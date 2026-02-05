@@ -1,0 +1,576 @@
+/**
+ * CABINET.CSS — Изолированные стили Личного кабинета
+ * Все стили изолированы через префикс .cabinet-*
+ */
+
+/* CSS ПЕРЕМЕННЫЕ */
+:root {
+    --cabinet-primary: #1a1a2e;
+    --cabinet-accent: #16213e;
+    --cabinet-highlight: #e94560;
+    --cabinet-bg: #f8f9fa;
+    --cabinet-white: #ffffff;
+    --cabinet-text: #1a1a2e;
+    --cabinet-text-secondary: #6c757d;
+    --cabinet-text-muted: #adb5bd;
+    --cabinet-text-inverse: #ffffff;
+    --cabinet-border: #e9ecef;
+    --cabinet-border-focus: #16213e;
+    --cabinet-success: #28a745;
+    --cabinet-warning: #ffc107;
+    --cabinet-danger: #dc3545;
+    --cabinet-info: #17a2b8;
+    --cabinet-radius: 8px;
+    --cabinet-radius-sm: 4px;
+    --cabinet-radius-lg: 12px;
+    --cabinet-radius-xl: 16px;
+    --cabinet-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --cabinet-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --cabinet-transition: 0.2s ease;
+    --cabinet-sidebar-width: 280px;
+}
+
+/* ОБЩИЕ */
+#cabinet-app { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 15px; line-height: 1.5; color: var(--cabinet-text); }
+#cabinet-app * { box-sizing: border-box; }
+
+/* КНОПКА В ШАПКЕ */
+.cabinet-header-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--cabinet-primary); color: var(--cabinet-text-inverse); border: none; border-radius: var(--cabinet-radius); font-size: 14px; font-weight: 500; cursor: pointer; transition: all var(--cabinet-transition); }
+.cabinet-header-btn:hover { background: var(--cabinet-accent); transform: translateY(-1px); }
+.cabinet-header-btn svg { width: 18px; height: 18px; }
+
+/* ЗАГРУЗКА */
+.cabinet-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; color: var(--cabinet-text-secondary); }
+.cabinet-spinner { animation: cabinet-spin 1s linear infinite; }
+@keyframes cabinet-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* АВТОРИЗАЦИЯ */
+.cabinet-auth { display: flex; align-items: center; justify-content: center; min-height: 500px; padding: 24px; background: var(--cabinet-bg); }
+.cabinet-auth__card { width: 100%; max-width: 400px; padding: 32px; background: var(--cabinet-white); border-radius: var(--cabinet-radius-xl); box-shadow: var(--cabinet-shadow-lg); }
+.cabinet-auth__card--wide { max-width: 500px; }
+.cabinet-auth__title { margin: 0 0 8px; font-size: 24px; font-weight: 600; text-align: center; }
+.cabinet-auth__subtitle { margin: 0 0 24px; color: var(--cabinet-text-secondary); text-align: center; font-size: 14px; }
+.cabinet-auth__switch { margin-top: 24px; text-align: center; font-size: 14px; color: var(--cabinet-text-secondary); }
+.cabinet-auth__switch a { color: var(--cabinet-highlight); text-decoration: none; }
+.cabinet-auth__switch a:hover { text-decoration: underline; }
+
+/* СОЦСЕТИ */
+.cabinet-social { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.cabinet-social__btn { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; padding: 12px 16px; border: 1px solid var(--cabinet-border); border-radius: var(--cabinet-radius); background: var(--cabinet-white); font-size: 14px; font-weight: 500; cursor: pointer; transition: all var(--cabinet-transition); }
+.cabinet-social__btn:hover { background: var(--cabinet-bg); border-color: var(--cabinet-text-muted); }
+.cabinet-social__btn svg { width: 20px; height: 20px; }
+.cabinet-social__divider { display: flex; align-items: center; margin: 16px 0; color: var(--cabinet-text-muted); font-size: 13px; }
+.cabinet-social__divider::before, .cabinet-social__divider::after { content: ''; flex: 1; height: 1px; background: var(--cabinet-border); }
+.cabinet-social__divider span { padding: 0 12px; }
+
+/* ЧЕРНОВИК */
+.cabinet-draft-summary { margin: 20px 0; padding: 16px; background: var(--cabinet-bg); border-radius: var(--cabinet-radius); }
+.cabinet-draft-summary h4 { margin: 0 0 8px; font-size: 14px; font-weight: 600; }
+.cabinet-draft-summary ul { margin: 0; padding-left: 20px; font-size: 14px; color: var(--cabinet-text-secondary); }
+.cabinet-draft-summary li { margin-bottom: 4px; }
+
+/* ОСНОВНОЙ ЛЕЙАУТ */
+.cabinet { display: flex; min-height: 600px; background: var(--cabinet-bg); border-radius: var(--cabinet-radius-lg); overflow: hidden; box-shadow: var(--cabinet-shadow); }
+
+/* САЙДБАР */
+.cabinet-sidebar { width: var(--cabinet-sidebar-width); min-width: var(--cabinet-sidebar-width); background: var(--cabinet-primary); color: var(--cabinet-text-inverse); display: flex; flex-direction: column; }
+.cabinet-sidebar__user { padding: 24px; text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+.cabinet-sidebar__avatar { width: 64px; height: 64px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; background: var(--cabinet-accent); border-radius: 50%; font-size: 22px; font-weight: 600; }
+.cabinet-sidebar__name { margin: 0 0 4px; font-size: 15px; font-weight: 500; }
+.cabinet-sidebar__id { margin: 0; font-size: 12px; opacity: 0.6; }
+.cabinet-sidebar__nav { flex: 1; padding: 16px 0; }
+.cabinet-sidebar__link { display: flex; align-items: center; gap: 12px; padding: 12px 24px; color: rgba(255, 255, 255, 0.7); text-decoration: none; font-size: 14px; transition: all var(--cabinet-transition); border: none; background: none; width: 100%; cursor: pointer; text-align: left; }
+.cabinet-sidebar__link:hover { background: rgba(255, 255, 255, 0.1); color: var(--cabinet-text-inverse); }
+.cabinet-sidebar__link--active { background: rgba(255, 255, 255, 0.15); color: var(--cabinet-text-inverse); border-right: 3px solid var(--cabinet-highlight); }
+.cabinet-sidebar__link svg { width: 20px; height: 20px; flex-shrink: 0; }
+.cabinet-sidebar__badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; margin-left: auto; background: var(--cabinet-highlight); border-radius: 10px; font-size: 11px; font-weight: 600; }
+.cabinet-sidebar__footer { padding: 16px 0; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.cabinet-sidebar__link--logout { color: rgba(255, 255, 255, 0.5); }
+.cabinet-sidebar__link--logout:hover { color: var(--cabinet-highlight); }
+
+/* КОНТЕНТ */
+.cabinet-content { flex: 1; display: flex; flex-direction: column; background: var(--cabinet-white); min-width: 0; }
+.cabinet-content__header { padding: 24px 32px; border-bottom: 1px solid var(--cabinet-border); }
+.cabinet-content__title { margin: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; }
+.cabinet-content__body { flex: 1; padding: 24px 32px; overflow-y: auto; min-width: 0; }
+
+/* ЧАТ */
+.cabinet-chat { display: flex; flex-direction: column; height: 100%; min-height: 500px; border: 1px solid var(--cabinet-border); border-radius: var(--cabinet-radius); overflow: hidden; }
+.cabinet-chat__order-badge { display: inline-block; padding: 4px 10px; background: var(--cabinet-accent); color: var(--cabinet-text-inverse); border-radius: var(--cabinet-radius-sm); font-size: 13px; font-weight: 500; }
+.cabinet-chat__inactive { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; flex: 1; }
+.cabinet-chat__icon { width: 64px; height: 64px; margin-bottom: 16px; color: var(--cabinet-text-muted); opacity: 0.4; }
+.cabinet-chat__icon svg { width: 100%; height: 100%; }
+.cabinet-chat__inactive h3 { margin: 0 0 8px; font-size: 18px; }
+.cabinet-chat__inactive p { margin: 0 0 24px; color: var(--cabinet-text-secondary); max-width: 360px; }
+.cabinet-chat__history-note { margin-bottom: 16px; padding: 12px 16px; background: rgba(23, 162, 184, 0.1); border-radius: var(--cabinet-radius); color: var(--cabinet-info); }
+.cabinet-chat__history-note p { margin: 0; }
+.cabinet-chat__order-select { width: 100%; max-width: 320px; margin-bottom: 24px; text-align: left; }
+.cabinet-chat__order-select label { display: block; margin-bottom: 8px; font-size: 14px; color: var(--cabinet-text-secondary); }
+.cabinet-chat__messages { flex: 1; padding: 20px; overflow-y: auto; background: var(--cabinet-bg); }
+.cabinet-chat__empty { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--cabinet-text-muted); }
+.cabinet-chat__message { max-width: 75%; margin-bottom: 16px; padding: 12px 16px; border-radius: var(--cabinet-radius-lg); position: relative; }
+.cabinet-chat__message--client { background: var(--cabinet-primary); color: var(--cabinet-text-inverse); margin-left: auto; border-bottom-right-radius: 4px; }
+.cabinet-chat__message--manager { background: var(--cabinet-white); border: 1px solid var(--cabinet-border); margin-right: auto; border-bottom-left-radius: 4px; }
+.cabinet-chat__message--system { background: rgba(23, 162, 184, 0.1); color: var(--cabinet-info); margin: 16px auto; max-width: 90%; text-align: center; font-size: 13px; }
+.cabinet-chat__message-sender { font-size: 12px; font-weight: 600; margin-bottom: 4px; opacity: 0.8; }
+.cabinet-chat__message-text { word-wrap: break-word; }
+.cabinet-chat__message-time { font-size: 11px; opacity: 0.6; text-align: right; margin-top: 6px; }
+.cabinet-chat__typing { display: flex; align-items: center; gap: 8px; padding: 12px 16px; color: var(--cabinet-text-secondary); font-size: 13px; }
+.cabinet-chat__typing-dots { display: flex; gap: 4px; }
+.cabinet-chat__typing-dots span { width: 6px; height: 6px; background: var(--cabinet-text-muted); border-radius: 50%; animation: cabinet-typing 1.4s infinite; }
+.cabinet-chat__typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.cabinet-chat__typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes cabinet-typing { 0%, 60%, 100% { opacity: 0.3; transform: scale(0.8); } 30% { opacity: 1; transform: scale(1); } }
+.cabinet-chat__input { display: flex; gap: 12px; padding: 16px; border-top: 1px solid var(--cabinet-border); background: var(--cabinet-white); }
+.cabinet-chat__input textarea { flex: 1; resize: none; }
+
+/* ЗАКАЗЫ */
+.cabinet-orders { display: flex; flex-direction: column; gap: 16px; }
+.cabinet-order { background: var(--cabinet-white); border: 1px solid var(--cabinet-border); border-radius: var(--cabinet-radius); padding: 20px; transition: all var(--cabinet-transition); }
+.cabinet-order:hover { border-color: var(--cabinet-text-muted); }
+.cabinet-order--draft { border-color: var(--cabinet-warning); background: rgba(255, 193, 7, 0.05); }
+.cabinet-order__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+.cabinet-order__info { display: flex; flex-direction: column; gap: 4px; }
+.cabinet-order__id { font-weight: 600; font-size: 15px; }
+.cabinet-order__date { font-size: 13px; color: var(--cabinet-text-secondary); }
+.cabinet-order__status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.cabinet-order__status--gray { background: #e9ecef; color: #495057; }
+.cabinet-order__status--yellow { background: #fff3cd; color: #856404; }
+.cabinet-order__status--blue { background: #cce5ff; color: #004085; }
+.cabinet-order__status--green { background: #d4edda; color: #155724; }
+.cabinet-order__status--red { background: #f8d7da; color: #721c24; }
+.cabinet-order__items { margin-bottom: 16px; }
+.cabinet-order__item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--cabinet-border); font-size: 14px; }
+.cabinet-order__item:last-child { border-bottom: none; }
+.cabinet-order__item-name { font-weight: 500; }
+.cabinet-order__item-details { color: var(--cabinet-text-secondary); }
+.cabinet-order__item-price { font-weight: 500; }
+.cabinet-order__total { display: flex; justify-content: space-between; padding: 12px 0; border-top: 2px solid var(--cabinet-border); font-size: 15px; }
+.cabinet-order__delivery { margin: 12px 0; padding: 12px; background: var(--cabinet-bg); border-radius: var(--cabinet-radius); font-size: 14px; }
+.cabinet-order__delivery p { margin: 0 0 4px; }
+.cabinet-order__actions { margin-top: 16px; display: flex; gap: 12px; }
+.cabinet-order__hint { margin: 12px 0 0; padding: 12px; background: rgba(23, 162, 184, 0.1); border-radius: var(--cabinet-radius); font-size: 13px; color: var(--cabinet-info); }
+.cabinet-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 24px; text-align: center; }
+.cabinet-empty__icon { width: 64px; height: 64px; margin-bottom: 16px; color: var(--cabinet-text-muted); opacity: 0.4; }
+.cabinet-empty h3 { margin: 0 0 8px; font-size: 18px; }
+.cabinet-empty p { margin: 0 0 24px; color: var(--cabinet-text-secondary); }
+
+/* ФОРМЫ */
+.cabinet-form { display: flex; flex-direction: column; gap: 16px; }
+.cabinet-form__row { display: flex; gap: 16px; }
+.cabinet-form__row--2col > * { flex: 1; }
+.cabinet-form__group { display: flex; flex-direction: column; gap: 6px; }
+.cabinet-form__label { font-size: 13px; font-weight: 500; color: var(--cabinet-text-secondary); }
+.cabinet-form__group--required .cabinet-form__label::after { content: ' *'; color: var(--cabinet-danger); }
+.cabinet-form__input, .cabinet-form__select, .cabinet-form__textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--cabinet-border); border-radius: var(--cabinet-radius); font-size: 14px; font-family: inherit; transition: all var(--cabinet-transition); background: var(--cabinet-white); }
+.cabinet-form__input:focus, .cabinet-form__select:focus, .cabinet-form__textarea:focus { outline: none; border-color: var(--cabinet-border-focus); box-shadow: 0 0 0 3px rgba(22, 33, 62, 0.1); }
+.cabinet-form__input::placeholder { color: var(--cabinet-text-muted); }
+.cabinet-form__select { cursor: pointer; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+.cabinet-form__textarea { resize: vertical; min-height: 80px; }
+.cabinet-form__divider { display: flex; align-items: center; margin: 8px 0; color: var(--cabinet-text-muted); font-size: 12px; }
+.cabinet-form__divider::before, .cabinet-form__divider::after { content: ''; flex: 1; height: 1px; background: var(--cabinet-border); }
+.cabinet-form__divider span { padding: 0 12px; }
+.cabinet-form__actions { margin-top: 8px; }
+.cabinet-form__note { margin-top: 12px; font-size: 12px; color: var(--cabinet-text-muted); text-align: center; }
+
+/* КНОПКИ */
+.cabinet-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border: none; border-radius: var(--cabinet-radius); font-size: 14px; font-weight: 500; font-family: inherit; cursor: pointer; transition: all var(--cabinet-transition); text-decoration: none; }
+.cabinet-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.cabinet-btn--primary { background: var(--cabinet-primary); color: var(--cabinet-text-inverse); }
+.cabinet-btn--primary:hover:not(:disabled) { background: var(--cabinet-accent); transform: translateY(-1px); }
+.cabinet-btn--secondary { background: var(--cabinet-bg); color: var(--cabinet-text); border: 1px solid var(--cabinet-border); }
+.cabinet-btn--secondary:hover:not(:disabled) { background: var(--cabinet-white); border-color: var(--cabinet-text-muted); }
+.cabinet-btn--full { width: 100%; }
+.cabinet-btn--icon { padding: 10px 14px; }
+
+/* АЛЕРТЫ */
+.cabinet-alert { padding: 12px 16px; border-radius: var(--cabinet-radius); font-size: 14px; margin-bottom: 16px; }
+.cabinet-alert--error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.cabinet-alert--success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+/* РЕКВИЗИТЫ */
+.cabinet-requisites__note { margin: 0 0 24px; padding: 12px 16px; background: rgba(23, 162, 184, 0.1); border-radius: var(--cabinet-radius); color: var(--cabinet-info); font-size: 14px; }
+
+/* ПРОФИЛЬ */
+.cabinet-profile__info { display: flex; align-items: center; gap: 20px; padding: 20px; background: var(--cabinet-bg); border-radius: var(--cabinet-radius); margin-bottom: 24px; }
+.cabinet-profile__avatar { width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; background: var(--cabinet-primary); color: var(--cabinet-text-inverse); border-radius: 50%; font-size: 24px; font-weight: 600; }
+.cabinet-profile__meta p { margin: 0 0 4px; font-size: 14px; }
+.cabinet-profile__id { font-weight: 600; }
+.cabinet-profile__email { color: var(--cabinet-text-secondary); }
+.cabinet-profile__provider { color: var(--cabinet-text-muted); font-size: 13px !important; }
+.cabinet-profile__member-since { margin-top: 24px; text-align: center; color: var(--cabinet-text-muted); font-size: 13px; }
+
+/* ONBOARDING */
+.cabinet-onboarding-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 999; cursor: pointer; }
+.cabinet-onboarding { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90%; max-width: 400px; background: var(--cabinet-white); border-radius: var(--cabinet-radius-xl); box-shadow: var(--cabinet-shadow-lg); z-index: 1000; padding: 28px; animation: cabinet-onboarding-in 0.3s ease; }
+@keyframes cabinet-onboarding-in { from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+.cabinet-onboarding__close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; background: var(--cabinet-bg); border-radius: 50%; cursor: pointer; color: var(--cabinet-text-secondary); transition: all var(--cabinet-transition); }
+.cabinet-onboarding__close:hover { background: var(--cabinet-border); color: var(--cabinet-text); }
+.cabinet-onboarding h3 { margin: 0 0 20px; font-size: 20px; text-align: center; }
+.cabinet-onboarding__steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.cabinet-onboarding__step { display: flex; gap: 12px; padding: 12px; background: var(--cabinet-bg); border-radius: var(--cabinet-radius); }
+.cabinet-onboarding__step-icon { flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--cabinet-primary); color: var(--cabinet-text-inverse); border-radius: var(--cabinet-radius); }
+.cabinet-onboarding__step-icon svg { width: 18px; height: 18px; }
+.cabinet-onboarding__step strong { display: block; margin-bottom: 2px; font-size: 14px; }
+.cabinet-onboarding__step p { margin: 0; font-size: 12px; color: var(--cabinet-text-secondary); }
+.cabinet-onboarding__action { text-align: center; display: flex; flex-direction: column; gap: 8px; }
+
+/* Задача 4: Кнопка "Больше не показывать" */
+.cabinet-btn--link { background: none; border: none; color: var(--cabinet-text-muted); font-size: 13px; padding: 8px; }
+.cabinet-btn--link:hover { color: var(--cabinet-text-secondary); text-decoration: underline; }
+
+/* Задача 2: Индикатор офлайна менеджера */
+.cabinet-chat__offline-notice { padding: 10px 16px; background: #fff3cd; color: #856404; font-size: 13px; text-align: center; border-bottom: 1px solid var(--cabinet-border); }
+
+/* Задача 1: Статусы сообщений + footer */
+.cabinet-chat__message-footer { display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+.cabinet-chat__message-time { font-size: 11px; opacity: 0.6; }
+.cabinet-chat__status { font-size: 12px; }
+.cabinet-chat__status--pending { color: var(--cabinet-text-muted); }
+.cabinet-chat__status--delivered { color: var(--cabinet-success); }
+.cabinet-chat__status--failed { color: var(--cabinet-danger); }
+.cabinet-chat__message--failed { opacity: 0.7; border: 1px dashed var(--cabinet-danger); }
+.cabinet-chat__retry-btn { background: none; border: none; color: var(--cabinet-highlight); font-size: 12px; cursor: pointer; padding: 2px 6px; margin-left: auto; }
+.cabinet-chat__retry-btn:hover { text-decoration: underline; }
+
+/* АДАПТИВНОСТЬ */
+@media (max-width: 768px) {
+    .cabinet { flex-direction: column; min-height: 100vh; height: auto; }
+    .cabinet-sidebar { width: 100%; min-width: 100%; }
+    .cabinet-sidebar__nav { display: flex; flex-direction: row; flex-wrap: wrap; gap: 8px; padding: 12px 16px; }
+    .cabinet-sidebar__link { flex: 1 1 auto; min-width: 80px; padding: 10px 14px; justify-content: center; font-size: 14px; white-space: nowrap; }
+    .cabinet-sidebar__link span { display: inline; }
+    .cabinet-sidebar__link svg { width: 24px; height: 24px; }
+    .cabinet-sidebar__footer { display: none; }
+    .cabinet-sidebar__user { padding: 16px; }
+    .cabinet-sidebar__avatar { width: 48px; height: 48px; font-size: 18px; }
+    .cabinet-content__header, .cabinet-content__body { padding: 16px; }
+    .cabinet-content { width: 100%; min-width: 0; box-sizing: border-box; }
+    .cabinet-form__row { flex-direction: column; }
+    .cabinet-chat__message { max-width: 90%; }
+    .cabinet-order__header { flex-direction: column; gap: 12px; }
+    .cabinet-profile__info { flex-direction: column; text-align: center; }
+
+
+    /* ========================================================================
+       Phase 4B: Touch Optimization (≤768px)
+       ======================================================================== 
+       
+       Minimum touch target: 44 × 44 px (Apple HIG / WCAG 2.1)
+       
+       IMPORTANT:
+       - CSS only, no HTML/JS changes
+       - No selector renaming
+       - No layout structure changes
+    */
+
+
+    /* ------------------------------------------------------------------------
+       4B.1: Sidebar Navigation Touch Targets
+       ------------------------------------------------------------------------ */
+
+    .cabinet-sidebar__link {
+        min-height: 44px;
+        padding: 12px 16px;
+    }
+
+    .cabinet-sidebar__link svg {
+        pointer-events: none;
+    }
+
+    .cabinet-sidebar__user {
+        min-height: 44px;
+        padding: 12px 16px;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4B.2: Buttons Touch Targets
+       ------------------------------------------------------------------------ */
+
+    .cabinet-btn {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+
+    .cabinet-form .cabinet-btn {
+        min-height: 44px;
+        width: 100%;
+        margin-top: 12px;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4B.3: Form Inputs Touch Targets
+       ------------------------------------------------------------------------ */
+
+    .cabinet-form__input,
+    .cabinet-form__select,
+    .cabinet-form__textarea {
+        min-height: 44px;
+        padding: 12px 14px;
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+
+    .cabinet-form__label {
+        min-height: 24px;
+        padding: 4px 0;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4B.4: Chat UI Touch Targets
+       ------------------------------------------------------------------------ */
+
+    .cabinet-chat__input textarea {
+        min-height: 44px;
+        padding: 12px 14px;
+        font-size: 16px;
+    }
+
+    .cabinet-chat__input .cabinet-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .cabinet-chat__message {
+        padding: 12px 16px;
+        font-size: 15px;
+        line-height: 1.4;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4B.5: General Spacing Improvements
+       ------------------------------------------------------------------------ */
+
+    .cabinet-sidebar__nav {
+        gap: 8px;
+    }
+
+    .cabinet-btn + .cabinet-btn {
+        margin-left: 8px;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4B.6: Focus States
+       ------------------------------------------------------------------------ */
+
+    .cabinet-sidebar__link:focus {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+    }
+
+    .cabinet-btn:focus,
+    .cabinet-form__input:focus,
+    .cabinet-form__select:focus,
+    .cabinet-form__textarea:focus {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4B.7: Active/Pressed States
+       ------------------------------------------------------------------------ */
+
+    .cabinet-sidebar__link:active {
+        opacity: 0.85;
+    }
+
+    .cabinet-btn:active {
+        opacity: 0.85;
+        transform: scale(0.98);
+    }
+
+
+    /* ========================================================================
+       Phase 4C: Micro-Fixes (≤768px)
+       ======================================================================== 
+       
+       Preventive fixes for common mobile UX issues:
+       - Text overflow
+       - Long labels breaking layout
+       - Chat bubble sizing
+       - Safe area (iOS notch)
+       - Small device edge cases
+       - Table scroll usability
+       
+       IMPORTANT:
+       - CSS only, no HTML/JS changes
+       - No layout refactoring
+       - No new components
+    */
+
+
+    /* ------------------------------------------------------------------------
+       4C.1: Text Overflow Prevention
+       ------------------------------------------------------------------------ */
+
+    .cabinet-sidebar__link {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .cabinet-content__title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .cabinet-form__label {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4C.2: Chat Bubble Fixes
+       ------------------------------------------------------------------------ */
+
+    .cabinet-chat__message {
+        max-width: 85%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+
+    .cabinet-chat__message a {
+        word-break: break-all;
+    }
+
+    .cabinet-chat {
+        max-height: 70vh;
+        max-height: 70dvh;
+    }
+
+    .cabinet-chat__messages {
+        scroll-behavior: smooth;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4C.3: Table Scroll Usability
+       ------------------------------------------------------------------------ */
+
+    .cabinet-table td {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 200px;
+    }
+
+    .cabinet-table th:first-child,
+    .cabinet-table td:first-child {
+        position: sticky;
+        left: 0;
+        background: inherit;
+        z-index: 1;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4C.4: iOS Safe Area (Notch) Support
+       ------------------------------------------------------------------------ */
+
+    .cabinet {
+        padding-left: env(safe-area-inset-left, 0);
+        padding-right: env(safe-area-inset-right, 0);
+    }
+
+    .cabinet-sidebar {
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .cabinet-chat__input {
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0));
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4C.5: Small Device Fixes (iPhone SE, small Android)
+       ------------------------------------------------------------------------ */
+
+    @media (max-width: 360px) {
+
+        .cabinet-content__header,
+        .cabinet-content__body {
+            padding: 12px;
+        }
+
+        .cabinet-sidebar {
+            padding: 10px 12px;
+        }
+
+        .cabinet-sidebar__link {
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+
+        .cabinet-content__title {
+            font-size: 18px;
+        }
+
+        .cabinet-form__label {
+            font-size: 13px;
+        }
+
+        .cabinet-btn {
+            padding: 10px 16px;
+            font-size: 15px;
+        }
+
+        .cabinet-chat__message {
+            font-size: 14px;
+            padding: 10px 12px;
+        }
+
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4C.6: Keyboard Overlap Prevention
+       ------------------------------------------------------------------------ */
+
+    .cabinet-chat {
+        max-height: 100dvh;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4C.7: Visual Clarity Improvements
+       ------------------------------------------------------------------------ */
+
+    .cabinet-form__input::placeholder,
+    .cabinet-form__textarea::placeholder {
+        color: #888888;
+        opacity: 1;
+    }
+
+    .cabinet-btn:disabled,
+    .cabinet-form__input:disabled,
+    .cabinet-form__select:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+
+    /* ------------------------------------------------------------------------
+       4C.8: Scroll Container Fixes
+       ------------------------------------------------------------------------ */
+
+    .cabinet-content__body {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+
+    .cabinet {
+        min-height: 100dvh;
+        min-height: -webkit-fill-available;
+    }
+
+}

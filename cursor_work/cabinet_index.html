@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет – Design Sandbox</title>
+    <link rel="stylesheet" href="cabinet.css">
+</head>
+<body>
+
+<!-- ⚠️ КОНТЕЙНЕРЫ (ID НЕ ТРОГАТЬ) -->
+<div id="cabinet-app">
+    <aside id="cabinet-sidebar"></aside>
+    <main id="cabinet-content"></main>
+</div>
+
+<!-- ✅ РАБОЧАЯ ЗОНА: ТОЛЬКО ВИЗУАЛ -->
+
+<template id="tpl-auth">
+    <div class="cabinet-auth">
+        <div class="cabinet-auth__container">
+            <div class="cabinet-auth__card">
+                <div class="cabinet-auth__header">
+                    <div class="cabinet-auth__logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <h1 class="cabinet-auth__title">Вход в кабинет</h1>
+                    <p class="cabinet-auth__subtitle">Введите данные для входа в систему</p>
+                </div>
+                <div class="cabinet-auth__body">
+                    <form class="cabinet-form">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Email</label>
+                            <input type="email" name="email" class="cabinet-form__input" placeholder="example@company.com" required autocomplete="email">
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Пароль</label>
+                            <input type="password" name="password" class="cabinet-form__input" placeholder="••••••••" required autocomplete="current-password">
+                        </div>
+                        <div class="cabinet-form__footer">
+                            <a href="#" class="cabinet-form__link">Забыли пароль?</a>
+                        </div>
+                        <button class="cabinet-btn cabinet-btn--primary cabinet-btn--full">
+                            <span>Войти</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+                    </form>
+                    <div class="cabinet-auth__divider">
+                        <span>или</span>
+                    </div>
+                    <div class="cabinet-social">
+                        <button type="button" class="cabinet-social__btn">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                            </svg>
+                            <span>Google</span>
+                        </button>
+                        <button type="button" class="cabinet-social__btn">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="#4C75A3" d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4 8.57 4 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.847 2.456 2.268 4.607 2.853 4.607.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.149-3.574 2.149-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/>
+                            </svg>
+                            <span>VK</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="cabinet-auth__footer">
+                    <span>Нет аккаунта?</span>
+                    <a href="#" class="cabinet-auth__link">Зарегистрируйтесь</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="tpl-register">
+    <div class="cabinet-auth">
+        <div class="cabinet-auth__container">
+            <div class="cabinet-auth__card">
+                <div class="cabinet-auth__header">
+                    <div class="cabinet-auth__logo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="8.5" cy="7" r="4"/>
+                            <polyline points="17 11 19 13 23 9"/>
+                        </svg>
+                    </div>
+                    <h1 class="cabinet-auth__title">Регистрация</h1>
+                    <p class="cabinet-auth__subtitle">Создайте корпоративный аккаунт</p>
+                </div>
+                <div class="cabinet-auth__body">
+                    <form class="cabinet-form">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Название компании</label>
+                            <input type="text" name="company" class="cabinet-form__input" placeholder="ООО «Ваша компания»" required autocomplete="organization">
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Email</label>
+                            <input type="email" name="email" class="cabinet-form__input" placeholder="director@company.com" required autocomplete="email">
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Телефон</label>
+                            <input type="tel" name="phone" class="cabinet-form__input" placeholder="+7 (___) ___-__-__" required autocomplete="tel">
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Пароль</label>
+                            <input type="password" name="password" class="cabinet-form__input" placeholder="Минимум 8 символов" required autocomplete="new-password">
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Подтвердите пароль</label>
+                            <input type="password" name="password_confirm" class="cabinet-form__input" placeholder="Повторите пароль" required autocomplete="new-password">
+                        </div>
+                        <button class="cabinet-btn cabinet-btn--primary cabinet-btn--full">
+                            <span>Создать аккаунт</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 18 15 12 9 6"/>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+                <div class="cabinet-auth__footer">
+                    <span>Уже есть аккаунт?</span>
+                    <a href="#" class="cabinet-auth__link">Войти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="tpl-sidebar">
+    <aside class="cabinet-sidebar">
+        <div class="cabinet-sidebar__header">
+            <div class="cabinet-sidebar__user">
+                <div class="cabinet-sidebar__avatar">
+                    <span class="cabinet-sidebar__avatar-text">ИИ</span>
+                </div>
+                <div class="cabinet-sidebar__user-info">
+                    <p class="cabinet-sidebar__name">Иван Иванов</p>
+                    <p class="cabinet-sidebar__email">ivan@company.com</p>
+                </div>
+            </div>
+        </div>
+        <nav class="cabinet-sidebar__nav">
+            <div class="cabinet-sidebar__link cabinet-sidebar__link--active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <span>Мои заказы</span>
+            </div>
+            <div class="cabinet-sidebar__link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+                <span>Реквизиты</span>
+            </div>
+            <div class="cabinet-sidebar__link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                <span>Профиль</span>
+            </div>
+        </nav>
+        <div class="cabinet-sidebar__footer">
+            <button class="cabinet-sidebar__logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Выйти</span>
+            </button>
+        </div>
+    </aside>
+</template>
+
+<template id="tpl-orders">
+    <div class="cabinet-content__header">
+        <h1 class="cabinet-content__title">Мои заказы</h1>
+    </div>
+    <div class="cabinet-content__body">
+        <div class="cabinet-orders"></div>
+    </div>
+</template>
+
+<template id="tpl-order-card">
+    <article class="cabinet-order-card">
+        <div class="cabinet-order-card__header">
+            <div class="cabinet-order-card__meta">
+                <div class="cabinet-order-card__number">
+                    <span class="cabinet-order-card__label">Заказ</span>
+                    <span class="cabinet-order-card__value">#12345</span>
+                </div>
+                <div class="cabinet-order-card__date">
+                    <span class="cabinet-order-card__label">Дата</span>
+                    <span class="cabinet-order-card__value">15 января 2026</span>
+                </div>
+            </div>
+            <div class="cabinet-status cabinet-status--pending">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <span>Обрабатывается</span>
+            </div>
+        </div>
+        <div class="cabinet-order-card__body">
+            <div class="cabinet-order-card__summary">
+                <div class="cabinet-order-card__items">
+                    <span class="cabinet-order-card__items-count">5 товаров</span>
+                </div>
+                <div class="cabinet-order-card__total">
+                    <span class="cabinet-order-card__total-label">Сумма:</span>
+                    <span class="cabinet-order-card__total-value">125 000 ₽</span>
+                </div>
+            </div>
+        </div>
+        <div class="cabinet-order-card__footer">
+            <button class="cabinet-btn cabinet-btn--secondary cabinet-btn--sm">
+                <span>Подробнее</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </button>
+        </div>
+    </article>
+</template>
+
+<template id="tpl-order-details">
+    <div class="cabinet-order-details">
+        <button class="cabinet-order-details__back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            <span>Вернуться к заказам</span>
+        </button>
+        
+        <div class="cabinet-content__header">
+            <h1 class="cabinet-content__title">Заказ #12345</h1>
+        </div>
+        
+        <div class="cabinet-order-details__meta">
+            <div class="cabinet-order-details__meta-item">
+                <span class="cabinet-order-details__meta-label">Дата создания</span>
+                <span class="cabinet-order-details__meta-value">15 января 2026</span>
+            </div>
+            <div class="cabinet-order-details__meta-item">
+                <span class="cabinet-order-details__meta-label">Статус</span>
+                <span class="cabinet-order-details__meta-value">Обрабатывается</span>
+            </div>
+            <div class="cabinet-order-details__meta-item">
+                <span class="cabinet-order-details__meta-label">Сумма</span>
+                <span class="cabinet-order-details__meta-value">125 000 ₽</span>
+            </div>
+            <div class="cabinet-order-details__meta-item">
+                <span class="cabinet-order-details__meta-label">Товаров</span>
+                <span class="cabinet-order-details__meta-value">5 шт</span>
+            </div>
+        </div>
+        
+        <div class="cabinet-card">
+            <div class="cabinet-card__header">
+                <h2 class="cabinet-card__title">Состав заказа</h2>
+            </div>
+            <div class="cabinet-card__body">
+                <div class="cabinet-order-items">
+                    <div class="cabinet-order-items__header">
+                        <div>Товар</div>
+                        <div>Цена</div>
+                        <div>Кол-во</div>
+                        <div>Сумма</div>
+                    </div>
+                    <div class="cabinet-order-item">
+                        <div class="cabinet-order-item__product">
+                            <span class="cabinet-order-item__product-id">Артикул: PT-001</span>
+                            <span class="cabinet-order-item__product-color">Цвет: Синий</span>
+                        </div>
+                        <div class="cabinet-order-item__value">15 000 ₽</div>
+                        <div class="cabinet-order-item__value">3 шт</div>
+                        <div class="cabinet-order-item__value">45 000 ₽</div>
+                    </div>
+                    <div class="cabinet-order-item">
+                        <div class="cabinet-order-item__product">
+                            <span class="cabinet-order-item__product-id">Артикул: PT-002</span>
+                            <span class="cabinet-order-item__product-color">Цвет: Черный</span>
+                        </div>
+                        <div class="cabinet-order-item__value">20 000 ₽</div>
+                        <div class="cabinet-order-item__value">4 шт</div>
+                        <div class="cabinet-order-item__value">80 000 ₽</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cabinet-order-delivery">
+            <div class="cabinet-order-delivery__title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13"/>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+                <span>Информация о доставке</span>
+            </div>
+            <div class="cabinet-order-delivery__info">
+                <p class="cabinet-order-delivery__address">
+                    <strong>Адрес:</strong> г. Москва, ул. Примерная, д. 123, офис 456
+                </p>
+                <p class="cabinet-order-delivery__date">
+                    Ожидаемая дата доставки: 20 января 2026
+                </p>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="tpl-profile">
+    <div class="cabinet-content__header">
+        <h1 class="cabinet-content__title">Профиль</h1>
+    </div>
+    <div class="cabinet-content__body">
+        <div class="cabinet-card">
+            <div class="cabinet-card__header">
+                <h2 class="cabinet-card__title">Основная информация</h2>
+                <p class="cabinet-card__description">Управление данными вашего профиля</p>
+            </div>
+            <div class="cabinet-card__body">
+                <form class="cabinet-form">
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Название компании</label>
+                            <input type="text" name="company" class="cabinet-form__input" value="ООО «Примерная компания»" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Email</label>
+                            <input type="email" name="email" class="cabinet-form__input" value="ivan@company.com" required>
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Телефон</label>
+                            <input type="tel" name="phone" class="cabinet-form__input" value="+7 (999) 123-45-67" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label">Контактное лицо</label>
+                            <input type="text" name="contact_person" class="cabinet-form__input" value="Иван Иванов">
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label">Должность</label>
+                            <input type="text" name="position" class="cabinet-form__input" value="Директор">
+                        </div>
+                    </div>
+                    <div class="cabinet-form__footer">
+                        <button class="cabinet-btn cabinet-btn--primary">
+                            <span>Сохранить изменения</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="cabinet-card">
+            <div class="cabinet-card__header">
+                <h2 class="cabinet-card__title">Смена пароля</h2>
+                <p class="cabinet-card__description">Обновите пароль для обеспечения безопасности</p>
+            </div>
+            <div class="cabinet-card__body">
+                <form class="cabinet-form">
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Текущий пароль</label>
+                            <input type="password" name="current_password" class="cabinet-form__input" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Новый пароль</label>
+                            <input type="password" name="new_password" class="cabinet-form__input" placeholder="Минимум 8 символов" required>
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Подтвердите пароль</label>
+                            <input type="password" name="confirm_password" class="cabinet-form__input" placeholder="Повторите новый пароль" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__footer">
+                        <button class="cabinet-btn cabinet-btn--primary">
+                            <span>Обновить пароль</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="tpl-requisites">
+    <div class="cabinet-content__header">
+        <h1 class="cabinet-content__title">Реквизиты</h1>
+    </div>
+    <div class="cabinet-content__body">
+        <div class="cabinet-card">
+            <div class="cabinet-card__header">
+                <h2 class="cabinet-card__title">Юридическая информация</h2>
+                <p class="cabinet-card__description">Данные организации для договоров и документов</p>
+            </div>
+            <div class="cabinet-card__body">
+                <form class="cabinet-form">
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Полное наименование</label>
+                            <input type="text" name="full_name" class="cabinet-form__input" value="Общество с ограниченной ответственностью «Примерная компания»" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">ИНН</label>
+                            <input type="text" name="inn" class="cabinet-form__input" value="7700123456" required>
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">КПП</label>
+                            <input type="text" name="kpp" class="cabinet-form__input" value="770001001" required>
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">ОГРН</label>
+                            <input type="text" name="ogrn" class="cabinet-form__input" value="1234567890123" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Юридический адрес</label>
+                            <input type="text" name="legal_address" class="cabinet-form__input" value="123456, г. Москва, ул. Примерная, д. 1, офис 100" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label">Фактический адрес</label>
+                            <input type="text" name="physical_address" class="cabinet-form__input" value="123456, г. Москва, ул. Примерная, д. 1, офис 100">
+                        </div>
+                    </div>
+                    <div class="cabinet-form__footer">
+                        <button class="cabinet-btn cabinet-btn--primary">
+                            <span>Сохранить реквизиты</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="cabinet-card">
+            <div class="cabinet-card__header">
+                <h2 class="cabinet-card__title">Банковские реквизиты</h2>
+                <p class="cabinet-card__description">Информация для расчетов и платежей</p>
+            </div>
+            <div class="cabinet-card__body">
+                <form class="cabinet-form">
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Расчетный счет</label>
+                            <input type="text" name="account" class="cabinet-form__input" value="40702810000000001234" required>
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Корр. счет</label>
+                            <input type="text" name="corr_account" class="cabinet-form__input" value="30101810000000000225" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__row">
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">Название банка</label>
+                            <input type="text" name="bank_name" class="cabinet-form__input" value="ПАО «Примербанк»" required>
+                        </div>
+                        <div class="cabinet-form__group">
+                            <label class="cabinet-form__label cabinet-form__label--required">БИК</label>
+                            <input type="text" name="bik" class="cabinet-form__input" value="044525225" required>
+                        </div>
+                    </div>
+                    <div class="cabinet-form__footer">
+                        <button class="cabinet-btn cabinet-btn--primary">
+                            <span>Сохранить реквизиты</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="tpl-loading">
+    <div class="cabinet-loader">
+        <div class="cabinet-loader__spinner"></div>
+    </div>
+</template>
+
+<template id="tpl-error">
+    <div class="cabinet-alert cabinet-alert--error">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>Произошла ошибка при загрузке данных</span>
+    </div>
+</template>
+
+</body>
+</html>

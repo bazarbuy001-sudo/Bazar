@@ -1,0 +1,646 @@
+/**
+ * megaMenu.js
+ * Модуль Mega Menu (каталог-навигация)
+ * 
+ * ЗАВИСИМОСТИ:
+ * - CatalogDataStore (frontend/js/catalog/dataStore.js)
+ * - CatalogEventBus (frontend/js/catalog/eventBus.js)
+ * 
+ * ИСТОЧНИК ДАННЫХ:
+ * - ТОЛЬКО navigation_menu (таблица навигации)
+ * - НЕ использует фильтры, цвета, плотности
+ * 
+ * СОБЫТИЯ:
+ * - Слушает: menu:open, menu:close, catalog:loaded
+ * - Эмитит: catalog:openProduct (при клике на товар)
+ * 
+ * УРОВНИ:
+ * 1. Category (категория)
+ * 2. Subcategory (подкатегория)
+ * 3. FabricType (тип ткани)
+ * 
+ * @version 1.0.0
+ * @author Claude (по ТЗ BazarBuy)
+ */
+
+const MegaMenu = (function() {
+    'use strict';
+
+    // ============================================
+    // СОСТОЯНИЕ
+    // ============================================
+
+    const state = {
+        navigation: [],      // Данные навигации
+        isOpen: false,
+        activeCategory: null,
+        activeSubcategory: null,
+        initialized: false,
+        eventsBound: false,  // Phase 5C-4: Guard for EventBus subscriptions
+        containerElement: null
+    };
+
+    // ============================================
+    // СЕЛЕКТОРЫ И КЛАССЫ
+    // ============================================
+
+    const SELECTORS = {
+        container: '.mega-menu',
+        categoriesList: '.mega-menu__categories',
+        subcategoriesList: '.mega-menu__subcategories',
+        fabricTypesList: '.mega-menu__fabric-types',
+        categoryItem: '.mega-menu__category-item',
+        subcategoryItem: '.mega-menu__subcategory-item',
+        fabricTypeItem: '.mega-menu__fabric-type-item'
+    };
+
+    const CLASSES = {
+        open: 'is-open',
+        active: 'is-active',
+        hasChildren: 'has-children',
+        empty: 'is-empty',
+        loading: 'is-loading'
+    };
+
+    // ============================================
+    // ПРИВАТНЫЕ МЕТОДЫ — ДАННЫЕ
+    // ============================================
+
+    /**
+     * Загрузить данные навигации из DataStore
+     * КОММЕНТАРИЙ: Если DataStore не имеет метода getNavigation(),
+     * нужно добавить его или использовать getCategories()
+     */
+    function loadNavigationData() {
+        if (!window.CatalogDataStore) {
+            console.error('[MegaMenu] CatalogDataStore не найден');
+            return [];
+        }
+
+        // Вариант 1: Если есть метод getNavigation()
+        if (typeof window.CatalogDataStore.getNavigation === 'function') {
+            return window.CatalogDataStore.getNavigation();
+        }
+
+        // Вариант 2: Если есть метод getCategories()
+        if (typeof window.CatalogDataStore.getCategories === 'function') {
+            return window.CatalogDataStore.getCategories();
+        }
+
+        // Вариант 3: Построить из getAllProducts()
+        // КОММЕНТАРИЙ: Это fallback, но по ТЗ навигация должна браться
+        // из отдельной таблицы navigation_menu, а не из products
+        console.warn('[MegaMenu] Используется fallback-построение навигации из products');
+        return buildNavigationFromProducts();
+    }
+
+    /**
+     * Fallback: построить навигацию из списка товаров
+     * КОММЕНТАРИЙ: По ТЗ это НЕ рекомендуется, но обеспечивает работоспособность
+     */
+    function buildNavigationFromProducts() {
+        const products = window.CatalogDataStore.getAllProducts();
+        const navMap = new Map();
+
+        products.forEach(product => {
+            if (!product.is_active) return;
+            
+            const key = `${product.category_id}|${product.subcategory_id}|${product.fabric_type_id}`;
+            
+            if (!navMap.has(key)) {
+                navMap.set(key, {
+                    category_id: product.category_id,
+                    category_name: product.category_name || product.category_id,
+                    subcategory_id: product.subcategory_id,
+                    subcategory_name: product.subcategory_name || product.subcategory_id,
+                    fabric_type_id: product.fabric_type_id,
+                    fabric_type_name: product.fabric_type_name || product.fabric_type_id,
+                    order: 0,
+                    productCount: 0
+                });
+            }
+            
+            navMap.get(key).productCount++;
+        });
+
+        return Array.from(navMap.values());
+    }
+
+    /**
+     * Получить уникальные категории
+     * @returns {Array}
+     */
+    function getCategories() {
+        const categoriesMap = new Map();
+        
+        state.navigation.forEach(item => {
+            if (!categoriesMap.has(item.category_id)) {
+                categoriesMap.set(item.category_id, {
+                    id: item.category_id,
+                    name: item.category_name,
+                    order: item.order || 0
+                });
+            }
+        });
+
+        return Array.from(categoriesMap.values())
+            .sort((a, b) => a.order - b.order);
+    }
+
+    /**
+     * Получить подкатегории для категории
+     * @param {string} categoryId
+     * @returns {Array}
+     */
+    function getSubcategories(categoryId) {
+        const subcategoriesMap = new Map();
+        
+        state.navigation
+            .filter(item => item.category_id === categoryId)
+            .forEach(item => {
+                if (!subcategoriesMap.has(item.subcategory_id)) {
+                    subcategoriesMap.set(item.subcategory_id, {
+                        id: item.subcategory_id,
+                        name: item.subcategory_name,
+                        categoryId: item.category_id,
+                        order: item.order || 0
+                    });
+                }
+            });
+
+        return Array.from(subcategoriesMap.values())
+            .sort((a, b) => a.order - b.order);
+    }
+
+    /**
+     * Получить типы ткани для подкатегории
+     * @param {string} categoryId
+     * @param {string} subcategoryId
+     * @returns {Array}
+     */
+    function getFabricTypes(categoryId, subcategoryId) {
+        return state.navigation
+            .filter(item => 
+                item.category_id === categoryId && 
+                item.subcategory_id === subcategoryId
+            )
+            .map(item => ({
+                id: item.fabric_type_id,
+                name: item.fabric_type_name,
+                categoryId: item.category_id,
+                subcategoryId: item.subcategory_id,
+                order: item.order || 0
+            }))
+            .sort((a, b) => a.order - b.order);
+    }
+
+    /**
+     * Проверить, есть ли товары в категории
+     * @param {string} categoryId
+     * @returns {boolean}
+     */
+    function hasProductsInCategory(categoryId) {
+        if (!window.CatalogDataStore) return true;
+        
+        const products = window.CatalogDataStore.getAllProducts();
+        return products.some(p => 
+            p.category_id === categoryId && 
+            p.is_active !== false
+        );
+    }
+
+    /**
+     * Проверить, есть ли товары в подкатегории
+     * @param {string} categoryId
+     * @param {string} subcategoryId
+     * @returns {boolean}
+     */
+    function hasProductsInSubcategory(categoryId, subcategoryId) {
+        if (!window.CatalogDataStore) return true;
+        
+        const products = window.CatalogDataStore.getAllProducts();
+        return products.some(p => 
+            p.category_id === categoryId && 
+            p.subcategory_id === subcategoryId &&
+            p.is_active !== false
+        );
+    }
+
+    // ============================================
+    // ПРИВАТНЫЕ МЕТОДЫ — РЕНДЕРИНГ
+    // ============================================
+
+    /**
+     * Создать HTML структуру меню
+     * @returns {string}
+     */
+    function createMenuHTML() {
+        return `
+            <div class="mega-menu__inner">
+                <div class="mega-menu__column mega-menu__column--categories">
+                    <ul class="mega-menu__categories"></ul>
+                </div>
+                <div class="mega-menu__column mega-menu__column--subcategories">
+                    <ul class="mega-menu__subcategories"></ul>
+                </div>
+                <div class="mega-menu__column mega-menu__column--fabric-types">
+                    <ul class="mega-menu__fabric-types"></ul>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Отрисовать категории
+     */
+    function renderCategories() {
+        const container = state.containerElement.querySelector(SELECTORS.categoriesList);
+        if (!container) return;
+
+        const categories = getCategories();
+        
+        // Фильтруем пустые категории
+        const nonEmptyCategories = categories.filter(cat => hasProductsInCategory(cat.id));
+
+        if (nonEmptyCategories.length === 0) {
+            container.innerHTML = '<li class="mega-menu__empty">Категории не найдены</li>';
+            return;
+        }
+
+        container.innerHTML = nonEmptyCategories.map(category => `
+            <li class="mega-menu__category-item ${CLASSES.hasChildren}" 
+                data-category-id="${escapeHtml(category.id)}">
+                <a href="/catalog/${escapeHtml(category.id)}" 
+                   class="mega-menu__category-link">
+                    ${escapeHtml(category.name)}
+                </a>
+            </li>
+        `).join('');
+
+        // Привязываем события
+        container.querySelectorAll(SELECTORS.categoryItem).forEach(item => {
+            item.addEventListener('mouseenter', handleCategoryHover);
+            item.addEventListener('click', handleCategoryClick);
+        });
+    }
+
+    /**
+     * Отрисовать подкатегории
+     * @param {string} categoryId
+     */
+    function renderSubcategories(categoryId) {
+        const container = state.containerElement.querySelector(SELECTORS.subcategoriesList);
+        if (!container) return;
+
+        const subcategories = getSubcategories(categoryId);
+        
+        // Фильтруем пустые подкатегории
+        const nonEmptySubcategories = subcategories.filter(sub => 
+            hasProductsInSubcategory(categoryId, sub.id)
+        );
+
+        if (nonEmptySubcategories.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = nonEmptySubcategories.map(subcategory => `
+            <li class="mega-menu__subcategory-item ${CLASSES.hasChildren}"
+                data-category-id="${escapeHtml(categoryId)}"
+                data-subcategory-id="${escapeHtml(subcategory.id)}">
+                <a href="/catalog/${escapeHtml(categoryId)}/${escapeHtml(subcategory.id)}"
+                   class="mega-menu__subcategory-link">
+                    ${escapeHtml(subcategory.name)}
+                </a>
+            </li>
+        `).join('');
+
+        // Привязываем события
+        container.querySelectorAll(SELECTORS.subcategoryItem).forEach(item => {
+            item.addEventListener('mouseenter', handleSubcategoryHover);
+            item.addEventListener('click', handleSubcategoryClick);
+        });
+    }
+
+    /**
+     * Отрисовать типы ткани
+     * @param {string} categoryId
+     * @param {string} subcategoryId
+     */
+    function renderFabricTypes(categoryId, subcategoryId) {
+        const container = state.containerElement.querySelector(SELECTORS.fabricTypesList);
+        if (!container) return;
+
+        const fabricTypes = getFabricTypes(categoryId, subcategoryId);
+
+        if (fabricTypes.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = fabricTypes.map(fabricType => `
+            <li class="mega-menu__fabric-type-item"
+                data-category-id="${escapeHtml(categoryId)}"
+                data-subcategory-id="${escapeHtml(subcategoryId)}"
+                data-fabric-type-id="${escapeHtml(fabricType.id)}">
+                <a href="/catalog/${escapeHtml(categoryId)}/${escapeHtml(subcategoryId)}/${escapeHtml(fabricType.id)}"
+                   class="mega-menu__fabric-type-link">
+                    ${escapeHtml(fabricType.name)}
+                </a>
+            </li>
+        `).join('');
+
+        // Привязываем события
+        container.querySelectorAll(SELECTORS.fabricTypeItem).forEach(item => {
+            item.addEventListener('click', handleFabricTypeClick);
+        });
+    }
+
+    /**
+     * Очистить подуровни
+     */
+    function clearSublevels() {
+        const subcategoriesContainer = state.containerElement.querySelector(SELECTORS.subcategoriesList);
+        const fabricTypesContainer = state.containerElement.querySelector(SELECTORS.fabricTypesList);
+        
+        if (subcategoriesContainer) subcategoriesContainer.innerHTML = '';
+        if (fabricTypesContainer) fabricTypesContainer.innerHTML = '';
+    }
+
+    /**
+     * Очистить типы ткани
+     */
+    function clearFabricTypes() {
+        const container = state.containerElement.querySelector(SELECTORS.fabricTypesList);
+        if (container) container.innerHTML = '';
+    }
+
+    // ============================================
+    // ПРИВАТНЫЕ МЕТОДЫ — ОБРАБОТЧИКИ
+    // ============================================
+
+    /**
+     * Обработчик наведения на категорию
+     * @param {Event} event
+     */
+    function handleCategoryHover(event) {
+        const item = event.currentTarget;
+        const categoryId = item.dataset.categoryId;
+
+        if (state.activeCategory === categoryId) return;
+
+        // Убираем активный класс с предыдущей категории
+        state.containerElement.querySelectorAll(SELECTORS.categoryItem).forEach(el => {
+            el.classList.remove(CLASSES.active);
+        });
+
+        // Добавляем активный класс текущей
+        item.classList.add(CLASSES.active);
+        state.activeCategory = categoryId;
+        state.activeSubcategory = null;
+
+        // Рендерим подкатегории
+        renderSubcategories(categoryId);
+        clearFabricTypes();
+    }
+
+    /**
+     * Обработчик клика по категории
+     * @param {Event} event
+     */
+    function handleCategoryClick(event) {
+        const link = event.target.closest('a');
+        if (link) {
+            // Позволяем стандартный переход по ссылке
+            // Меню закроется автоматически при смене страницы
+            // Или закрываем вручную для SPA:
+            if (window.CatalogButton) {
+                window.CatalogButton.close();
+            }
+        }
+    }
+
+    /**
+     * Обработчик наведения на подкатегорию
+     * @param {Event} event
+     */
+    function handleSubcategoryHover(event) {
+        const item = event.currentTarget;
+        const categoryId = item.dataset.categoryId;
+        const subcategoryId = item.dataset.subcategoryId;
+
+        if (state.activeSubcategory === subcategoryId) return;
+
+        // Убираем активный класс с предыдущей подкатегории
+        state.containerElement.querySelectorAll(SELECTORS.subcategoryItem).forEach(el => {
+            el.classList.remove(CLASSES.active);
+        });
+
+        // Добавляем активный класс текущей
+        item.classList.add(CLASSES.active);
+        state.activeSubcategory = subcategoryId;
+
+        // Рендерим типы ткани
+        renderFabricTypes(categoryId, subcategoryId);
+    }
+
+    /**
+     * Обработчик клика по подкатегории
+     * @param {Event} event
+     */
+    function handleSubcategoryClick(event) {
+        const link = event.target.closest('a');
+        if (link) {
+            if (window.CatalogButton) {
+                window.CatalogButton.close();
+            }
+        }
+    }
+
+    /**
+     * Обработчик клика по типу ткани
+     * @param {Event} event
+     */
+    function handleFabricTypeClick(event) {
+        const link = event.target.closest('a');
+        if (link) {
+            if (window.CatalogButton) {
+                window.CatalogButton.close();
+            }
+        }
+    }
+
+    // ============================================
+    // ПРИВАТНЫЕ МЕТОДЫ — ВСПОМОГАТЕЛЬНЫЕ
+    // ============================================
+
+    /**
+     * Экранирование HTML
+     * @param {string} str
+     * @returns {string}
+     */
+    function escapeHtml(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+
+    /**
+     * Обработчик события загрузки каталога
+     */
+    function handleCatalogLoaded() {
+        state.navigation = loadNavigationData();
+        renderCategories();
+    }
+
+    /**
+     * Обработчик открытия меню
+     */
+    function handleMenuOpen() {
+        state.isOpen = true;
+        
+        // Если данные ещё не загружены — загружаем
+        if (state.navigation.length === 0) {
+            state.navigation = loadNavigationData();
+        }
+        
+        renderCategories();
+    }
+
+    /**
+     * Обработчик закрытия меню
+     */
+    function handleMenuClose() {
+        state.isOpen = false;
+        state.activeCategory = null;
+        state.activeSubcategory = null;
+        clearSublevels();
+        
+        // Сбрасываем активные классы
+        state.containerElement.querySelectorAll(`.${CLASSES.active}`).forEach(el => {
+            el.classList.remove(CLASSES.active);
+        });
+    }
+
+    // ============================================
+    // ПУБЛИЧНЫЙ API
+    // ============================================
+
+    /**
+     * Инициализация модуля
+     * @param {string|HTMLElement} container - Селектор или элемент контейнера
+     * @returns {boolean}
+     */
+    function init(container) {
+        if (state.initialized) {
+            console.warn('[MegaMenu] Уже инициализирован');
+            return true;
+        }
+
+        // Находим контейнер
+        if (typeof container === 'string') {
+            state.containerElement = document.querySelector(container);
+        } else if (container instanceof HTMLElement) {
+            state.containerElement = container;
+        } else {
+            state.containerElement = document.querySelector(SELECTORS.container);
+        }
+
+        if (!state.containerElement) {
+            console.error('[MegaMenu] Контейнер не найден');
+            return false;
+        }
+
+        // Создаём структуру меню
+        state.containerElement.innerHTML = createMenuHTML();
+
+        // Подписываемся на события
+        // Phase 5C-4: Guard against duplicate subscriptions
+        if (window.CatalogEventBus && !state.eventsBound) {
+            window.CatalogEventBus.on('catalog:loaded', handleCatalogLoaded);
+            window.CatalogEventBus.on('menu:open', handleMenuOpen);
+            window.CatalogEventBus.on('menu:close', handleMenuClose);
+            state.eventsBound = true;
+        }
+
+        // Если данные уже загружены — рендерим
+        if (window.CatalogDataStore) {
+            const products = window.CatalogDataStore.getAllProducts();
+            if (products && products.length > 0) {
+                state.navigation = loadNavigationData();
+            }
+        }
+
+        state.initialized = true;
+        console.log('[MegaMenu] Инициализирован');
+        
+        return true;
+    }
+
+    /**
+     * Уничтожение модуля
+     */
+    function destroy() {
+        if (!state.initialized) return;
+
+        // Phase 5C-4: Unsubscribe from EventBus if off() method exists
+        if (window.CatalogEventBus && typeof window.CatalogEventBus.off === 'function') {
+            window.CatalogEventBus.off('catalog:loaded', handleCatalogLoaded);
+            window.CatalogEventBus.off('menu:open', handleMenuOpen);
+            window.CatalogEventBus.off('menu:close', handleMenuClose);
+        }
+        state.eventsBound = false; // Phase 5C-4: Reset flag
+        
+        if (state.containerElement) {
+            state.containerElement.innerHTML = '';
+        }
+
+        state.navigation = [];
+        state.isOpen = false;
+        state.activeCategory = null;
+        state.activeSubcategory = null;
+        state.containerElement = null;
+        state.initialized = false;
+
+        console.log('[MegaMenu] Уничтожен');
+    }
+
+    /**
+     * Перезагрузить данные навигации
+     */
+    function refresh() {
+        state.navigation = loadNavigationData();
+        if (state.isOpen) {
+            renderCategories();
+        }
+    }
+
+    /**
+     * Получить текущие данные навигации
+     * @returns {Array}
+     */
+    function getNavigationData() {
+        return [...state.navigation];
+    }
+
+    // ============================================
+    // ЭКСПОРТ
+    // ============================================
+
+    return {
+        init,
+        destroy,
+        refresh,
+        getNavigationData
+    };
+
+})();
+
+// Экспорт для модульных систем
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = MegaMenu;
+}
+
+// Глобальный экспорт
+window.MegaMenu = MegaMenu;

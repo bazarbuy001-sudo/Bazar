@@ -1,0 +1,3635 @@
+{
+  "title": "Каталог товаров",
+  "slug": "catalog",
+  "children": [
+    {
+      "title": "Одежные Ткани",
+      "slug": "odezhnye-tkani",
+      "children": [
+        {
+          "title": "Атлас",
+          "slug": "atlas",
+          "children": [
+            {
+              "title": "Жаккардовый",
+              "slug": "zhakkardovyy"
+            },
+            {
+              "title": "Креп-сатин",
+              "slug": "krep-satin"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Бархат",
+          "slug": "barhat",
+          "children": [
+            {
+              "title": "Мраморный",
+              "slug": "mramornyy"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Панбархат",
+              "slug": "panbarhat"
+            },
+            {
+              "title": "Плиссе",
+              "slug": "plisse"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            },
+            {
+              "title": "С Люрексом",
+              "slug": "s-lyureksom"
+            },
+            {
+              "title": "С Пайетками И Стразами",
+              "slug": "s-payetkami-i-strazami"
+            }
+          ]
+        },
+        {
+          "title": "Батист",
+          "slug": "batist",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Крэш",
+              "slug": "kresh"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Блузочные",
+          "slug": "bluzochnye",
+          "children": [
+            {
+              "title": "Вискоза",
+              "slug": "viskoza"
+            },
+            {
+              "title": "Вышивка",
+              "slug": "vyshivka"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            },
+            {
+              "title": "Супер Софт",
+              "slug": "super-soft"
+            },
+            {
+              "title": "Шифон",
+              "slug": "shifon"
+            }
+          ]
+        },
+        {
+          "title": "Букле",
+          "slug": "bukle",
+          "children": [
+            {
+              "title": "Костюмные",
+              "slug": "kostyumnye"
+            },
+            {
+              "title": "Пальтовое",
+              "slug": "paltovoe"
+            }
+          ]
+        },
+        {
+          "title": "Вельвет",
+          "slug": "velvet",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            },
+            {
+              "title": "Трикотажный",
+              "slug": "trikotazhnyy"
+            }
+          ]
+        },
+        {
+          "title": "Велюр",
+          "slug": "velyur",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Вискоза",
+          "slug": "viskoza",
+          "children": [
+            {
+              "title": "Блузочная",
+              "slug": "bluzochnaya"
+            },
+            {
+              "title": "Плательная",
+              "slug": "platelnaya"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Вышивка",
+          "slug": "vyshivka",
+          "children": [
+            {
+              "title": "Блузочные",
+              "slug": "bluzochnye"
+            },
+            {
+              "title": "Джинс",
+              "slug": "dzhins"
+            },
+            {
+              "title": "Кожа",
+              "slug": "kozha"
+            },
+            {
+              "title": "Марлевка",
+              "slug": "marlevka"
+            },
+            {
+              "title": "Муслин",
+              "slug": "muslin"
+            },
+            {
+              "title": "На Сетке",
+              "slug": "na-setke"
+            },
+            {
+              "title": "Рубашечные",
+              "slug": "rubashechnye"
+            },
+            {
+              "title": "Хлопок",
+              "slug": "hlopok"
+            },
+            {
+              "title": "Шифон",
+              "slug": "shifon"
+            }
+          ]
+        },
+        {
+          "title": "Габардин",
+          "slug": "gabardin",
+          "children": []
+        },
+        {
+          "title": "Джерси",
+          "slug": "dzhersi",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принт",
+              "slug": "print"
+            }
+          ]
+        },
+        {
+          "title": "Джинс",
+          "slug": "dzhins",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "На Флисе",
+              "slug": "na-flise"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Перфорация",
+              "slug": "perforatsiya"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            },
+            {
+              "title": "Рубашечный",
+              "slug": "rubashechnyy"
+            },
+            {
+              "title": "С Напылением",
+              "slug": "s-napyleniem"
+            },
+            {
+              "title": "Коттон",
+              "slug": "kotton"
+            }
+          ]
+        },
+        {
+          "title": "Бифлекс",
+          "slug": "bifleks",
+          "children": [
+            {
+              "title": "Принт",
+              "slug": "print"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            }
+          ]
+        },
+        {
+          "title": "Для Мусульманской Одежды",
+          "slug": "dlya-musulmanskoy-odezhdy",
+          "children": [
+            {
+              "title": "Буркини",
+              "slug": "burkini"
+            },
+            {
+              "title": "Для Намаза",
+              "slug": "dlya-namaza"
+            }
+          ]
+        },
+        {
+          "title": "Для Школьной Формы",
+          "slug": "dlya-shkolnoy-formy",
+          "children": [
+            {
+              "title": "Джерси",
+              "slug": "dzhersi"
+            },
+            {
+              "title": "Костюмные",
+              "slug": "kostyumnye"
+            },
+            {
+              "title": "Рубашечные",
+              "slug": "rubashechnye"
+            }
+          ]
+        },
+        {
+          "title": "Дубленка",
+          "slug": "dublenka",
+          "children": [
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            }
+          ]
+        },
+        {
+          "title": "Жаккард",
+          "slug": "zhakkard",
+          "children": [
+            {
+              "title": "Меланж",
+              "slug": "melanzh"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            },
+            {
+              "title": "С Вышивкой",
+              "slug": "s-vyshivkoy"
+            }
+          ]
+        },
+        {
+          "title": "Замша",
+          "slug": "zamsha",
+          "children": [
+            {
+              "title": "Двусторонняя",
+              "slug": "dvustoronnyaya"
+            },
+            {
+              "title": "На Меху",
+              "slug": "na-mehu"
+            },
+            {
+              "title": "На Флисе",
+              "slug": "na-flise"
+            },
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            },
+            {
+              "title": "Принтованная",
+              "slug": "printovannaya"
+            }
+          ]
+        },
+        {
+          "title": "Интерлок",
+          "slug": "interlok",
+          "children": [
+            {
+              "title": "Меланж",
+              "slug": "melanzh"
+            },
+            {
+              "title": "На Меху",
+              "slug": "na-mehu"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Кожа",
+          "slug": "kozha",
+          "children": [
+            {
+              "title": "Декоративная",
+              "slug": "dekorativnaya"
+            },
+            {
+              "title": "Лаке",
+              "slug": "lake"
+            },
+            {
+              "title": "Металлик",
+              "slug": "metallik"
+            },
+            {
+              "title": "На Велюре",
+              "slug": "na-velyure"
+            },
+            {
+              "title": "На Замше",
+              "slug": "na-zamshe"
+            },
+            {
+              "title": "На Меху",
+              "slug": "na-mehu"
+            },
+            {
+              "title": "На Флисе",
+              "slug": "na-flise"
+            },
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            },
+            {
+              "title": "Перфорация",
+              "slug": "perforatsiya"
+            },
+            {
+              "title": "Принт",
+              "slug": "print"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Костюмные",
+          "slug": "kostyumnye",
+          "children": [
+            {
+              "title": "Букле",
+              "slug": "bukle"
+            },
+            {
+              "title": "В Полоску",
+              "slug": "v-polosku"
+            },
+            {
+              "title": "Габардин",
+              "slug": "gabardin"
+            },
+            {
+              "title": "Гусиная Лапка",
+              "slug": "gusinaya-lapka"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Клетка",
+              "slug": "kletka"
+            },
+            {
+              "title": "Креп",
+              "slug": "krep"
+            },
+            {
+              "title": "Меланж",
+              "slug": "melanzh"
+            },
+            {
+              "title": "Мужские",
+              "slug": "muzhskie"
+            },
+            {
+              "title": "На Флисе",
+              "slug": "na-flise"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Пикачу",
+              "slug": "pikachu"
+            },
+            {
+              "title": "Поливискоза",
+              "slug": "poliviskoza"
+            },
+            {
+              "title": "Принт",
+              "slug": "print"
+            },
+            {
+              "title": "Твид",
+              "slug": "tvid"
+            },
+            {
+              "title": "Шерстяные",
+              "slug": "sherstyanye"
+            }
+          ]
+        },
+        {
+          "title": "Креп",
+          "slug": "krep",
+          "children": [
+            {
+              "title": "Блузочный",
+              "slug": "bluzochnyy"
+            },
+            {
+              "title": "Костюмный",
+              "slug": "kostyumnyy"
+            },
+            {
+              "title": "Плательный",
+              "slug": "platelnyy"
+            }
+          ]
+        },
+        {
+          "title": "Кроше Кружево",
+          "slug": "kroshe-kruzhevo",
+          "children": [
+            {
+              "title": "Бельевое Кружево",
+              "slug": "belevoe-kruzhevo"
+            },
+            {
+              "title": "Вышивка На Сетке",
+              "slug": "vyshivka-na-setke"
+            },
+            {
+              "title": "Гипюр Не Стрейч",
+              "slug": "gipyur-ne-streych"
+            },
+            {
+              "title": "Гипюр-стрейч",
+              "slug": "gipyur-streych"
+            },
+            {
+              "title": "Кордовое",
+              "slug": "kordovoe"
+            },
+            {
+              "title": "Кроше",
+              "slug": "kroshe"
+            },
+            {
+              "title": "На Подкладе",
+              "slug": "na-podklade"
+            },
+            {
+              "title": "Плетеное",
+              "slug": "pletenoe"
+            },
+            {
+              "title": "Свадебное",
+              "slug": "svadebnoe"
+            },
+            {
+              "title": "С Пайетками",
+              "slug": "s-payetkami"
+            },
+            {
+              "title": "С Фестонами",
+              "slug": "s-festonami"
+            },
+            {
+              "title": "Французский Гипюр",
+              "slug": "frantsuzskiy-gipyur"
+            }
+          ]
+        },
+        {
+          "title": "Кулирка",
+          "slug": "kulirka",
+          "children": []
+        },
+        {
+          "title": "Лен",
+          "slug": "len",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Прин",
+              "slug": "prin"
+            }
+          ]
+        },
+        {
+          "title": "Люрекс",
+          "slug": "lyureks",
+          "children": [
+            {
+              "title": "Букле",
+              "slug": "bukle"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Сетка",
+              "slug": "setka"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Марлевка",
+          "slug": "marlevka",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            },
+            {
+              "title": "Принтованная",
+              "slug": "printovannaya"
+            },
+            {
+              "title": "С Вышивкой",
+              "slug": "s-vyshivkoy"
+            }
+          ]
+        },
+        {
+          "title": "Мех",
+          "slug": "meh",
+          "children": [
+            {
+              "title": "Декоративный",
+              "slug": "dekorativnyy"
+            },
+            {
+              "title": "Длинноворсный",
+              "slug": "dlinnovorsnyy"
+            },
+            {
+              "title": "Завиток",
+              "slug": "zavitok"
+            },
+            {
+              "title": "На Замше",
+              "slug": "na-zamshe"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Подкладочный",
+              "slug": "podkladochnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            },
+            {
+              "title": "Шерстяной",
+              "slug": "sherstyanoy"
+            }
+          ]
+        },
+        {
+          "title": "Муслин",
+          "slug": "muslin",
+          "children": [
+            {
+              "title": "Принт",
+              "slug": "print"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Вышивка",
+              "slug": "vyshivka"
+            }
+          ]
+        },
+        {
+          "title": "На Флисе",
+          "slug": "na-flise",
+          "children": [
+            {
+              "title": "Джинс",
+              "slug": "dzhins"
+            },
+            {
+              "title": "Замша",
+              "slug": "zamsha"
+            },
+            {
+              "title": "Кожа",
+              "slug": "kozha"
+            },
+            {
+              "title": "Костюмные",
+              "slug": "kostyumnye"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            },
+            {
+              "title": "Футер",
+              "slug": "futer"
+            }
+          ]
+        },
+        {
+          "title": "Органза,кристаллон",
+          "slug": "organzakristallon",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            },
+            {
+              "title": "Принтованная",
+              "slug": "printovannaya"
+            }
+          ]
+        },
+        {
+          "title": "Пайетка",
+          "slug": "payetka",
+          "children": [
+            {
+              "title": "Двусторонняя",
+              "slug": "dvustoronnyaya"
+            },
+            {
+              "title": "На Сетке",
+              "slug": "na-setke"
+            },
+            {
+              "title": "На Шифоне",
+              "slug": "na-shifone"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Пальтовые",
+          "slug": "paltovye",
+          "children": [
+            {
+              "title": "Барашек",
+              "slug": "barashek"
+            },
+            {
+              "title": "Букле",
+              "slug": "bukle"
+            },
+            {
+              "title": "Джерси",
+              "slug": "dzhersi"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Меланж",
+              "slug": "melanzh"
+            },
+            {
+              "title": "На Трикотаже",
+              "slug": "na-trikotazhe"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            },
+            {
+              "title": "Сукно",
+              "slug": "sukno"
+            },
+            {
+              "title": "Твид",
+              "slug": "tvid"
+            },
+            {
+              "title": "Шерстяные",
+              "slug": "sherstyanye"
+            }
+          ]
+        },
+        {
+          "title": "Парча",
+          "slug": "parcha",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            }
+          ]
+        },
+        {
+          "title": "Плательные",
+          "slug": "platelnye",
+          "children": [
+            {
+              "title": "Вискоза",
+              "slug": "viskoza"
+            },
+            {
+              "title": "Гофре",
+              "slug": "gofre"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Креп",
+              "slug": "krep"
+            },
+            {
+              "title": "Лиоцелл",
+              "slug": "liotsell"
+            },
+            {
+              "title": "Купра",
+              "slug": "kupra"
+            },
+            {
+              "title": "Тенсел",
+              "slug": "tensel"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            },
+            {
+              "title": "Рами",
+              "slug": "rami"
+            },
+            {
+              "title": "Супер Софт",
+              "slug": "super-soft"
+            }
+          ]
+        },
+        {
+          "title": "Плащевые Курточные",
+          "slug": "plaschevye-kurtochnye",
+          "children": [
+            {
+              "title": "Мембранные",
+              "slug": "membrannye"
+            },
+            {
+              "title": "На Флисе",
+              "slug": "na-flise"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            },
+            {
+              "title": "Светоотражающие",
+              "slug": "svetootrazhayuschie"
+            },
+            {
+              "title": "Софтшелл",
+              "slug": "softshell"
+            },
+            {
+              "title": "Стеганые",
+              "slug": "steganye"
+            }
+          ]
+        },
+        {
+          "title": "Плиссе,гофре",
+          "slug": "plissegofre",
+          "children": [
+            {
+              "title": "Бархат",
+              "slug": "barhat"
+            },
+            {
+              "title": "Плательные",
+              "slug": "platelnye"
+            },
+            {
+              "title": "Сетка",
+              "slug": "setka"
+            },
+            {
+              "title": "С Люрексом",
+              "slug": "s-lyureksom"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            },
+            {
+              "title": "Шелк",
+              "slug": "shelk"
+            },
+            {
+              "title": "Шифон",
+              "slug": "shifon"
+            }
+          ]
+        },
+        {
+          "title": "Подкладочные",
+          "slug": "podkladochnye",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Ложная Сетка",
+              "slug": "lozhnaya-setka"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Перфорация",
+              "slug": "perforatsiya"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            },
+            {
+              "title": "Стеганые",
+              "slug": "steganye"
+            },
+            {
+              "title": "Стрейч",
+              "slug": "streych"
+            },
+            {
+              "title": "Таффета",
+              "slug": "taffeta"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Поплин",
+          "slug": "poplin",
+          "children": [
+            {
+              "title": "Клетка",
+              "slug": "kletka"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Рами",
+          "slug": "rami",
+          "children": []
+        },
+        {
+          "title": "Рибана",
+          "slug": "ribana",
+          "children": [
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            },
+            {
+              "title": "Принт",
+              "slug": "print"
+            }
+          ]
+        },
+        {
+          "title": "Рубашечные",
+          "slug": "rubashechnye",
+          "children": [
+            {
+              "title": "Вышивка",
+              "slug": "vyshivka"
+            },
+            {
+              "title": "Джинс",
+              "slug": "dzhins"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Клетка",
+              "slug": "kletka"
+            },
+            {
+              "title": "Меланж",
+              "slug": "melanzh"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Полоска",
+              "slug": "poloska"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            },
+            {
+              "title": "Фланель",
+              "slug": "flanel"
+            },
+            {
+              "title": "Хлопок",
+              "slug": "hlopok"
+            }
+          ]
+        },
+        {
+          "title": "Свадебные",
+          "slug": "svadebnye",
+          "children": [
+            {
+              "title": "Атлас",
+              "slug": "atlas"
+            },
+            {
+              "title": "Тафта",
+              "slug": "tafta"
+            },
+            {
+              "title": "Шелк",
+              "slug": "shelk"
+            },
+            {
+              "title": "Шифон",
+              "slug": "shifon"
+            }
+          ]
+        },
+        {
+          "title": "Сетка",
+          "slug": "setka",
+          "children": [
+            {
+              "title": "Вышивка На Сетке",
+              "slug": "vyshivka-na-setke"
+            },
+            {
+              "title": "Горох",
+              "slug": "goroh"
+            },
+            {
+              "title": "Декоративная",
+              "slug": "dekorativnaya"
+            },
+            {
+              "title": "Корсетная",
+              "slug": "korsetnaya"
+            },
+            {
+              "title": "Ложная",
+              "slug": "lozhnaya"
+            },
+            {
+              "title": "Неопрен",
+              "slug": "neopren"
+            },
+            {
+              "title": "Плиссе",
+              "slug": "plisse"
+            },
+            {
+              "title": "Со Стразами И Бусинами",
+              "slug": "so-strazami-i-businami"
+            },
+            {
+              "title": "Трикотажная",
+              "slug": "trikotazhnaya"
+            },
+            {
+              "title": "Фатин Москитная Сетка",
+              "slug": "fatin-moskitnaya-setka"
+            }
+          ]
+        },
+        {
+          "title": "Спорт И Фитнес",
+          "slug": "sport-i-fitnes",
+          "children": [
+            {
+              "title": "Бифлекс",
+              "slug": "bifleks"
+            },
+            {
+              "title": "Кулирка",
+              "slug": "kulirka"
+            },
+            {
+              "title": "Плащевые",
+              "slug": "plaschevye"
+            },
+            {
+              "title": "Сетка",
+              "slug": "setka"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            },
+            {
+              "title": "Футер",
+              "slug": "futer"
+            }
+          ]
+        },
+        {
+          "title": "Стеганые",
+          "slug": "steganye",
+          "children": [
+            {
+              "title": "Кожа",
+              "slug": "kozha"
+            },
+            {
+              "title": "Курточные",
+              "slug": "kurtochnye"
+            },
+            {
+              "title": "Термо",
+              "slug": "termo"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Тафта",
+          "slug": "tafta",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            }
+          ]
+        },
+        {
+          "title": "Трикотаж",
+          "slug": "trikotazh",
+          "children": [
+            {
+              "title": "Ажурный",
+              "slug": "azhurnyy"
+            },
+            {
+              "title": "Бифлекс",
+              "slug": "bifleks"
+            },
+            {
+              "title": "Варенка",
+              "slug": "varenka"
+            },
+            {
+              "title": "Вискоза",
+              "slug": "viskoza"
+            },
+            {
+              "title": "Вязаный",
+              "slug": "vyazanyy"
+            },
+            {
+              "title": "Декоративный",
+              "slug": "dekorativnyy"
+            },
+            {
+              "title": "Джерси",
+              "slug": "dzhersi"
+            },
+            {
+              "title": "Диско",
+              "slug": "disko"
+            },
+            {
+              "title": "Интерлок",
+              "slug": "interlok"
+            },
+            {
+              "title": "Капитоний",
+              "slug": "kapitoniy"
+            },
+            {
+              "title": "Кашкорсе",
+              "slug": "kashkorse"
+            },
+            {
+              "title": "Коса",
+              "slug": "kosa"
+            },
+            {
+              "title": "Крэш",
+              "slug": "kresh"
+            },
+            {
+              "title": "Кулирка",
+              "slug": "kulirka"
+            },
+            {
+              "title": "Лакоста",
+              "slug": "lakosta"
+            },
+            {
+              "title": "Люрекс",
+              "slug": "lyureks"
+            },
+            {
+              "title": "Масло",
+              "slug": "maslo"
+            },
+            {
+              "title": "Металлик",
+              "slug": "metallik"
+            },
+            {
+              "title": "На Меху",
+              "slug": "na-mehu"
+            },
+            {
+              "title": "Неопрен",
+              "slug": "neopren"
+            },
+            {
+              "title": "Перфорированный",
+              "slug": "perforirovannyy"
+            },
+            {
+              "title": "Пике",
+              "slug": "pike"
+            },
+            {
+              "title": "Полупрозрачный",
+              "slug": "poluprozrachnyy"
+            },
+            {
+              "title": "Пушистый",
+              "slug": "pushistyy"
+            },
+            {
+              "title": "Резинка",
+              "slug": "rezinka"
+            },
+            {
+              "title": "Рибана",
+              "slug": "ribana"
+            },
+            {
+              "title": "С Напылением",
+              "slug": "s-napyleniem"
+            },
+            {
+              "title": "С Начесом",
+              "slug": "s-nachesom"
+            },
+            {
+              "title": "Спорт",
+              "slug": "sport"
+            },
+            {
+              "title": "Термополотно",
+              "slug": "termopolotno"
+            },
+            {
+              "title": "Тонкий",
+              "slug": "tonkiy"
+            },
+            {
+              "title": "Травка",
+              "slug": "travka"
+            },
+            {
+              "title": "Фланель",
+              "slug": "flanel"
+            },
+            {
+              "title": "Футер",
+              "slug": "futer"
+            }
+          ]
+        },
+        {
+          "title": "Фатин",
+          "slug": "fatin",
+          "children": [
+            {
+              "title": "Горох",
+              "slug": "goroh"
+            },
+            {
+              "title": "Жесткий",
+              "slug": "zhestkiy"
+            },
+            {
+              "title": "Металлик",
+              "slug": "metallik"
+            },
+            {
+              "title": "Мягкий",
+              "slug": "myagkiy"
+            },
+            {
+              "title": "Напыление",
+              "slug": "napylenie"
+            }
+          ]
+        },
+        {
+          "title": "Фетр",
+          "slug": "fetr",
+          "children": []
+        },
+        {
+          "title": "Флис,велсофт",
+          "slug": "flisvelsoft",
+          "children": [
+            {
+              "title": "Антипиллинг",
+              "slug": "antipilling"
+            },
+            {
+              "title": "Велсофт",
+              "slug": "velsoft"
+            },
+            {
+              "title": "Двухсторонний",
+              "slug": "dvuhstoronniy"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Подкладочный",
+              "slug": "podkladochnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Футер",
+          "slug": "futer",
+          "children": []
+        },
+        {
+          "title": "Хлопок",
+          "slug": "hlopok",
+          "children": [
+            {
+              "title": "Батист",
+              "slug": "batist"
+            },
+            {
+              "title": "Бенгалин",
+              "slug": "bengalin"
+            },
+            {
+              "title": "Костюмный",
+              "slug": "kostyumnyy"
+            },
+            {
+              "title": "Коттон-сатин",
+              "slug": "kotton-satin"
+            },
+            {
+              "title": "Крэш",
+              "slug": "kresh"
+            },
+            {
+              "title": "Марлевка",
+              "slug": "marlevka"
+            },
+            {
+              "title": "Муслин",
+              "slug": "muslin"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Поплин",
+              "slug": "poplin"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            },
+            {
+              "title": "Шитье",
+              "slug": "shite"
+            }
+          ]
+        },
+        {
+          "title": "Шелк",
+          "slug": "shelk",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Крэш",
+              "slug": "kresh"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Плиссе",
+              "slug": "plisse"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Шерсть",
+          "slug": "sherst",
+          "children": [
+            {
+              "title": "Букле",
+              "slug": "bukle"
+            },
+            {
+              "title": "Костюмная",
+              "slug": "kostyumnaya"
+            },
+            {
+              "title": "Пальтовая",
+              "slug": "paltovaya"
+            },
+            {
+              "title": "Твид",
+              "slug": "tvid"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Шитье",
+          "slug": "shite",
+          "children": []
+        },
+        {
+          "title": "Шифон",
+          "slug": "shifon",
+          "children": [
+            {
+              "title": "Вышивка",
+              "slug": "vyshivka"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Креп-шифон",
+              "slug": "krep-shifon"
+            },
+            {
+              "title": "Крэш",
+              "slug": "kresh"
+            },
+            {
+              "title": "Напыление",
+              "slug": "napylenie"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Плиссе Гофре",
+              "slug": "plisse-gofre"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            },
+            {
+              "title": "Стрейч",
+              "slug": "streych"
+            },
+            {
+              "title": "Шелк-шифон",
+              "slug": "shelk-shifon"
+            }
+          ]
+        },
+        {
+          "title": "Штапель",
+          "slug": "shtapel",
+          "children": []
+        },
+        {
+          "title": "Купра",
+          "slug": "kupra",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принт",
+              "slug": "print"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            }
+          ]
+        },
+        {
+          "title": "Тенсель",
+          "slug": "tensel",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принт",
+              "slug": "print"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Швейная Фурнитура",
+      "slug": "shveynaya-furnitura",
+      "children": [
+        {
+          "title": "Аппликации Пришивные",
+          "slug": "applikatsii-prishivnye",
+          "children": [
+            {
+              "title": "Декоративные",
+              "slug": "dekorativnye"
+            },
+            {
+              "title": "Детские",
+              "slug": "detskie"
+            },
+            {
+              "title": "Наборы",
+              "slug": "nabory"
+            },
+            {
+              "title": "С Пайетками",
+              "slug": "s-payetkami"
+            }
+          ]
+        },
+        {
+          "title": "Аппликации Термо",
+          "slug": "applikatsii-termo",
+          "children": [
+            {
+              "title": "Декоративные",
+              "slug": "dekorativnye"
+            },
+            {
+              "title": "Детские",
+              "slug": "detskie"
+            },
+            {
+              "title": "Заплатки",
+              "slug": "zaplatki"
+            },
+            {
+              "title": "Наборы",
+              "slug": "nabory"
+            },
+            {
+              "title": "Светоотражающие",
+              "slug": "svetootrazhayuschie"
+            },
+            {
+              "title": "Спорт",
+              "slug": "sport"
+            },
+            {
+              "title": "Термотрансферы",
+              "slug": "termotransfery"
+            }
+          ]
+        },
+        {
+          "title": "Бахрома",
+          "slug": "bahroma",
+          "children": [
+            {
+              "title": "Декоративная",
+              "slug": "dekorativnaya"
+            },
+            {
+              "title": "Отделочная",
+              "slug": "otdelochnaya"
+            }
+          ]
+        },
+        {
+          "title": "Бегунки Слайдеры",
+          "slug": "begunki-slaydery",
+          "children": [
+            {
+              "title": "К Рулонной Молнии",
+              "slug": "k-rulonnoy-molnii"
+            },
+            {
+              "title": "Металл",
+              "slug": "metall"
+            },
+            {
+              "title": "Пуллеры",
+              "slug": "pullery"
+            },
+            {
+              "title": "Спираль",
+              "slug": "spiral"
+            },
+            {
+              "title": "Трактор",
+              "slug": "traktor"
+            }
+          ]
+        },
+        {
+          "title": "Бейка",
+          "slug": "beyka",
+          "children": [
+            {
+              "title": "Бейка Трикотажная",
+              "slug": "beyka-trikotazhnaya"
+            },
+            {
+              "title": "Декорированная",
+              "slug": "dekorirovannaya"
+            },
+            {
+              "title": "Косая Атласная",
+              "slug": "kosaya-atlasnaya"
+            },
+            {
+              "title": "Косая Хб",
+              "slug": "kosaya-hb"
+            },
+            {
+              "title": "Стрейч",
+              "slug": "streych"
+            }
+          ]
+        },
+        {
+          "title": "Бельевая Фурнитура",
+          "slug": "belevaya-furnitura",
+          "children": [
+            {
+              "title": "Бельевой Поролон",
+              "slug": "belevoy-porolon"
+            },
+            {
+              "title": "Бретели",
+              "slug": "breteli"
+            },
+            {
+              "title": "Застежки",
+              "slug": "zastezhki"
+            },
+            {
+              "title": "Корсетная Фурнитура",
+              "slug": "korsetnaya-furnitura"
+            },
+            {
+              "title": "Крючки Кольца Регуляторы",
+              "slug": "kryuchki-koltsa-regulyatory"
+            },
+            {
+              "title": "Наборы",
+              "slug": "nabory"
+            },
+            {
+              "title": "Наборы Для Пошива Нижнего Белья",
+              "slug": "nabory-dlya-poshiva-nizhnego-belya"
+            },
+            {
+              "title": "Тесьма Крючки Кнопки",
+              "slug": "tesma-kryuchki-knopki"
+            },
+            {
+              "title": "Чашечки",
+              "slug": "chashechki"
+            }
+          ]
+        },
+        {
+          "title": "Велкро",
+          "slug": "velkro",
+          "children": [
+            {
+              "title": "Застежки",
+              "slug": "zastezhki"
+            },
+            {
+              "title": "Клеевое",
+              "slug": "kleevoe"
+            },
+            {
+              "title": "Пришивное",
+              "slug": "prishivnoe"
+            }
+          ]
+        },
+        {
+          "title": "Воротники",
+          "slug": "vorotniki",
+          "children": [
+            {
+              "title": "Воротники Для Поло",
+              "slug": "vorotniki-dlya-polo"
+            },
+            {
+              "title": "Вставки",
+              "slug": "vstavki"
+            },
+            {
+              "title": "Декоративные",
+              "slug": "dekorativnye"
+            },
+            {
+              "title": "Лейсы",
+              "slug": "leysy"
+            },
+            {
+              "title": "Плетеные",
+              "slug": "pletenye"
+            }
+          ]
+        },
+        {
+          "title": "Галантерея",
+          "slug": "galantereya",
+          "children": [
+            {
+              "title": "Подмышечники",
+              "slug": "podmyshechniki"
+            },
+            {
+              "title": "Подокатники",
+              "slug": "podokatniki"
+            },
+            {
+              "title": "Подплечники",
+              "slug": "podplechniki"
+            },
+            {
+              "title": "Ремни",
+              "slug": "remni"
+            }
+          ]
+        },
+        {
+          "title": "Декоративные Элементы",
+          "slug": "dekorativnye-elementy",
+          "children": [
+            {
+              "title": "Дерево",
+              "slug": "derevo"
+            },
+            {
+              "title": "Кисти",
+              "slug": "kisti"
+            },
+            {
+              "title": "Металл",
+              "slug": "metall"
+            },
+            {
+              "title": "Наборы",
+              "slug": "nabory"
+            },
+            {
+              "title": "Пластик",
+              "slug": "plastik"
+            },
+            {
+              "title": "Светоотражающие Элементы",
+              "slug": "svetootrazhayuschie-elementy"
+            },
+            {
+              "title": "Со Стразами",
+              "slug": "so-strazami"
+            },
+            {
+              "title": "Текстиль",
+              "slug": "tekstil"
+            },
+            {
+              "title": "Украшения",
+              "slug": "ukrasheniya"
+            },
+            {
+              "title": "Шипы",
+              "slug": "shipy"
+            }
+          ]
+        },
+        {
+          "title": "Застежки",
+          "slug": "zastezhki",
+          "children": [
+            {
+              "title": "Бельевые",
+              "slug": "belevye"
+            },
+            {
+              "title": "Декоративные Застежки",
+              "slug": "dekorativnye-zastezhki"
+            },
+            {
+              "title": "Застежки Для Бейсболок",
+              "slug": "zastezhki-dlya-beysbolok"
+            },
+            {
+              "title": "Застежки Магнитные",
+              "slug": "zastezhki-magnitnye"
+            },
+            {
+              "title": "Клеванты",
+              "slug": "klevanty"
+            },
+            {
+              "title": "Фастексы",
+              "slug": "fasteksy"
+            }
+          ]
+        },
+        {
+          "title": "Кант",
+          "slug": "kant",
+          "children": [
+            {
+              "title": "Атласный",
+              "slug": "atlasnyy"
+            },
+            {
+              "title": "Декоративный",
+              "slug": "dekorativnyy"
+            },
+            {
+              "title": "Кожаный",
+              "slug": "kozhanyy"
+            },
+            {
+              "title": "Парча",
+              "slug": "parcha"
+            },
+            {
+              "title": "Хлопковый",
+              "slug": "hlopkovyy"
+            }
+          ]
+        },
+        {
+          "title": "Карты Цветов",
+          "slug": "karty-tsvetov",
+          "children": [
+            {
+              "title": "Бисер",
+              "slug": "biser"
+            },
+            {
+              "title": "Молнии",
+              "slug": "molnii"
+            },
+            {
+              "title": "Нитки",
+              "slug": "nitki"
+            }
+          ]
+        },
+        {
+          "title": "Кнопки",
+          "slug": "knopki",
+          "children": [
+            {
+              "title": "Декоративные",
+              "slug": "dekorativnye"
+            },
+            {
+              "title": "Магнитные",
+              "slug": "magnitnye"
+            },
+            {
+              "title": "Наборы",
+              "slug": "nabory"
+            },
+            {
+              "title": "Пришивные",
+              "slug": "prishivnye"
+            },
+            {
+              "title": "Установочные",
+              "slug": "ustanovochnye"
+            }
+          ]
+        },
+        {
+          "title": "Кольца Полукольца Рамки Шлевки",
+          "slug": "koltsa-polukoltsa-ramki-shlevki",
+          "children": [
+            {
+              "title": "Кольца",
+              "slug": "koltsa"
+            },
+            {
+              "title": "Полукольца",
+              "slug": "polukoltsa"
+            },
+            {
+              "title": "Рамки",
+              "slug": "ramki"
+            },
+            {
+              "title": "Шлевки",
+              "slug": "shlevki"
+            }
+          ]
+        },
+        {
+          "title": "Кружево",
+          "slug": "kruzhevo",
+          "children": [
+            {
+              "title": "Бельевое",
+              "slug": "belevoe"
+            },
+            {
+              "title": "Капроновое",
+              "slug": "kapronovoe"
+            },
+            {
+              "title": "Льняное И Хб",
+              "slug": "lnyanoe-i-hb"
+            },
+            {
+              "title": "Мерсеризованное Хлопковое Кружево",
+              "slug": "merserizovannoe-hlopkovoe-kruzhevo"
+            },
+            {
+              "title": "На Сетке",
+              "slug": "na-setke"
+            },
+            {
+              "title": "Плетеное Гипюр",
+              "slug": "pletenoe-gipyur"
+            },
+            {
+              "title": "Расшитое",
+              "slug": "rasshitoe"
+            },
+            {
+              "title": "Стрейч",
+              "slug": "streych"
+            },
+            {
+              "title": "Французское",
+              "slug": "frantsuzskoe"
+            },
+            {
+              "title": "Эксклюзивное",
+              "slug": "eksklyuzivnoe"
+            }
+          ]
+        },
+        {
+          "title": "Ленты Отделочные",
+          "slug": "lenty-otdelochnye",
+          "children": [
+            {
+              "title": "Атласные",
+              "slug": "atlasnye"
+            },
+            {
+              "title": "Бархатные",
+              "slug": "barhatnye"
+            },
+            {
+              "title": "Декоративные",
+              "slug": "dekorativnye"
+            },
+            {
+              "title": "Капроновые Органза",
+              "slug": "kapronovye-organza"
+            },
+            {
+              "title": "Люрекс",
+              "slug": "lyureks"
+            },
+            {
+              "title": "Наборы Лент",
+              "slug": "nabory-lent"
+            },
+            {
+              "title": "Репсовые",
+              "slug": "repsovye"
+            },
+            {
+              "title": "Тематические",
+              "slug": "tematicheskie"
+            }
+          ]
+        },
+        {
+          "title": "Манжеты Подвязы",
+          "slug": "manzhety-podvyazy",
+          "children": [
+            {
+              "title": "Комплекты",
+              "slug": "komplekty"
+            },
+            {
+              "title": "Манжеты",
+              "slug": "manzhety"
+            },
+            {
+              "title": "Подвязы",
+              "slug": "podvyazy"
+            },
+            {
+              "title": "Полотно",
+              "slug": "polotno"
+            }
+          ]
+        },
+        {
+          "title": "Металлофурнитура",
+          "slug": "metallofurnitura",
+          "children": [
+            {
+              "title": "Вешалки",
+              "slug": "veshalki"
+            },
+            {
+              "title": "Карабины Зажимы",
+              "slug": "karabiny-zazhimy"
+            },
+            {
+              "title": "Кольца Полукольца Рамки Шлевки",
+              "slug": "koltsa-polukoltsa-ramki-shlevki"
+            },
+            {
+              "title": "Кольца Уплотнительные",
+              "slug": "koltsa-uplotnitelnye"
+            },
+            {
+              "title": "Люверсы",
+              "slug": "lyuversy"
+            },
+            {
+              "title": "Хольнитены Винты",
+              "slug": "holniteny-vinty"
+            }
+          ]
+        },
+        {
+          "title": "Молнии",
+          "slug": "molnii",
+          "children": [
+            {
+              "title": "Riri",
+              "slug": "riri"
+            },
+            {
+              "title": "Ykk Молнии",
+              "slug": "ykk-molnii"
+            },
+            {
+              "title": "Ассорти",
+              "slug": "assorti"
+            },
+            {
+              "title": "Брючные",
+              "slug": "bryuchnye"
+            },
+            {
+              "title": "Влагостойкие",
+              "slug": "vlagostoykie"
+            },
+            {
+              "title": "Карты Цветов",
+              "slug": "karty-tsvetov"
+            },
+            {
+              "title": "Металлические",
+              "slug": "metallicheskie"
+            },
+            {
+              "title": "Потайные",
+              "slug": "potaynye"
+            },
+            {
+              "title": "Рулонные",
+              "slug": "rulonnye"
+            },
+            {
+              "title": "Спиральные",
+              "slug": "spiralnye"
+            },
+            {
+              "title": "Тракторные",
+              "slug": "traktornye"
+            }
+          ]
+        },
+        {
+          "title": "Наконечники",
+          "slug": "nakonechniki",
+          "children": [
+            {
+              "title": "Зажимы-наконечники",
+              "slug": "zazhimy-nakonechniki"
+            },
+            {
+              "title": "Металл",
+              "slug": "metall"
+            },
+            {
+              "title": "Пластик",
+              "slug": "plastik"
+            }
+          ]
+        },
+        {
+          "title": "Нашивки Лейблы",
+          "slug": "nashivki-leybly",
+          "children": [
+            {
+              "title": "Другое",
+              "slug": "drugoe"
+            },
+            {
+              "title": "Кожа",
+              "slug": "kozha"
+            },
+            {
+              "title": "Металл",
+              "slug": "metall"
+            },
+            {
+              "title": "Текстиль",
+              "slug": "tekstil"
+            }
+          ]
+        },
+        {
+          "title": "Нитки",
+          "slug": "nitki",
+          "children": [
+            {
+              "title": "Нитки Армированные Пнк",
+              "slug": "nitki-armirovannye-pnk"
+            },
+            {
+              "title": "Обувные",
+              "slug": "obuvnye"
+            },
+            {
+              "title": "Промышленные",
+              "slug": "promyshlennye"
+            },
+            {
+              "title": "Универсальные",
+              "slug": "universalnye"
+            }
+          ]
+        },
+        {
+          "title": "Пряжки",
+          "slug": "pryazhki",
+          "children": [
+            {
+              "title": "Для Комбинезонов",
+              "slug": "dlya-kombinezonov"
+            },
+            {
+              "title": "Металлические",
+              "slug": "metallicheskie"
+            },
+            {
+              "title": "Пластиковые",
+              "slug": "plastikovye"
+            },
+            {
+              "title": "Регулировочные",
+              "slug": "regulirovochnye"
+            }
+          ]
+        },
+        {
+          "title": "Пуговицы",
+          "slug": "pugovitsy",
+          "children": [
+            {
+              "title": "Блузочные",
+              "slug": "bluzochnye"
+            },
+            {
+              "title": "Декоративные",
+              "slug": "dekorativnye"
+            },
+            {
+              "title": "Дерево Кокос Ракушка",
+              "slug": "derevo-kokos-rakushka"
+            },
+            {
+              "title": "Детские",
+              "slug": "detskie"
+            },
+            {
+              "title": "Джинсовые",
+              "slug": "dzhinsovye"
+            },
+            {
+              "title": "Дубленочные",
+              "slug": "dublenochnye"
+            },
+            {
+              "title": "Кожаные",
+              "slug": "kozhanye"
+            },
+            {
+              "title": "Костюмные",
+              "slug": "kostyumnye"
+            },
+            {
+              "title": "Металлические",
+              "slug": "metallicheskie"
+            },
+            {
+              "title": "Морская Тема",
+              "slug": "morskaya-tema"
+            },
+            {
+              "title": "Наборы Пуговиц",
+              "slug": "nabory-pugovits"
+            },
+            {
+              "title": "Пальтовые",
+              "slug": "paltovye"
+            },
+            {
+              "title": "Под Металл",
+              "slug": "pod-metall"
+            },
+            {
+              "title": "Пукли",
+              "slug": "pukli"
+            },
+            {
+              "title": "Распродажа",
+              "slug": "rasprodazha"
+            },
+            {
+              "title": "Супатные",
+              "slug": "supatnye"
+            },
+            {
+              "title": "Шубные",
+              "slug": "shubnye"
+            }
+          ]
+        },
+        {
+          "title": "Сетка",
+          "slug": "setka",
+          "children": []
+        },
+        {
+          "title": "Резина",
+          "slug": "rezina",
+          "children": [
+            {
+              "title": "Бретелечная",
+              "slug": "bretelechnaya"
+            },
+            {
+              "title": "Декоративная",
+              "slug": "dekorativnaya"
+            },
+            {
+              "title": "Одежная",
+              "slug": "odezhnaya"
+            },
+            {
+              "title": "Перфорированная",
+              "slug": "perforirovannaya"
+            },
+            {
+              "title": "Резина Для Масок",
+              "slug": "rezina-dlya-masok"
+            },
+            {
+              "title": "Резина Помочная Для Подтяжек",
+              "slug": "rezina-pomochnaya-dlya-podtyazhek"
+            },
+            {
+              "title": "Шляпная",
+              "slug": "shlyapnaya"
+            },
+            {
+              "title": "Шпульная",
+              "slug": "shpulnaya"
+            }
+          ]
+        },
+        {
+          "title": "Стразы",
+          "slug": "strazy",
+          "children": [
+            {
+              "title": "Конусовидные Риволи",
+              "slug": "konusovidnye-rivoli"
+            },
+            {
+              "title": "Пришивные",
+              "slug": "prishivnye"
+            },
+            {
+              "title": "Термо",
+              "slug": "termo"
+            },
+            {
+              "title": "Холодной Фиксации",
+              "slug": "holodnoy-fiksatsii"
+            }
+          ]
+        },
+        {
+          "title": "Тесьма",
+          "slug": "tesma",
+          "children": [
+            {
+              "title": "Вьюнок",
+              "slug": "vyunok"
+            },
+            {
+              "title": "Декоративная",
+              "slug": "dekorativnaya"
+            },
+            {
+              "title": "Жаккардовая",
+              "slug": "zhakkardovaya"
+            },
+            {
+              "title": "Косичка",
+              "slug": "kosichka"
+            },
+            {
+              "title": "Лампас",
+              "slug": "lampas"
+            },
+            {
+              "title": "Льняная",
+              "slug": "lnyanaya"
+            },
+            {
+              "title": "Металлизированная",
+              "slug": "metallizirovannaya"
+            },
+            {
+              "title": "Металл Пластик",
+              "slug": "metall-plastik"
+            },
+            {
+              "title": "Наборы",
+              "slug": "nabory"
+            },
+            {
+              "title": "Отделочная",
+              "slug": "otdelochnaya"
+            },
+            {
+              "title": "С Пайетками",
+              "slug": "s-payetkami"
+            },
+            {
+              "title": "Термо",
+              "slug": "termo"
+            }
+          ]
+        },
+        {
+          "title": "Шитье",
+          "slug": "shite",
+          "children": [
+            {
+              "title": "На Батисте",
+              "slug": "na-batiste"
+            }
+          ]
+        },
+        {
+          "title": "Этикетки Размерники",
+          "slug": "etiketki-razmerniki",
+          "children": [
+            {
+              "title": "Биркодержатели",
+              "slug": "birkoderzhateli"
+            },
+            {
+              "title": "Размерники",
+              "slug": "razmerniki"
+            },
+            {
+              "title": "Составники",
+              "slug": "sostavniki"
+            },
+            {
+              "title": "Этикет-пистолеты",
+              "slug": "etiket-pistolety"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Натуральные Ткани",
+      "slug": "naturalnye-tkani",
+      "children": [
+        {
+          "title": "Батист",
+          "slug": "batist",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Вискоза",
+          "slug": "viskoza",
+          "children": [
+            {
+              "title": "Блузочная",
+              "slug": "bluzochnaya"
+            },
+            {
+              "title": "Плательная",
+              "slug": "platelnaya"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            },
+            {
+              "title": "Турция",
+              "slug": "turtsiya"
+            }
+          ]
+        },
+        {
+          "title": "Костюмные",
+          "slug": "kostyumnye",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Турция",
+              "slug": "turtsiya"
+            }
+          ]
+        },
+        {
+          "title": "Коттон-сатин",
+          "slug": "kotton-satin",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Лен",
+          "slug": "len",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Муслин",
+          "slug": "muslin",
+          "children": [
+            {
+              "title": "Вышивка",
+              "slug": "vyshivka"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Подкладочные",
+          "slug": "podkladochnye",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            }
+          ]
+        },
+        {
+          "title": "Поплин",
+          "slug": "poplin",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Рами",
+          "slug": "rami",
+          "children": []
+        },
+        {
+          "title": "Трикотаж",
+          "slug": "trikotazh",
+          "children": [
+            {
+              "title": "Вискоза",
+              "slug": "viskoza"
+            },
+            {
+              "title": "Интерлок",
+              "slug": "interlok"
+            },
+            {
+              "title": "Кашкорсе",
+              "slug": "kashkorse"
+            },
+            {
+              "title": "Кулирка",
+              "slug": "kulirka"
+            },
+            {
+              "title": "Пике",
+              "slug": "pike"
+            },
+            {
+              "title": "Рибана",
+              "slug": "ribana"
+            },
+            {
+              "title": "Футер",
+              "slug": "futer"
+            }
+          ]
+        },
+        {
+          "title": "Штапель",
+          "slug": "shtapel",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Панбархат",
+          "slug": "panbarhat",
+          "children": []
+        },
+        {
+          "title": "Крапива",
+          "slug": "krapiva",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Ткани Для Спецодежды",
+      "slug": "tkani-dlya-spetsodezhdy",
+      "children": [
+        {
+          "title": "Для Медицинских Масок И Халатов",
+          "slug": "dlya-meditsinskih-masok-i-halatov",
+          "children": [
+            {
+              "title": "Бенгалин",
+              "slug": "bengalin"
+            },
+            {
+              "title": "Коттон-сатин",
+              "slug": "kotton-satin"
+            },
+            {
+              "title": "Поплин",
+              "slug": "poplin"
+            },
+            {
+              "title": "Тиси",
+              "slug": "tisi"
+            }
+          ]
+        },
+        {
+          "title": "Брезент",
+          "slug": "brezent",
+          "children": [
+            {
+              "title": "Водоотталкивающий",
+              "slug": "vodoottalkivayuschiy"
+            },
+            {
+              "title": "Огнеупорный",
+              "slug": "ogneupornyy"
+            },
+            {
+              "title": "Скпв",
+              "slug": "skpv"
+            }
+          ]
+        },
+        {
+          "title": "Грета",
+          "slug": "greta",
+          "children": [
+            {
+              "title": "Гладкокрашеная",
+              "slug": "gladkokrashenaya"
+            },
+            {
+              "title": "Камуфлированная",
+              "slug": "kamuflirovannaya"
+            },
+            {
+              "title": "Рипстоп",
+              "slug": "ripstop"
+            },
+            {
+              "title": "Хаки",
+              "slug": "haki"
+            }
+          ]
+        },
+        {
+          "title": "Диагональ",
+          "slug": "diagonal",
+          "children": [
+            {
+              "title": "Гладкокрашеная",
+              "slug": "gladkokrashenaya"
+            },
+            {
+              "title": "Камуфлированная",
+              "slug": "kamuflirovannaya"
+            }
+          ]
+        },
+        {
+          "title": "Для Анорака",
+          "slug": "dlya-anoraka",
+          "children": []
+        },
+        {
+          "title": "Для Маскхалата",
+          "slug": "dlya-maskhalata",
+          "children": []
+        },
+        {
+          "title": "Для Тактических Брюк",
+          "slug": "dlya-takticheskih-bryuk",
+          "children": []
+        },
+        {
+          "title": "Для Фуфаек",
+          "slug": "dlya-fufaek",
+          "children": []
+        },
+        {
+          "title": "Дубок",
+          "slug": "dubok",
+          "children": []
+        },
+        {
+          "title": "Дюспо",
+          "slug": "dyuspo",
+          "children": [
+            {
+              "title": "Дюспо Флис",
+              "slug": "dyuspo-flis"
+            },
+            {
+              "title": "Камуфляж",
+              "slug": "kamuflyazh"
+            },
+            {
+              "title": "Милки",
+              "slug": "milki"
+            },
+            {
+              "title": "Рипстоп",
+              "slug": "ripstop"
+            }
+          ]
+        },
+        {
+          "title": "Камуфляжная Флора",
+          "slug": "kamuflyazhnaya-flora",
+          "children": []
+        },
+        {
+          "title": "Мембранные Ткани",
+          "slug": "membrannye-tkani",
+          "children": [
+            {
+              "title": "Алова Камуфлированная",
+              "slug": "alova-kamuflirovannaya"
+            },
+            {
+              "title": "Дюспо Тефлон",
+              "slug": "dyuspo-teflon"
+            },
+            {
+              "title": "Кошачий Глаз",
+              "slug": "koshachiy-glaz"
+            },
+            {
+              "title": "Лантана",
+              "slug": "lantana"
+            },
+            {
+              "title": "Софт-шелл",
+              "slug": "soft-shell"
+            },
+            {
+              "title": "Цунами",
+              "slug": "tsunami"
+            }
+          ]
+        },
+        {
+          "title": "Оксфорд",
+          "slug": "oksford",
+          "children": [
+            {
+              "title": "Камуфлированный",
+              "slug": "kamuflirovannyy"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            }
+          ]
+        },
+        {
+          "title": "Полушерстяная",
+          "slug": "polusherstyanaya",
+          "children": []
+        },
+        {
+          "title": "Саржа",
+          "slug": "sarzha",
+          "children": [
+            {
+              "title": "Камуфлированная",
+              "slug": "kamuflirovannaya"
+            },
+            {
+              "title": "Однотонная",
+              "slug": "odnotonnaya"
+            },
+            {
+              "title": "Хаки",
+              "slug": "haki"
+            }
+          ]
+        },
+        {
+          "title": "Смесовая",
+          "slug": "smesovaya",
+          "children": []
+        },
+        {
+          "title": "Стежка",
+          "slug": "stezhka",
+          "children": [
+            {
+              "title": "Курточная",
+              "slug": "kurtochnaya"
+            }
+          ]
+        },
+        {
+          "title": "Твил",
+          "slug": "tvil",
+          "children": [
+            {
+              "title": "Гладкокрашеный",
+              "slug": "gladkokrashenyy"
+            },
+            {
+              "title": "Камуфлированный",
+              "slug": "kamuflirovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Тиси",
+          "slug": "tisi",
+          "children": [
+            {
+              "title": "Гладкокрашеная",
+              "slug": "gladkokrashenaya"
+            },
+            {
+              "title": "Камуфлированная",
+              "slug": "kamuflirovannaya"
+            }
+          ]
+        },
+        {
+          "title": "Трикотаж Для Спецодежды",
+          "slug": "trikotazh-dlya-spetsodezhdy",
+          "children": [
+            {
+              "title": "Для Спорта",
+              "slug": "dlya-sporta"
+            },
+            {
+              "title": "Камуфляжная Сетка",
+              "slug": "kamuflyazhnaya-setka"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Европейские Ткани",
+      "slug": "evropeyskie-tkani",
+      "children": [
+        {
+          "title": "Атлас",
+          "slug": "atlas",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            }
+          ]
+        },
+        {
+          "title": "Бархат И Вельвет",
+          "slug": "barhat-i-velvet",
+          "children": []
+        },
+        {
+          "title": "Батист",
+          "slug": "batist",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Принтованный",
+              "slug": "printovannyy"
+            }
+          ]
+        },
+        {
+          "title": "Бифлекс",
+          "slug": "bifleks",
+          "children": []
+        },
+        {
+          "title": "Блузочная",
+          "slug": "bluzochnaya",
+          "children": [
+            {
+              "title": "Вискоза",
+              "slug": "viskoza"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            }
+          ]
+        },
+        {
+          "title": "Гипюр",
+          "slug": "gipyur",
+          "children": []
+        },
+        {
+          "title": "Деворе",
+          "slug": "devore",
+          "children": []
+        },
+        {
+          "title": "Джерси",
+          "slug": "dzhersi",
+          "children": []
+        },
+        {
+          "title": "Джинса",
+          "slug": "dzhinsa",
+          "children": []
+        },
+        {
+          "title": "Дубленка",
+          "slug": "dublenka",
+          "children": []
+        },
+        {
+          "title": "Жаккард",
+          "slug": "zhakkard",
+          "children": []
+        },
+        {
+          "title": "Искусственная Замша",
+          "slug": "iskusstvennaya-zamsha",
+          "children": []
+        },
+        {
+          "title": "Искусственный Мех",
+          "slug": "iskusstvennyy-meh",
+          "children": []
+        },
+        {
+          "title": "Костюмные",
+          "slug": "kostyumnye",
+          "children": [
+            {
+              "title": "Вискоза",
+              "slug": "viskoza"
+            },
+            {
+              "title": "Гусиная Лапка",
+              "slug": "gusinaya-lapka"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Клетка",
+              "slug": "kletka"
+            },
+            {
+              "title": "Лейтмотив",
+              "slug": "leytmotiv"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Хлопок",
+              "slug": "hlopok"
+            }
+          ]
+        },
+        {
+          "title": "Креп",
+          "slug": "krep",
+          "children": [
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            }
+          ]
+        },
+        {
+          "title": "Кружево",
+          "slug": "kruzhevo",
+          "children": []
+        },
+        {
+          "title": "Кашемир",
+          "slug": "kashemir",
+          "children": []
+        },
+        {
+          "title": "Мохер",
+          "slug": "moher",
+          "children": []
+        },
+        {
+          "title": "Купра",
+          "slug": "kupra",
+          "children": []
+        },
+        {
+          "title": "Курточные",
+          "slug": "kurtochnye",
+          "children": []
+        },
+        {
+          "title": "Лен",
+          "slug": "len",
+          "children": []
+        },
+        {
+          "title": "Неопрен",
+          "slug": "neopren",
+          "children": []
+        },
+        {
+          "title": "Органза",
+          "slug": "organza",
+          "children": []
+        },
+        {
+          "title": "Пайетки",
+          "slug": "payetki",
+          "children": []
+        },
+        {
+          "title": "Пальтовые",
+          "slug": "paltovye",
+          "children": [
+            {
+              "title": "Альпака",
+              "slug": "alpaka"
+            },
+            {
+              "title": "Клетка",
+              "slug": "kletka"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "С Ворсом",
+              "slug": "s-vorsom"
+            }
+          ]
+        },
+        {
+          "title": "Плательные",
+          "slug": "platelnye",
+          "children": [
+            {
+              "title": "Клетка",
+              "slug": "kletka"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            }
+          ]
+        },
+        {
+          "title": "Плащевые",
+          "slug": "plaschevye",
+          "children": [
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Принтованные",
+              "slug": "printovannye"
+            }
+          ]
+        },
+        {
+          "title": "Подкладочные",
+          "slug": "podkladochnye",
+          "children": [
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Однотонные",
+              "slug": "odnotonnye"
+            },
+            {
+              "title": "Трикотаж",
+              "slug": "trikotazh"
+            }
+          ]
+        },
+        {
+          "title": "Прикладные Материалы",
+          "slug": "prikladnye-materialy",
+          "children": [
+            {
+              "title": "Дублерин",
+              "slug": "dublerin"
+            },
+            {
+              "title": "Шерстепон",
+              "slug": "sherstepon"
+            }
+          ]
+        },
+        {
+          "title": "Сетка",
+          "slug": "setka",
+          "children": []
+        },
+        {
+          "title": "Сорочечные",
+          "slug": "sorochechnye",
+          "children": []
+        },
+        {
+          "title": "Стеклярус",
+          "slug": "steklyarus",
+          "children": []
+        },
+        {
+          "title": "Трикотаж",
+          "slug": "trikotazh",
+          "children": [
+            {
+              "title": "Вискоза",
+              "slug": "viskoza"
+            },
+            {
+              "title": "Двухсторонний",
+              "slug": "dvuhstoronniy"
+            },
+            {
+              "title": "Жаккард",
+              "slug": "zhakkard"
+            },
+            {
+              "title": "Кулирка",
+              "slug": "kulirka"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            }
+          ]
+        },
+        {
+          "title": "Фатин",
+          "slug": "fatin",
+          "children": []
+        },
+        {
+          "title": "Хлопок",
+          "slug": "hlopok",
+          "children": []
+        },
+        {
+          "title": "Шелк",
+          "slug": "shelk",
+          "children": [
+            {
+              "title": "Натуральный",
+              "slug": "naturalnyy"
+            }
+          ]
+        },
+        {
+          "title": "Шитье",
+          "slug": "shite",
+          "children": []
+        },
+        {
+          "title": "Шифон",
+          "slug": "shifon",
+          "children": []
+        },
+        {
+          "title": "Штапель",
+          "slug": "shtapel",
+          "children": []
+        },
+        {
+          "title": "Экокожа",
+          "slug": "ekokozha",
+          "children": []
+        }
+      ]
+    },
+    {
+      "title": "Технические Ткани",
+      "slug": "tehnicheskie-tkani",
+      "children": [
+        {
+          "title": "Брезент",
+          "slug": "brezent",
+          "children": [
+            {
+              "title": "Водоотталкивающий",
+              "slug": "vodoottalkivayuschiy"
+            },
+            {
+              "title": "Огнеупорный",
+              "slug": "ogneupornyy"
+            },
+            {
+              "title": "Скпв",
+              "slug": "skpv"
+            }
+          ]
+        },
+        {
+          "title": "Бязь Суровая",
+          "slug": "byaz-surovaya",
+          "children": []
+        },
+        {
+          "title": "Ватин",
+          "slug": "vatin",
+          "children": []
+        },
+        {
+          "title": "Двунитка",
+          "slug": "dvunitka",
+          "children": [
+            {
+              "title": "Аппретированная",
+              "slug": "appretirovannaya"
+            },
+            {
+              "title": "Суровая",
+              "slug": "surovaya"
+            }
+          ]
+        },
+        {
+          "title": "Диагональ",
+          "slug": "diagonal",
+          "children": [
+            {
+              "title": "Суровая",
+              "slug": "surovaya"
+            }
+          ]
+        },
+        {
+          "title": "Для Тентов",
+          "slug": "dlya-tentov",
+          "children": [
+            {
+              "title": "Камуфляж",
+              "slug": "kamuflyazh"
+            },
+            {
+              "title": "Хаки",
+              "slug": "haki"
+            }
+          ]
+        },
+        {
+          "title": "Канвас",
+          "slug": "kanvas",
+          "children": [
+            {
+              "title": "Набивной",
+              "slug": "nabivnoy"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            }
+          ]
+        },
+        {
+          "title": "Лотекс",
+          "slug": "loteks",
+          "children": []
+        },
+        {
+          "title": "Марля",
+          "slug": "marlya",
+          "children": []
+        },
+        {
+          "title": "Мембранные Ткани",
+          "slug": "membrannye-tkani",
+          "children": [
+            {
+              "title": "Мулетон",
+              "slug": "muleton"
+            }
+          ]
+        },
+        {
+          "title": "Мешковина",
+          "slug": "meshkovina",
+          "children": []
+        },
+        {
+          "title": "Микрофибра",
+          "slug": "mikrofibra",
+          "children": [
+            {
+              "title": "Бытовая Для Уборки",
+              "slug": "bytovaya-dlya-uborki"
+            }
+          ]
+        },
+        {
+          "title": "Миткаль",
+          "slug": "mitkal",
+          "children": []
+        },
+        {
+          "title": "Москитная Сетка",
+          "slug": "moskitnaya-setka",
+          "children": []
+        },
+        {
+          "title": "Наборы Для Рукоделия",
+          "slug": "nabory-dlya-rukodeliya",
+          "children": []
+        },
+        {
+          "title": "Нетканое Полотно",
+          "slug": "netkanoe-polotno",
+          "children": []
+        },
+        {
+          "title": "Оксфорд",
+          "slug": "oksford",
+          "children": [
+            {
+              "title": "Камуфлированный",
+              "slug": "kamuflirovannyy"
+            },
+            {
+              "title": "Набивной",
+              "slug": "nabivnoy"
+            },
+            {
+              "title": "Однотонный",
+              "slug": "odnotonnyy"
+            },
+            {
+              "title": "Рипстоп",
+              "slug": "ripstop"
+            }
+          ]
+        },
+        {
+          "title": "Палаточная",
+          "slug": "palatochnaya",
+          "children": []
+        },
+        {
+          "title": "Пвх Ткань",
+          "slug": "pvh-tkan",
+          "children": [
+            {
+              "title": "Камуфляж",
+              "slug": "kamuflyazh"
+            }
+          ]
+        },
+        {
+          "title": "Поливискоза",
+          "slug": "poliviskoza",
+          "children": []
+        },
+        {
+          "title": "Рогожка Суровая",
+          "slug": "rogozhka-surovaya",
+          "children": []
+        },
+        {
+          "title": "Саржа",
+          "slug": "sarzha",
+          "children": [
+            {
+              "title": "Суровая",
+              "slug": "surovaya"
+            }
+          ]
+        },
+        {
+          "title": "Спанбонд",
+          "slug": "spanbond",
+          "children": []
+        },
+        {
+          "title": "Сукно",
+          "slug": "sukno",
+          "children": []
+        },
+        {
+          "title": "Термовойлок",
+          "slug": "termovoylok",
+          "children": []
+        },
+        {
+          "title": "Тик",
+          "slug": "tik",
+          "children": [
+            {
+              "title": "Матрасный",
+              "slug": "matrasnyy"
+            },
+            {
+              "title": "Наволочный",
+              "slug": "navolochnyy"
+            },
+            {
+              "title": "Поплекс",
+              "slug": "popleks"
+            },
+            {
+              "title": "Пуходержащий",
+              "slug": "puhoderzhaschiy"
+            }
+          ]
+        },
+        {
+          "title": "Ткани Для Печати",
+          "slug": "tkani-dlya-pechati",
+          "children": [
+            {
+              "title": "Прямая Печать",
+              "slug": "pryamaya-pechat"
+            },
+            {
+              "title": "Сублимация",
+              "slug": "sublimatsiya"
+            }
+          ]
+        },
+        {
+          "title": "Ткани Для Рюкзаков",
+          "slug": "tkani-dlya-ryukzakov",
+          "children": [
+            {
+              "title": "Для Тактических Рюкзаков",
+              "slug": "dlya-takticheskih-ryukzakov"
+            }
+          ]
+        },
+        {
+          "title": "Утеплитель",
+          "slug": "uteplitel",
+          "children": [
+            {
+              "title": "Атмо",
+              "slug": "atmo"
+            },
+            {
+              "title": "Синтепон",
+              "slug": "sintepon"
+            },
+            {
+              "title": "Слайтекс",
+              "slug": "slayteks"
+            },
+            {
+              "title": "Холстон",
+              "slug": "holston"
+            }
+          ]
+        },
+        {
+          "title": "Фланель Суровая",
+          "slug": "flanel-surovaya",
+          "children": []
+        }
+      ]
+    }
+  ]
+}
