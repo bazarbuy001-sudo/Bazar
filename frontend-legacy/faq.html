@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - Часто задаваемые вопросы</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cabinet/cabinet.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/didot');
+
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #d4a574;
+            --background: #fafafa;
+            --border-color: #e5e5e5;
+            --text-primary: #2c2c2c;
+            --text-secondary: #6b6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           HEADER - STICKY
+           ============================================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+        }
+
+        .nav-container {
+            max-width: 60%;
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        .header-sticky {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-row-2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            gap: 12px;
+            transition: padding 0.3s ease, gap 0.3s ease;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-decoration: none;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .row2-brand {
+            font-family: 'Didot', serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            max-width: 150px;
+            opacity: 1;
+            margin-right: 10px;
+        }
+
+        .catalog-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition: background 0.2s ease;
+        }
+
+        .catalog-btn:hover {
+            background: var(--primary-color);
+        }
+
+        .search-box {
+            position: relative;
+            width: 280px;
+            transition: width 0.3s ease;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn,
+        #cabinet-header-btn a.cabinet-header-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+            transition: border-color 0.2s ease, color 0.2s ease !important;
+            text-decoration: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn:hover,
+        #cabinet-header-btn a.cabinet-header-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+        }
+
+        .cart-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .cart-btn:hover {
+            background: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f5f0eb 0%, #e8dfd6 100%);
+            padding: 80px 20px 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 197, 185, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 300;
+            color: #3a3a3a;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #6a6a6a;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Main Content area */
+        .main-content {
+            max-width: 1000px;
+            margin: -60px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-card {
+            background: #ffffff;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            margin-bottom: 40px;
+        }
+
+        .content-card h2 {
+            font-size: 28px;
+            font-weight: 400;
+            color: #8b7355;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #d4a574;
+        }
+
+        /* FAQ Accordion */
+        .faq-item {
+            margin-bottom: 15px;
+            border: 1px solid #e5e5e5;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 5px 15px rgba(139, 115, 85, 0.1);
+        }
+
+        .faq-question {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            color: var(--primary-color);
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background: #fafafa;
+            color: var(--accent-color);
+        }
+
+        .faq-question.active {
+            background: #8b7355;
+            color: white;
+        }
+
+        .faq-question::after {
+            content: '+';
+            font-size: 24px;
+            font-weight: 300;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-question.active::after {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            background: #fafafa;
+            padding: 0 25px;
+        }
+
+        .faq-answer.active {
+            max-height: 500px;
+            padding: 24px 25px;
+        }
+
+        .faq-answer p {
+            color: #5a5a5a;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        /* Footer Section */
+        .page-footer-cta {
+            background: linear-gradient(135deg, #8b7355 0%, #6b5a45 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            border-radius: 20px;
+            margin-top: 40px;
+        }
+
+        .page-footer-cta h2 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 25px;
+        }
+
+        .cta-subtitle {
+            font-size: 16px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .social-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-5px);
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            overflow: hidden;
+        }
+
+        .social-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .whatsapp-icon {
+            background: #25D366;
+        }
+
+        .telegram-icon {
+            background: #0088cc;
+        }
+
+        .social-btn span {
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .content-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-sticky" id="headerSticky">
+            <div class="nav-container">
+                <div class="header-row-2">
+                    <a href="index.html" class="logo-icon">
+                        <img src="icons/LogoBazarbuy.svg" alt="Bazar Buy">
+                    </a>
+                    <a href="index.html" class="row2-brand">Bazar Buy</a>
+
+                    <button class="catalog-btn">
+                        <span>☰</span>
+                        <span>Каталог товаров</span>
+                    </button>
+
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Поиск товаров...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+
+                    <div id="cabinet-header-btn"></div>
+
+                    <a href="cart.html" class="cart-btn">
+                        <span>🛒</span>
+                        <span>Корзина</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>FAQ — Часто задаваемые вопросы</h1>
+            <p>Здесь собраны ответы на самые распространённые вопросы о заказах, оплате, доставке и условиях работы.
+                Если вы не нашли нужную информацию, вы всегда можете уточнить детали перед подтверждением заказа.</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <div class="content-card">
+            <div class="faq-sections">
+                <!-- Вопросы о заказе -->
+                <div class="section">
+                    <h2 class="section-title">Вопросы о заказе</h2>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Как оформить заказ?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Вы выбираете интересующие ткани и формируете заказ. После этого заказ согласовывается с
+                                менеджером, уточняются наличие, количество и стоимость.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Можно ли изменить заказ после оформления?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Да, до момента подтверждения и оплаты заказа вы можете вносить изменения: добавлять,
+                                убирать
+                                или корректировать позиции.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вопросы об оплате -->
+                <div class="section">
+                    <h2 class="section-title">Вопросы об оплате</h2>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Когда производится оплата?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Оплата производится только после согласования заказа и подтверждения итоговой стоимости.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Можно ли оплатить заказ частями?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Условия оплаты обсуждаются индивидуально и зависят от объёма заказа.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вопросы о доставке -->
+                <div class="section">
+                    <h2 class="section-title">Вопросы о доставке</h2>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            В какие страны осуществляется доставка?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Мы доставляем заказы во все страны СНГ и ближнего зарубежья.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Кто выбирает транспортную компанию?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Транспортную компанию клиент выбирает самостоятельно либо из предложенных нами вариантов.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Кто несёт ответственность за доставку?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Транспортные компании являются посредниками. После передачи груза ответственность за
+                                доставку
+                                несёт выбранная транспортная компания.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Вопросы о товарах -->
+                <div class="section">
+                    <h2 class="section-title">Вопросы о товарах</h2>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Соответствует ли цвет ткани фотографиям на сайте?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Цвет ткани на экране может незначительно отличаться из-за настроек устройства и
+                                освещения.
+                                При необходимости детали можно уточнить перед заказом.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Можно ли заказать образцы?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Возможность заказа образцов уточняется индивидуально.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Оптовые вопросы -->
+                <div class="section">
+                    <h2 class="section-title">Оптовые вопросы</h2>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Предоставляете ли вы оптовые скидки?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Да, условия оптовых скидок зависят от объёма заказа и описаны на странице «Оптовые
+                                скидки».
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Можно ли суммировать разные ткани для получения скидки?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Условия суммирования обсуждаются индивидуально при согласовании заказа.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Документы и сопровождение -->
+                <div class="section">
+                    <h2 class="section-title">Документы и сопровождение</h2>
+
+                    <div class="faq-item">
+                        <div class="faq-question">
+                            Предоставляете ли вы документы на товар?
+                        </div>
+                        <div class="faq-answer">
+                            <p>Да, все необходимые документы предоставляются в соответствии с условиями сделки.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-footer-cta">
+            <h2>Нужна консультация по тканям?</h2>
+            <p class="cta-subtitle">Напишите нам в мессенджеры — мы поможем подобрать ткань<br>и рассчитаем стоимость
+                заказа.</p>
+            <div class="social-links">
+                <a href="https://wa.me/79691263030" target="_blank" rel="noopener noreferrer" class="social-btn">
+                    <div class="social-icon whatsapp-icon">
+                        <img src="icons/whatsapp.png" alt="WhatsApp">
+                    </div>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="https://t.me/bazarbuy" target="_blank" rel="noopener noreferrer" class="social-btn">
+                    <div class="social-icon telegram-icon">
+                        <img src="icons/telegram.png" alt="Telegram">
+                    </div>
+                    <span>Telegram</span>
+                </a>
+            </div>
+        </div>
+        <p>Если вы не нашли ответ на свой вопрос, вы можете уточнить информацию перед подтверждением заказа. Мы
+            всегда готовы помочь.</p>
+    </main>
+
+    <script>
+        // Обработка скролла для шапки
+        document.addEventListener('DOMContentLoaded', () => {
+            const headerSticky = document.getElementById('headerSticky');
+            if (headerSticky) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 60) {
+                        headerSticky.classList.add('scrolled');
+                    } else {
+                        headerSticky.classList.remove('scrolled');
+                    }
+                }, { passive: true });
+            }
+
+            // FAQ аккордеон
+            const questions = document.querySelectorAll('.faq-question');
+
+            questions.forEach(q => {
+                q.addEventListener('click', () => {
+                    const answer = q.nextElementSibling;
+                    const isActive = answer.classList.contains('active');
+
+                    // Закрыть все ответы
+                    document.querySelectorAll('.faq-answer').forEach(a => {
+                        a.classList.remove('active');
+                    });
+                    document.querySelectorAll('.faq-question').forEach(qu => {
+                        qu.classList.remove('active');
+                    });
+
+                    // Открыть текущий, если он был закрыт
+                    if (!isActive) {
+                        answer.classList.add('active');
+                        q.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+    <!-- Cabinet Scripts -->
+    <script src="cabinet/cabinet-api.js"></script>
+    <script src="cabinet/cabinet-store.js"></script>
+    <script src="cabinet/cabinet.js"></script>
+</body>
+
+</html>

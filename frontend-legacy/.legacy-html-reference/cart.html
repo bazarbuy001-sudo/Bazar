@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина - Bazar Buy</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cabinet/cabinet.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/didot');
+        
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #d4a574;
+            --background: #fafafa;
+            --border-color: #e5e5e5;
+            --text-primary: #2c2c2c;
+            --text-secondary: #6b6b6b;
+            --primary: #1a1a2e;
+            --accent: #e94560;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --text: #2d2d2d;
+            --text-light: #6c757d;
+            --border: #dee2e6;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           HEADER - STICKY (весь header закреплен)
+           ============================================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+        }
+
+        /* ============================================
+           КОНТЕЙНЕР - 60% ШИРИНЫ ЭКРАНА, ЦЕНТРИРОВАН
+           ============================================ */
+        .nav-container {
+            max-width: 60%;
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           STICKY WRAPPER - сразу в липком состоянии
+           ============================================ */
+        .header-sticky {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ============================================
+           СТРОКА 2: Все элементы на одном уровне с равным gap
+           ============================================ */
+        .header-row-2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            gap: 10px;
+            transition: 
+                padding 0.3s ease,
+                gap 0.3s ease;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-decoration: none;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .row2-brand {
+            font-family: 'Didot', serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            max-width: 150px;
+            opacity: 1;
+            margin-right: 10px;
+        }
+
+        .catalog-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition: 
+                background 0.2s ease,
+                transform 0.3s ease;
+        }
+
+        .catalog-btn:hover {
+            background: var(--primary-color);
+        }
+
+        .search-box {
+            position: relative;
+            width: 200px;
+            min-width: 200px;
+            max-width: 200px;
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .row2-contacts {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            flex-shrink: 0;
+            opacity: 1;
+            max-width: 100px;
+            pointer-events: auto;
+        }
+
+        .account-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            transition: 
+                border-color 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .account-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* Переопределение стилей кнопки "Личный кабинет" для соответствия старому виду */
+        #cabinet-header-btn .cabinet-header-btn,
+        #cabinet-header-btn a.cabinet-header-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+            transition: 
+                border-color 0.2s ease,
+                color 0.2s ease !important;
+            text-decoration: none !important;
+            box-shadow: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn:hover,
+        #cabinet-header-btn a.cabinet-header-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized,
+        #cabinet-header-btn a.cabinet-header-btn--authorized {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized:hover,
+        #cabinet-header-btn a.cabinet-header-btn--authorized:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized::after {
+            display: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn__icon {
+            width: auto !important;
+            height: auto !important;
+            opacity: 1 !important;
+        }
+
+        .cart-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition: 
+                background 0.2s ease,
+                transform 0.3s ease;
+        }
+
+        .cart-btn:hover {
+            background: var(--primary-color);
+        }
+
+        .cart-badge {
+            background: white;
+            color: var(--accent-color);
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .cart-badge.hidden {
+            display: none;
+        }
+
+        /* === CONTAINER === */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* === CART PAGE === */
+        .cart-page {
+            display: block;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .back-link {
+            color: var(--text-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .back-link:hover {
+            color: var(--accent);
+        }
+
+        .cart-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+        }
+
+        .cart-items {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-text {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            overflow: hidden;
+        }
+        
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .item-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .item-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-params {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 0.4rem;
+        }
+
+        .qty-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1.2rem;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .qty-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .qty-value {
+            min-width: 40px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .remove-btn {
+            color: var(--danger);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 0.5rem;
+        }
+
+        .remove-btn:hover {
+            text-decoration: underline;
+        }
+
+        .item-pricing {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .item-total {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .item-per-unit {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        /* === CART SUMMARY === */
+        .cart-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .summary-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            font-size: 1rem;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid var(--border);
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .summary-row.total .summary-value {
+            color: var(--accent);
+            font-size: 2rem;
+        }
+
+        .summary-label {
+            color: var(--text-light);
+        }
+
+        .summary-value {
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1.2rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .summary-note {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .cart-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+            }
+
+            .item-pricing {
+                grid-column: 2;
+                text-align: left;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <!-- ТОЛЬКО ЛИПКАЯ СТРОКА -->
+        <div class="header-sticky" id="headerSticky">
+            <div class="nav-container">
+                <div class="header-row-2">
+                    <a href="index.html" class="logo-icon">
+                        <img src="icons/LogoBazarbuy.svg" alt="Bazar Buy">
+                    </a>
+                    <a href="index.html" class="row2-brand">Bazar Buy</a>
+
+                    <button class="catalog-btn" onclick="window.location.href='index.html'">
+                        <span>☰</span>
+                        <span>Каталог товаров</span>
+                    </button>
+
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Поиск товаров...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+
+                    <span class="row2-contacts">Контакты</span>
+                    
+                    <div id="cabinet-header-btn"></div>
+                    
+                    <button class="cart-btn" onclick="window.location.href='cart.html'">
+                        <span>🛒</span>
+                        <span>Корзина</span>
+                        <span class="cart-badge hidden" id="cartBadge">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Cart Page -->
+    <div class="cart-page" id="cartPage">
+        <div class="container">
+            <div class="cart-header">
+                <h1 class="page-title">Корзина</h1>
+                <a class="back-link" href="catalog.html">
+                    ← Вернуться в каталог
+                </a>
+            </div>
+            <div class="cart-layout" id="cartContent"></div>
+        </div>
+    </div>
+
+    <script src="js/cart-store.js"></script>
+    <script>
+        // === DATA ===
+        let productsData = [];
+        
+        // Загружаем данные товаров
+        async function loadProducts() {
+            try {
+                const response = await fetch('data/products.json');
+                if (response.ok) {
+                    productsData = await response.json();
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки товаров:', error);
+            }
+        }
+        
+        // Получить данные товара по ID
+        function getProductById(productId) {
+            return productsData.find(p => String(p.id) === String(productId));
+        }
+
+        // === INIT ===
+        async function init() {
+            await loadProducts();
+            updateCartCount();
+            renderCart();
+            
+            // Обновляем корзину при изменении
+            document.addEventListener('cart:updated', () => {
+                updateCartCount();
+                renderCart();
+            });
+        }
+        
+        init();
+
+        // === UPDATE CART COUNT ===
+        function updateCartCount() {
+            const count = CartStore.getCount();
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                badge.textContent = count;
+                badge.classList.toggle('hidden', count === 0);
+            }
+        }
+
+        // === RENDER CART ===
+        function renderCart() {
+            const container = document.getElementById('cartContent');
+            const cartItems = CartStore.getAll();
+
+            if (cartItems.length === 0) {
+                container.innerHTML = `
+                    <div class="cart-items" style="grid-column: 1/-1;">
+                        <div class="cart-empty">
+                            <div class="empty-icon">🛒</div>
+                            <h2 class="empty-title">Ваша корзина пуста</h2>
+                            <p class="empty-text">Добавьте товары из каталога</p>
+                            <button class="submit-btn" onclick="window.location.href='index.html'">Перейти в каталог</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            let totalPrice = 0;
+
+            const itemsHTML = cartItems.map((item, index) => {
+                const product = getProductById(item.productId);
+                if (!product) {
+                    return '';
+                }
+                
+                const price = product.price || 0;
+                const pricePerMeter = price;
+                const itemTotal = pricePerMeter * item.meters;
+                totalPrice += itemTotal;
+                
+                const colorText = item.color ? `Цвет: ${item.color} • ` : '';
+                const paramsText = `${colorText}Метраж: ${item.meters} м${item.rolls > 0 ? ` • Рулоны: ${item.rolls}` : ''}`;
+                const imageSrc = product.image || '';
+
+                return `
+                    <div class="cart-item">
+                        <div class="item-image">
+                            ${imageSrc ? `<img src="${imageSrc}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">` : '🛒'}
+                        </div>
+                        <div class="item-details">
+                            <div class="item-name">${product.name}</div>
+                            <div class="item-params">${paramsText}</div>
+                            <div class="item-controls">
+                                <div class="qty-control">
+                                    <button class="qty-btn" onclick="updateMeters(${index}, -1)">−</button>
+                                    <span class="qty-value">${item.meters} м</span>
+                                    <button class="qty-btn" onclick="updateMeters(${index}, 1)">+</button>
+                                </div>
+                                <button class="remove-btn" onclick="removeItem(${index})">Удалить</button>
+                            </div>
+                        </div>
+                        <div class="item-pricing">
+                            <div class="item-total">₽ ${itemTotal.toLocaleString()}</div>
+                            <div class="item-per-unit">₽ ${pricePerMeter.toLocaleString()} / м</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="cart-items">${itemsHTML}</div>
+                <div class="cart-summary">
+                    <h3 class="summary-title">Итого</h3>
+                    <div class="summary-row">
+                        <span class="summary-label">Товаров:</span>
+                        <span class="summary-value">${cartItems.length} поз.</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span class="summary-label">К оплате:</span>
+                        <span class="summary-value">₽ ${totalPrice.toLocaleString()}</span>
+                    </div>
+                    <button class="submit-btn" onclick="submitOrder()">
+                        Отправить заказ на согласование
+                    </button>
+                    <div class="summary-note">
+                        После отправки с вами свяжется менеджер для согласования. 
+                        Оплата производится только после подтверждения заказа.
+                    </div>
+                </div>
+            `;
+        }
+
+        // === UPDATE METERS ===
+        function updateMeters(index, change) {
+            const cartItems = CartStore.getAll();
+            if (index >= 0 && index < cartItems.length) {
+                const item = cartItems[index];
+                const newMeters = item.meters + change;
+                if (newMeters >= 1) {
+                    // Удаляем старый элемент
+                    CartStore.remove(index);
+                    // Добавляем обновленный
+                    CartStore.add({
+                        productId: item.productId,
+                        color: item.color,
+                        meters: newMeters,
+                        rolls: item.rolls
+                    });
+                    renderCart();
+                }
+            }
+        }
+
+        // === REMOVE ITEM ===
+        function removeItem(index) {
+            CartStore.remove(index);
+            renderCart();
+        }
+
+        // === SUBMIT ORDER ===
+        function submitOrder() {
+            try {
+                // Проверка доступности CartStore
+                if (typeof CartStore === 'undefined') {
+                    console.error('[Cart] CartStore не определён. Проверьте подключение js/cart-store.js');
+                    alert('Ошибка: модуль корзины не загружен. Пожалуйста, обновите страницу.');
+                    return;
+                }
+
+                const cartItems = CartStore.getAll();
+                if (!cartItems || !cartItems.length) {
+                    alert('Корзина пуста. Добавьте товары в корзину.');
+                    return;
+                }
+
+                console.log('[Cart] Начало формирования заказа. Товаров в корзине:', cartItems.length);
+
+                // Формируем данные заказа с полной информацией о товарах
+                const orderItems = [];
+                for (const item of cartItems) {
+                    const product = getProductById(item.productId);
+                    if (product) {
+                        orderItems.push({
+                            productId: item.productId,
+                            name: product.name || `Товар ${item.productId}`,
+                            color: item.color || '',
+                            meters: item.meters || 0,
+                            rolls: item.rolls || 0,
+                            price: product.price || 0,
+                            category: product.category || ''
+                        });
+                    } else {
+                        // Если товар не найден, всё равно добавляем с базовой информацией
+                        console.warn('[Cart] Товар не найден в базе:', item.productId);
+                        orderItems.push({
+                            productId: item.productId,
+                            name: `Товар ${item.productId}`,
+                            color: item.color || '',
+                            meters: item.meters || 0,
+                            rolls: item.rolls || 0,
+                            price: 0
+                        });
+                    }
+                }
+
+                if (orderItems.length === 0) {
+                    alert('Не удалось сформировать заказ. Проверьте товары в корзине.');
+                    return;
+                }
+
+                const orderData = {
+                    items: orderItems
+                };
+
+                console.log('[Cart] Отправка заказа на согласование:', orderData);
+
+                // Сохраняем данные заказа в localStorage для передачи на страницу кабинета
+                try {
+                    localStorage.setItem('pending_order_data', JSON.stringify(orderData));
+                    console.log('[Cart] Заказ сохранён в localStorage');
+                } catch (e) {
+                    console.error('[Cart] Не удалось сохранить данные заказа в localStorage:', e);
+                    alert('Ошибка сохранения заказа. Пожалуйста, попробуйте ещё раз.');
+                    return;
+                }
+
+                // Отправляем событие для личного кабинета (на случай, если он уже открыт)
+                try {
+                    window.dispatchEvent(new CustomEvent('cart:submit-order', {
+                        detail: orderData
+                    }));
+                    console.log('[Cart] Событие cart:submit-order отправлено');
+                } catch (e) {
+                    console.warn('[Cart] Ошибка отправки события:', e);
+                    // Не прерываем процесс, так как данные сохранены в localStorage
+                }
+
+                // Перенаправляем на страницу личного кабинета
+                console.log('[Cart] Перенаправление на страницу кабинета...');
+                window.location.href = 'cabinet/index.html';
+            } catch (error) {
+                console.error('[Cart] Критическая ошибка при отправке заказа:', error);
+                alert('Произошла ошибка при отправке заказа. Пожалуйста, попробуйте ещё раз или обратитесь в поддержку.');
+            }
+        }
+    </script>
+    <!-- Cabinet Scripts -->
+    <script src="cabinet/cabinet-api.js"></script>
+    <script src="cabinet/cabinet-store.js"></script>
+    <script src="cabinet/cabinet.js"></script>
+</body>
+</html>
+

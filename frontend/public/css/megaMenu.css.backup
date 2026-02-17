@@ -1,0 +1,320 @@
+/**
+ * megaMenu.css
+ * Стили для Mega Menu каталога
+ * 
+ * Использует CSS-переменные проекта:
+ * - --accent-color
+ * - --primary-color
+ * - --text-color
+ * - --bg-color
+ * 
+ * @version 1.0.0
+ */
+
+/* ============================================
+   КОНТЕЙНЕР MEGA MENU
+   ============================================ */
+
+.mega-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-width: 1200px;
+    background: #fff;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: 
+        opacity 0.25s ease,
+        visibility 0.25s ease,
+        transform 0.25s ease;
+    z-index: 1000;
+}
+
+.mega-menu.is-open {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0) !important;
+}
+
+.mega-menu__inner {
+    display: flex;
+    min-height: 400px;
+    max-height: 70vh;
+}
+
+/* ============================================
+   КОЛОНКИ
+   ============================================ */
+
+.mega-menu__column {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    border-right: 1px solid #eee;
+}
+
+.mega-menu__column:last-child {
+    border-right: none;
+}
+
+.mega-menu__column--categories {
+    flex: 0 0 250px;
+    max-width: 250px;
+    background: #fafafa;
+}
+
+.mega-menu__column--subcategories {
+    flex: 0 0 280px;
+    max-width: 280px;
+}
+
+.mega-menu__column--fabric-types {
+    flex: 1;
+}
+
+/* ============================================
+   СПИСКИ
+   ============================================ */
+
+.mega-menu__categories,
+.mega-menu__subcategories,
+.mega-menu__fabric-types {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* ============================================
+   ЭЛЕМЕНТЫ КАТЕГОРИЙ
+   ============================================ */
+
+.mega-menu__category-item,
+.mega-menu__subcategory-item,
+.mega-menu__fabric-type-item {
+    margin-bottom: 4px;
+}
+
+.mega-menu__category-link,
+.mega-menu__subcategory-link,
+.mega-menu__fabric-type-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: 
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.mega-menu__category-link:hover,
+.mega-menu__subcategory-link:hover,
+.mega-menu__fabric-type-link:hover {
+    background: #f0f0f0;
+    color: var(--accent-color, #d4a574);
+}
+
+/* Активное состояние */
+.mega-menu__category-item.is-active > .mega-menu__category-link,
+.mega-menu__subcategory-item.is-active > .mega-menu__subcategory-link {
+    background: var(--accent-color, #d4a574);
+    color: #fff;
+}
+
+/* Индикатор вложенности */
+.mega-menu__category-item.has-children > .mega-menu__category-link::after,
+.mega-menu__subcategory-item.has-children > .mega-menu__subcategory-link::after {
+    content: '›';
+    font-size: 18px;
+    font-weight: 300;
+    margin-left: 8px;
+    opacity: 0.6;
+}
+
+.mega-menu__category-item.is-active > .mega-menu__category-link::after,
+.mega-menu__subcategory-item.is-active > .mega-menu__subcategory-link::after {
+    opacity: 1;
+}
+
+/* ============================================
+   ТИПЫ ТКАНИ (третий уровень)
+   ============================================ */
+
+.mega-menu__fabric-type-link {
+    font-weight: 400;
+    padding: 10px 14px;
+}
+
+.mega-menu__fabric-type-link:hover {
+    background: var(--accent-color, #d4a574);
+    color: #fff;
+}
+
+/* ============================================
+   ПУСТОЕ СОСТОЯНИЕ
+   ============================================ */
+
+.mega-menu__empty {
+    padding: 24px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+}
+
+/* ============================================
+   ЗАГРУЗКА
+   ============================================ */
+
+.mega-menu.is-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border: 3px solid #eee;
+    border-top-color: var(--accent-color, #d4a574);
+    border-radius: 50%;
+    animation: mega-menu-spin 0.8s linear infinite;
+}
+
+@keyframes mega-menu-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   БЛОКИРОВКА СКРОЛЛА
+   ============================================ */
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+/* ============================================
+   КНОПКА КАТАЛОГА — АКТИВНОЕ СОСТОЯНИЕ
+   ============================================ */
+
+.catalog-btn.is-active {
+    background: var(--primary-color, #1a1a1a);
+}
+
+/* ============================================
+   АДАПТИВ — ПЛАНШЕТ
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .mega-menu__inner {
+        flex-wrap: wrap;
+    }
+    
+    .mega-menu__column--categories {
+        flex: 0 0 100%;
+        max-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .mega-menu__column--subcategories,
+    .mega-menu__column--fabric-types {
+        flex: 1;
+        max-width: none;
+    }
+}
+
+/* ============================================
+   АДАПТИВ — МОБИЛЬНЫЕ
+   ============================================ */
+
+@media (max-width: 768px) {
+    .mega-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        max-width: none;
+        max-height: none;
+        border-radius: 0;
+        transform: translateX(-100%);
+        opacity: 1;
+        visibility: hidden;
+    }
+    
+    .mega-menu.is-open {
+        transform: translateX(0);
+        visibility: visible;
+    }
+    
+    .mega-menu__inner {
+        flex-direction: column;
+        height: 100%;
+        max-height: none;
+    }
+    
+    .mega-menu__column {
+        flex: none;
+        max-width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .mega-menu__column--categories {
+        flex: 0 0 auto;
+    }
+    
+    .mega-menu__column--subcategories {
+        flex: 0 0 auto;
+    }
+    
+    .mega-menu__column--fabric-types {
+        flex: 1;
+        overflow-y: auto;
+    }
+    
+    /* Кнопка закрытия на мобиле */
+    .mega-menu::before {
+        content: '×';
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #666;
+        background: #f5f5f5;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10;
+    }
+}
+
+/* ============================================
+   ДОСТУПНОСТЬ
+   ============================================ */
+
+.mega-menu__category-link:focus,
+.mega-menu__subcategory-link:focus,
+.mega-menu__fabric-type-link:focus {
+    outline: 2px solid var(--accent-color, #d4a574);
+    outline-offset: 2px;
+}
+
+/* Минимальная область клика */
+.mega-menu__category-link,
+.mega-menu__subcategory-link,
+.mega-menu__fabric-type-link {
+    min-height: 44px;
+}

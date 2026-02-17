@@ -36,6 +36,7 @@ const Catalog = (function() {
 
   /**
    * Загрузить индекс товаров и все товары
+   * PHASE 3: использует API вместо локального JSON
    */
   async function loadProducts(jsonPath = null) {
     if (isLoading) {
@@ -46,27 +47,94 @@ const Catalog = (function() {
     hasError = false;
 
     try {
-      let source;
+      // PHASE 3: Используем ProductsAPI для загрузки товаров
+      if (typeof ProductsAPI !== 'undefined') {
+        console.log('[Catalog] Загружаем товары из API...');
+        
+        const result = await ProductsAPI.getProducts({
+          page: 1,
+          limit: 100 // Загружаем больше товаров для кэша
+        });
 
-      if (jsonPath) {
-        source = jsonPath;
+        if (!result.success) {
+          console.error('[Catalog] API ошибка:', result.error);
+          hasError = true;
+          return [];
+        }
+
+        // Преобразуем данные из API формата в формат, ожидаемый CatalogCore
+        const apiProducts = result.data.products || result.data;
+        const adaptedProducts = adaptApiProductsToCatalog(apiProducts);
+
+        // Сохраняем в DataStore
+        await CatalogCore.setProducts(adaptedProducts);
+        
+        console.log(`[Catalog] Загружено ${adaptedProducts.length} товаров из API`);
+        const products = CatalogCore.getProducts();
+        return products;
       } else {
-        source = CONFIG.dataPath + CONFIG.indexFile;
-      }
+        // Fallback на локальный JSON если API модуль не загружен
+        console.warn('[Catalog] ProductsAPI не найден, используем локальный JSON');
+        
+        let source;
+        if (jsonPath) {
+          source = jsonPath;
+        } else {
+          source = CONFIG.dataPath + CONFIG.indexFile;
+        }
 
-      await CatalogCore.init(source);
-      
-      const products = CatalogCore.getProducts();
-      console.log(`Каталог: загружено ${products.length} товаров`);
-      
-      return products;
+        await CatalogCore.init(source);
+        
+        const products = CatalogCore.getProducts();
+        console.log(`[Catalog] Загружено ${products.length} товаров из JSON`);
+        
+        return products;
+      }
     } catch (error) {
-      console.error('Ошибка загрузки каталога:', error);
+      console.error('[Catalog] Ошибка загрузки:', error);
       hasError = true;
       return [];
     } finally {
       isLoading = false;
     }
+  }
+
+  /**
+   * Адаптировать данные из API в формат CatalogCore
+   * PHASE 3: преобразование структуры данных
+   */
+  function adaptApiProductsToCatalog(apiProducts) {
+    if (!Array.isArray(apiProducts)) {
+      return [];
+    }
+
+    return apiProducts.map(product => ({
+      // Основные поля
+      id: product.id || product.productId,
+      name: product.name || '',
+      category: product.category || 'Прочее',
+      price: product.price || 0,
+      price_unit: product.currency || 'RUB',
+      image: product.images?.[0] || product.image || CONFIG.defaultImage,
+      
+      // Дополнительные поля
+      sku: product.sku || '',
+      colors: product.colors || [],
+      rollLength: product.rollLength || 0,
+      stock: product.stock || 0,
+      supplier: product.supplier || '',
+      
+      // Флаги (если есть в API)
+      is_new: product.isNew === true || false,
+      is_sale: product.isSale === true || false,
+      coming_soon: product.comingSoon === true || false,
+      old_price: product.oldPrice || null,
+      
+      // Meta
+      isActive: product.isActive !== false,
+      createdAt: product.createdAt || new Date().toISOString(),
+      updatedAt: product.updatedAt || new Date().toISOString()
+    }));
   }
 
   /**

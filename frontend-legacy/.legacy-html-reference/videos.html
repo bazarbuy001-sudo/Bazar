@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Все видео-обзоры — Bazar Buy</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="cabinet/cabinet.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/didot');
+
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #d4a574;
+            --background: #fafafa;
+            --border-color: #e5e5e5;
+            --text-primary: #2c2c2c;
+            --text-secondary: #6b6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           HEADER - STICKY (весь header закреплен)
+           ============================================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+        }
+
+        .nav-container {
+            max-width: 60%;
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        .header-sticky {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .header-sticky.scrolled {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-row-2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            gap: 12px;
+            transition: padding 0.3s ease, gap 0.3s ease;
+        }
+
+        .header-sticky.scrolled .header-row-2 {
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-decoration: none;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .row2-brand {
+            font-family: 'Didot', serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            max-width: 150px;
+            opacity: 1;
+            margin-right: 10px;
+        }
+
+        .site-header .catalog-btn {
+            background: var(--accent-color) !important;
+            color: white !important;
+            padding: 9px 18px !important;
+            border-radius: 8px !important;
+            border: none !important;
+            cursor: pointer !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            flex-shrink: 0 !important;
+            transition: background 0.2s ease !important;
+        }
+
+        .site-header .catalog-btn:hover {
+            background: var(--primary-color) !important;
+        }
+
+        /* Более специфичные селекторы для переопределения styles.css */
+        .site-header .search-box,
+        .header-row-2 .search-box {
+            position: relative !important;
+            width: 280px !important;
+            min-width: 250px !important;
+            max-width: 320px !important;
+            flex: none !important;
+            flex-shrink: 0 !important;
+            display: block !important;
+            transition: width 0.3s ease, min-width 0.3s ease;
+        }
+
+        .header-sticky.scrolled .search-box {
+            width: 200px !important;
+            min-width: 200px !important;
+        }
+
+        .site-header .search-input,
+        .header-row-2 .search-input {
+            width: 100% !important;
+            padding: 10px 40px 10px 14px !important;
+            border: 1px solid var(--border-color) !important;
+            border-right: 1px solid var(--border-color) !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 13px !important;
+            box-sizing: border-box !important;
+            transition: border-color 0.2s ease !important;
+            flex: none !important;
+        }
+
+        .site-header .search-input:focus,
+        .header-row-2 .search-input:focus {
+            outline: none !important;
+            border-color: var(--accent-color) !important;
+        }
+
+        .site-header .search-icon,
+        .header-row-2 .search-icon {
+            position: absolute !important;
+            right: 14px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            color: var(--text-secondary) !important;
+            width: 16px !important;
+            height: 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: none !important;
+        }
+
+        .search-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+        }
+
+        .site-header .account-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+        }
+
+        .site-header .account-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+        }
+
+        /* Переопределение стилей кнопки "Личный кабинет" для соответствия старому виду */
+        #cabinet-header-btn .cabinet-header-btn,
+        #cabinet-header-btn a.cabinet-header-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+            transition:
+                border-color 0.2s ease,
+                color 0.2s ease !important;
+            text-decoration: none !important;
+            box-shadow: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn:hover,
+        #cabinet-header-btn a.cabinet-header-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized,
+        #cabinet-header-btn a.cabinet-header-btn--authorized {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized:hover,
+        #cabinet-header-btn a.cabinet-header-btn--authorized:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized::after {
+            display: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn__icon {
+            width: auto !important;
+            height: auto !important;
+            opacity: 1 !important;
+        }
+
+        .site-header .cart-btn {
+            background: var(--accent-color) !important;
+            color: white !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            border: none !important;
+            cursor: pointer !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            flex-shrink: 0 !important;
+            text-decoration: none !important;
+        }
+
+        .site-header .cart-btn:hover {
+            background: var(--primary-color) !important;
+        }
+
+        .cart-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============================================
+           VIDEO PAGE CONTENT
+           ============================================ */
+        .videos-page-container {
+            max-width: 1100px;
+            /* Уменьшен контейнер для более компактного вида */
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .videos-page-title {
+            font-family: 'Didot', serif;
+            font-size: 42px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            /* Увеличено до 5 колонок, что уменьшает размер каждого видео */
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        /* Адаптивность для меньших экранов */
+        @media (max-width: 1024px) {
+            .videos-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .videos-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .videos-page-title {
+                font-size: 32px;
+            }
+        }
+
+        .video-item {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .video-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-item video {
+            width: 100%;
+            aspect-ratio: 9/16;
+            /* Пропорции 1080x1920 */
+            object-fit: cover;
+            display: block;
+            background: #000;
+        }
+
+        .video-item-info {
+            padding: 20px;
+        }
+
+        .video-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .video-item-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-sticky">
+            <div class="nav-container">
+                <div class="header-row-2">
+                    <a href="/" class="logo-icon">
+                        <img src="icons/LogoBazarbuy.svg" alt="Bazar Buy">
+                    </a>
+                    <a href="/" class="row2-brand">Bazar Buy</a>
+
+                    <button class="catalog-btn">
+                        <span>☰</span>
+                        <span>Каталог товаров</span>
+                    </button>
+
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Поиск товаров...">
+                        <span class="search-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div id="cabinet-header-btn"></div>
+
+                    <a href="cart.html" class="cart-btn">
+                        <span class="cart-icon">
+                            <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                                <rect fill="none" height="256" width="256" />
+                                <path d="M184,184H69.8L41.9,30.6A8,8,0,0,0,34.1,24H16" fill="none" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                <circle cx="80" cy="204" fill="none" r="20" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="16" />
+                                <circle cx="184" cy="204" fill="none" r="20" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                <path d="M62.5,144H188.1a15.9,15.9,0,0,0,15.7-13.1L216,64H48" fill="none"
+                                    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="16" />
+                            </svg>
+                        </span>
+                        <span>Корзина</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="videos-page-container">
+            <a href="index.html" class="back-link">← Назад на главную</a>
+            <h1 class="videos-page-title">Все видео-обзоры</h1>
+
+            <div class="videos-grid" id="videosGrid">
+                <!-- Видео будут добавлены через JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Video data (можно расширить)
+        const allVideos = [
+            {
+                id: 1,
+                title: 'Премиум велюр',
+                description: 'Роскошная текстура итальянского велюра с глубокими оттенками',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4'
+            },
+            {
+                id: 2,
+                title: 'Шелк класса люкс',
+                description: 'Натуральный шелк высшего качества для элитных интерьеров',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4'
+            },
+            {
+                id: 3,
+                title: 'Жаккард премиум',
+                description: 'Эксклюзивные узоры ручной работы с уникальным дизайном',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4'
+            },
+            {
+                id: 4,
+                title: 'Бархат королевский',
+                description: 'Глубокие оттенки премиум бархата для роскошных интерьеров',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4'
+            },
+            {
+                id: 5,
+                title: 'Лен натуральный',
+                description: 'Экологичный европейский лен высочайшего качества',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4'
+            },
+            {
+                id: 6,
+                title: 'Хлопок органический',
+                description: 'Натуральный хлопок без химических добавок',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4'
+            },
+            {
+                id: 7,
+                title: 'Шерсть меринос',
+                description: 'Премиальная шерсть австралийского мериноса',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4'
+            },
+            {
+                id: 8,
+                title: 'Габардин элитный',
+                description: 'Классический габардин для деловых интерьеров',
+                video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4'
+            }
+        ];
+
+        function renderVideos() {
+            const grid = document.getElementById('videosGrid');
+            if (!grid) return;
+
+            grid.innerHTML = allVideos.map(video => `
+                <div class="video-item">
+                    <video controls preload="metadata">
+                        <source src="${video.video}" type="video/mp4">
+                        Ваш браузер не поддерживает видео.
+                    </video>
+                    <div class="video-item-info">
+                        <h3 class="video-item-title">${video.title}</h3>
+                        <p class="video-item-description">${video.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Инициализация при загрузке страницы
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                renderVideos();
+                initHeaderScroll();
+            });
+        } else {
+            renderVideos();
+            initHeaderScroll();
+        }
+
+        // Обработка скролла для шапки
+        function initHeaderScroll() {
+            const headerSticky = document.querySelector('.header-sticky');
+            if (!headerSticky) return;
+
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 60) {
+                    headerSticky.classList.add('scrolled');
+                } else {
+                    headerSticky.classList.remove('scrolled');
+                }
+            }, { passive: true });
+        }
+    </script>
+    <!-- Cabinet Scripts -->
+    <script src="cabinet/cabinet-api.js"></script>
+    <script src="cabinet/cabinet-store.js"></script>
+    <script src="cabinet/cabinet.js"></script>
+</body>
+
+</html>

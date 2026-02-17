@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты - Bazar Buy</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cabinet/cabinet.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/didot');
+
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #d4a574;
+            --background: #fafafa;
+            --border-color: #e5e5e5;
+            --text-primary: #2c2c2c;
+            --text-secondary: #6b6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           HEADER - STICKY (весь header закреплен)
+           ============================================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+        }
+
+        /* ============================================
+           КОНТЕЙНЕР - 60% ШИРИНЫ ЭКРАНА, ЦЕНТРИРОВАН
+           ============================================ */
+        .nav-container {
+            max-width: 60%;
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           STICKY WRAPPER - сразу в липком состоянии
+           ============================================ */
+        .header-sticky {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* ============================================
+           СТРОКА 2: Все элементы на одном уровне с равным gap
+           ============================================ */
+        .header-row-2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            gap: 12px;
+            transition:
+                padding 0.3s ease,
+                gap 0.3s ease;
+        }
+
+        .header-sticky .header-row-2 {
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-decoration: none;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .row2-brand {
+            font-family: 'Didot', serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition:
+                max-width 0.3s ease,
+                opacity 0.3s ease,
+                margin 0.3s ease;
+            margin-right: 0;
+        }
+
+        .header-sticky .row2-brand {
+            max-width: 150px;
+            opacity: 1;
+            margin-right: 10px;
+        }
+
+        .catalog-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition:
+                background 0.2s ease,
+                transform 0.3s ease;
+        }
+
+        .catalog-btn:hover {
+            background: var(--primary-color);
+        }
+
+        .search-box {
+            position: relative;
+            width: 280px;
+            min-width: 250px;
+            max-width: 320px;
+            flex-shrink: 0;
+            transition:
+                width 0.3s ease,
+                min-width 0.3s ease;
+        }
+
+        .header-sticky .search-box {
+            width: 200px;
+            min-width: 200px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .row2-contacts {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            flex-shrink: 0;
+            opacity: 0;
+            max-width: 0;
+            overflow: hidden;
+            pointer-events: none;
+            transition:
+                opacity 0.3s ease,
+                max-width 0.3s ease,
+                margin 0.3s ease;
+        }
+
+        .header-sticky .row2-contacts {
+            opacity: 1;
+            max-width: 100px;
+            pointer-events: auto;
+        }
+
+        .account-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            transition:
+                border-color 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .account-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .cart-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition:
+                background 0.2s ease,
+                transform 0.3s ease;
+        }
+
+        .cart-btn:hover {
+            background: var(--primary-color);
+        }
+
+        .cart-badge {
+            background: white;
+            color: var(--accent-color);
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .cart-badge.hidden {
+            display: none;
+        }
+
+        /* ============================================
+           ПЕРЕОПРЕДЕЛЕНИЕ СТИЛЕЙ КНОПКИ "ЛИЧНЫЙ КАБИНЕТ"
+           ============================================ */
+        #cabinet-header-btn .cabinet-header-btn,
+        #cabinet-header-btn a.cabinet-header-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+            transition:
+                border-color 0.2s ease,
+                color 0.2s ease !important;
+            text-decoration: none !important;
+            box-shadow: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn:hover,
+        #cabinet-header-btn a.cabinet-header-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized,
+        #cabinet-header-btn a.cabinet-header-btn--authorized {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized:hover,
+        #cabinet-header-btn a.cabinet-header-btn--authorized:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn--authorized::after {
+            display: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn__icon {
+            width: auto !important;
+            height: auto !important;
+            opacity: 1 !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f5f0eb 0%, #e8dfd6 100%);
+            padding: 80px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 197, 185, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(184, 165, 150, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 300;
+            color: #3a3a3a;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #6a6a6a;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1000px;
+            margin: -40px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-card {
+            background: #ffffff;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .content-card h2 {
+            font-size: 28px;
+            font-weight: 400;
+            color: #2a2a2a;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .content-card h3 {
+            font-size: 22px;
+            font-weight: 400;
+            color: #3a3a3a;
+            margin-bottom: 20px;
+            margin-top: 30px;
+        }
+
+        .content-card p {
+            font-size: 16px;
+            color: #5a5a5a;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #fafafa;
+            border: 1px solid #f0f0f0;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .info-item:hover {
+            transform: translateX(5px);
+            border-color: var(--accent-color);
+        }
+
+        .info-item a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .info-item a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer Section */
+        .footer-notice {
+            background: linear-gradient(135deg, #e8dfd6 0%, #d4c5b9 100%);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .footer-notice p {
+            font-size: 16px;
+            color: #3a3a3a;
+            margin: 0;
+        }
+
+        /* Footer */
+        .footer {
+            background: #3a3a3a;
+            color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer p {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .content-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-sticky" id="headerSticky">
+            <div class="nav-container">
+                <div class="header-row-2">
+                    <a href="index.html" class="logo-icon">
+                        <img src="icons/LogoBazarbuy.svg" alt="Bazar Buy">
+                    </a>
+                    <a href="index.html" class="row2-brand">Bazar Buy</a>
+
+                    <button class="catalog-btn">
+                        <span>☰</span>
+                        <span>Каталог товаров</span>
+                    </button>
+
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Поиск товаров...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+
+                    <span class="row2-contacts">Контакты</span>
+
+                    <div id="cabinet-header-btn"></div>
+
+                    <button class="cart-btn" onclick="window.location.href='cart.html'">
+                        <span>🛒</span>
+                        <span>Корзина</span>
+                        <span class="cart-badge hidden" id="cartBadge">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Контакты</h1>
+            <p>Мы всегда на связи и готовы ответить на ваши вопросы по ассортименту, условиям сотрудничества, оплате и
+                доставке.</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-card">
+            <h2>Связь с менеджером</h2>
+            <p>По всем вопросам вы можете связаться с менеджером напрямую. Мы консультируем по наличию тканей, условиям
+                заказа, оплате и доставке.</p>
+
+            <div class="info-item">
+                <p>📞 Телефон: <a href="tel:+79999999999">+7 (999) 999-99-99</a></p>
+            </div>
+            <div class="info-item">
+                <p>✉️ Email: <a href="mailto:info@bazarbuy.ru">info@bazarbuy.ru</a></p>
+            </div>
+
+            <h3>Время работы</h3>
+            <p>Обращения обрабатываются в рабочее время. Сообщения, полученные вне рабочего времени, обрабатываются в
+                ближайшее рабочее время.</p>
+
+            <h3>С какими вопросами можно обращаться</h3>
+            <p>• подбор тканей и консультации по ассортименту;</p>
+            <p>• формирование и согласование заказа;</p>
+            <p>• условия оплаты и доставки;</p>
+            <p>• оптовые условия и скидки;</p>
+            <p>• документы и сопровождение заказа.</p>
+
+            <h3>Перед обращением</h3>
+            <p>Рекомендуем заранее ознакомиться с разделами <a href="payment.html">«Оплата»</a>, <a
+                    href="delivery.html">«Доставка»</a>, <a href="discounts.html">«Оптовые скидки»</a> и <a
+                    href="faq.html">«FAQ»</a>.</p>
+
+            <h3>Индивидуальные условия</h3>
+            <p>Если у вас нестандартный запрос, крупный объём или особые требования, вы можете обсудить детали напрямую
+                с менеджером до оформления заказа.</p>
+        </div>
+
+        <div class="footer-notice">
+            <p>Мы ценим ваше время и стараемся отвечать максимально оперативно и по существу.</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 Bazar Buy. Все права защищены.</p>
+    </footer>
+    <script>
+        // Handle contact form submission
+        function handleContactSubmit(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('contactForm');
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+
+            console.log('Форма отправлена:', formData);
+            alert('Спасибо! Ваше сообщение было отправлено. Мы свяжемся с вами в ближайшее время.');
+            form.reset();
+        }
+
+        // Search functionality
+        document.querySelector('.search-icon').addEventListener('click', function () {
+            const searchInput = document.querySelector('.search-input');
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = 'catalog.html?search=' + encodeURIComponent(query);
+            }
+        });
+
+        document.querySelector('.search-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-icon').click();
+            }
+        });
+
+        // Catalog button functionality
+        document.querySelector('.catalog-btn').addEventListener('click', function () {
+            window.location.href = 'catalog.html';
+        });
+
+        // Scroll effect for header
+        window.addEventListener('scroll', function () {
+            const headerSticky = document.getElementById('headerSticky');
+            if (window.scrollY > 0) {
+                headerSticky.classList.add('scrolled');
+            } else {
+                headerSticky.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+
+</html>

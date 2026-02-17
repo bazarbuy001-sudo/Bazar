@@ -1,0 +1,255 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ===================================
+// CORE ENTITIES (D-001: B2B Model)
+// ===================================
+
+/// Клиенты (Юридические лица / ИП)
+model Client {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  publicId        String   @unique
+  email           String   @unique
+  name            String   // Наименование компании
+  phone           String? 
+  city            String? 
+  inn             String? 
+  primaryAuthMethod String @default("email")
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  orders          Order[]
+  idempotentRequests IdempotentRequest[]
+
+  @@index([email])
+  @@index([publicId])
+  @@map("clients")
+}
+
+/// Администраторы системы
+model AdminUser {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  publicId        String   @unique
+  email           String   @unique
+  passwordHash    String  
+  firstName       String? 
+  lastName        String? 
+  role            AdminRole @default(ADMIN)
+  isActive        Boolean  @default(true)
+  lastLoginAt     DateTime?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  orders          Order[]
+  sessions        Session[]
+  idempotentRequests IdempotentRequest[]
+
+  @@index([email])
+  @@index([role])
+  @@map("admin_users")
+}
+
+enum AdminRole {
+  ADMIN
+  SUPERADMIN
+  MANAGER
+}
+
+// ===================================
+// ORDERS (D-004: Meters Model)
+// ===================================
+
+model Order {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  publicId        String   @unique
+  clientId        String  
+  createdByAdminId String? 
+  
+  status          OrderStatus @default(PENDING)
+  totalAmount     Decimal  @db.Decimal(12, 2)
+  currency        String   @default("RUB")
+  shippingAddress Json?    // JSONB for address
+  notes           String? 
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdByAdmin  AdminUser? @relation(fields: [createdByAdminId], references: [id], onDelete: SetNull)
+  items           OrderItem[]
+
+  @@index([clientId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+/// Позиции в заказе (метражная модель)
+model OrderItem {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  orderId         String  
+  
+  fabricId        String   // Ссылка на ID ткани
+  color           String  
+  
+  requestedMeters Decimal  @db.Decimal(10, 2) // Заказано метров
+  fulfilledMeters Decimal? @db.Decimal(10, 2) // Отгружено метров
+  unitPricePerMeter Decimal @db.Decimal(10, 2)
+  
+  rolls           Int?     // Кол-во рулонов (BR-ITEM-001: ceil(meters / rollLength))
+  rollAllocations Json?    // JSONB для конкретных рулонов
+  totalPrice      Decimal  @db.Decimal(12, 2)
+
+  createdAt       DateTime @default(now())
+
+  // Relations
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+// ===================================
+// SAGA ORCHESTRATION (D-002)
+// ===================================
+
+model SagaOrchestration {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  sagaType        SagaType
+  sagaStatus      SagaStatus @default(INITIATED)
+  requestId       String  
+  
+  currentStep     String?  // ⚠️ DERIVED FIELD (updated via trigger)
+  payload         Json    
+  
+  startedAt       DateTime @default(now())
+  completedAt     DateTime?
+  timeoutAt       DateTime? // Explicit deadline
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  steps           SagaStep[]
+
+  @@index([sagaStatus])
+  @@index([sagaType])
+  @@map("saga_orchestration")
+}
+
+enum SagaType {
+  ORDER_CREATION
+  ORDER_CANCELLATION
+  PAYMENT_PROCESSING
+  STOCK_RESERVATION
+}
+
+enum SagaStatus {
+  INITIATED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  COMPENSATING
+  COMPENSATED
+}
+
+/// Шаги саги (SOURCE OF TRUTH для current_step)
+model SagaStep {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  sagaId          String  
+  
+  stepNumber      Int     
+  stepName        String  
+  stepStatus      SagaStepStatus @default(PENDING)
+  
+  inputData       Json?   
+  outputData      Json?   
+  errorMessage    String? 
+  
+  startedAt       DateTime?
+  completedAt     DateTime?
+
+  // Relations
+  saga            SagaOrchestration @relation(fields: [sagaId], references: [id], onDelete: Cascade)
+
+  @@unique([sagaId, stepNumber])
+  @@index([sagaId, stepNumber])
+  @@map("saga_steps")
+}
+
+enum SagaStepStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  COMPENSATED
+}
+
+// ===================================
+// IDEMPOTENCY & SESSIONS
+// ===================================
+
+model IdempotentRequest {
+  idempotencyKey  String   @id // UUID v4
+  clientId        String  
+  adminUserId     String? 
+  
+  requestHash     String  
+  responseStatus  Int?
+  responseBody    Json?   
+  
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime // TTL
+
+  // Relations
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  adminUser       AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([clientId])
+  @@index([expiresAt])
+  @@map("idempotent_requests")
+}
+
+model Session {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  adminUserId     String  
+  
+  tokenHash       String   @unique
+  ipAddress       String? 
+  userAgent       String? 
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime
+  lastActivityAt  DateTime?
+
+  // Relations
+  adminUser       AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, isActive])
+  @@index([tokenHash])
+  @@map("sessions")
+}

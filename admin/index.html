@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель - Bazar Buy</title>
+  <link rel="stylesheet" href="/admin/css/admin-styles.css">
+</head>
+<body id="app">
+
+  <!-- LOGIN PAGE -->
+  <div id="login-page" class="login-page">
+    <div class="login-container">
+      <div class="login-box">
+        <h1>Админ-панель</h1>
+        <p class="subtitle">Bazar Buy</p>
+        
+        <form id="login-form" class="login-form">
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              placeholder="admin@bazarbuy.com" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              placeholder="••••••••" 
+              required
+            >
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-login">Войти</button>
+          
+          <div id="login-error" class="alert alert-danger hidden">
+            <span id="error-message"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN DASHBOARD (Hidden initially) -->
+  <div id="dashboard-page" class="admin-container hidden">
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+      <div class="sidebar-header">
+        <h1>Bazar Buy</h1>
+      </div>
+
+      <nav class="sidebar-nav">
+        <li><a href="#dashboard" class="nav-link active">📊 Дашборд</a></li>
+        <li><a href="#products" class="nav-link">📦 Товары</a></li>
+        <li><a href="#orders" class="nav-link">📋 Заказы</a></li>
+        <li><a href="#clients" class="nav-link">👥 Клиенты</a></li>
+        <li><a href="#messages" class="nav-link">💬 Сообщения</a></li>
+        <li><a href="#settings" class="nav-link">⚙️ Настройки</a></li>
+        <li style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+          <a href="#" id="logout-btn" class="nav-link">🚪 Выход</a>
+        </li>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-main">
+      <!-- HEADER -->
+      <header class="admin-header">
+        <div class="header-left">
+          <h2 id="page-title">Дашборд</h2>
+        </div>
+        <div class="header-actions">
+          <div class="header-user">
+            <div class="header-user-avatar" id="user-avatar">A</div>
+            <div class="header-user-info">
+              <div class="header-user-name" id="user-name">Admin</div>
+              <div class="header-user-role" id="user-role">admin</div>
+            </div>
+          </div>
+          <button id="logout-btn-header" class="btn btn-secondary btn-small">Выход</button>
+        </div>
+      </header>
+
+      <!-- CONTENT AREA -->
+      <div class="admin-content">
+        <!-- DASHBOARD VIEW -->
+        <div id="view-dashboard" class="view active">
+          <div class="card-grid">
+            <div class="metric-card">
+              <div class="metric-label">Всего заказов</div>
+              <div class="metric-value" id="metric-total-orders">0</div>
+              <div class="metric-change" id="metric-orders-change"></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Общий доход</div>
+              <div class="metric-value" id="metric-total-revenue">0 ₽</div>
+              <div class="metric-change" id="metric-revenue-change"></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Новые клиенты</div>
+              <div class="metric-value" id="metric-new-clients">0</div>
+              <div class="metric-change" id="metric-clients-change"></div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Средний заказ</div>
+              <div class="metric-value" id="metric-avg-order">0 ₽</div>
+              <div class="metric-change"></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 30px;">
+            <div class="card-header">Статусы заказов</div>
+            <div id="dashboard-status-queue" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px;">
+              <div class="status-item">
+                <div class="status-count" id="status-pending">0</div>
+                <div class="status-label">На обработку</div>
+              </div>
+              <div class="status-item">
+                <div class="status-count" id="status-confirmed">0</div>
+                <div class="status-label">Подтверждены</div>
+              </div>
+              <div class="status-item">
+                <div class="status-count" id="status-processing">0</div>
+                <div class="status-label">На отправку</div>
+              </div>
+              <div class="status-item">
+                <div class="status-count" id="status-shipped">0</div>
+                <div class="status-label">Отправлены</div>
+              </div>
+              <div class="status-item">
+                <div class="status-count" id="status-delivered">0</div>
+                <div class="status-label">Доставлены</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top: 20px;">
+            <div class="card-header">Последние заказы</div>
+            <div id="dashboard-recent-orders" class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Клиент</th>
+                    <th>Статус</th>
+                    <th>Сумма</th>
+                    <th>Дата</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td colspan="5" class="text-center">Загрузка...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRODUCTS VIEW -->
+        <div id="view-products" class="view hidden">
+          <div class="flex-between mb-20">
+            <h2>Управление товарами</h2>
+            <div>
+              <button class="btn btn-primary" id="btn-add-product">+ Добавить товар</button>
+              <button class="btn btn-secondary" id="btn-import-products">📥 Импорт</button>
+            </div>
+          </div>
+
+          <div class="search-box">
+            <input type="text" id="products-search" placeholder="Поиск товаров...">
+            <select id="products-category">
+              <option value="">Все категории</option>
+            </select>
+            <button class="btn btn-secondary">Поиск</button>
+          </div>
+
+          <div id="products-table-container" class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Название</th>
+                  <th>Цена</th>
+                  <th>Категория</th>
+                  <th>Цвета</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="products-tbody">
+                <tr><td colspan="6" class="text-center">Загрузка...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ORDERS VIEW -->
+        <div id="view-orders" class="view hidden">
+          <div class="flex-between mb-20">
+            <h2>Управление заказами</h2>
+          </div>
+
+          <div class="search-box">
+            <input type="text" id="orders-search" placeholder="Поиск по ID или клиенту...">
+            <select id="orders-status-filter">
+              <option value="">Все статусы</option>
+              <option value="pending">На обработку</option>
+              <option value="confirmed">Подтверждены</option>
+              <option value="processing">На отправку</option>
+              <option value="shipped">Отправлены</option>
+              <option value="delivered">Доставлены</option>
+            </select>
+            <button class="btn btn-secondary">Поиск</button>
+          </div>
+
+          <div id="orders-table-container" class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Клиент</th>
+                  <th>Статус</th>
+                  <th>Сумма</th>
+                  <th>Дата</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody">
+                <tr><td colspan="6" class="text-center">Загрузка...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CLIENTS VIEW -->
+        <div id="view-clients" class="view hidden">
+          <div class="flex-between mb-20">
+            <h2>Управление клиентами</h2>
+          </div>
+
+          <div class="search-box">
+            <input type="text" id="clients-search" placeholder="Поиск клиентов...">
+            <button class="btn btn-secondary">Поиск</button>
+          </div>
+
+          <div id="clients-table-container" class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Компания</th>
+                  <th>Email</th>
+                  <th>Телефон</th>
+                  <th>Город</th>
+                  <th>Статус</th>
+                  <th>Действия</th>
+                </tr>
+              </thead>
+              <tbody id="clients-tbody">
+                <tr><td colspan="7" class="text-center">Загрузка...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- MESSAGES VIEW -->
+        <div id="view-messages" class="view hidden">
+          <div class="flex-between mb-20">
+            <h2>Сообщения</h2>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 300px 1fr; gap: 20px; height: 600px;">
+            <div id="chats-list" class="card" style="overflow-y: auto;">
+              <div class="card-header">Активные чаты</div>
+              <div id="chats-list-items"></div>
+            </div>
+
+            <div id="chat-view" class="card" style="display: flex; flex-direction: column;">
+              <div class="card-header">Чат</div>
+              <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 15px; background: #f9f9f9;"></div>
+              <div style="padding: 15px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
+                <input type="text" id="chat-input" placeholder="Введите сообщение..." style="flex: 1;">
+                <button class="btn btn-primary" id="btn-send-message">Отправить</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SETTINGS VIEW -->
+        <div id="view-settings" class="view hidden">
+          <div class="card">
+            <div class="card-header">Настройки</div>
+            <div class="form-group">
+              <label>Информация о профиле</label>
+              <p id="settings-info">Загрузка...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALS -->
+  <div id="product-modal" class="modal-overlay">
+    <div class="modal" style="max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header">
+        <h2 id="modal-title">Добавить товар</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="product-form" class="modal-body">
+
+        <!-- STEP 1: SELECT PRODUCT TYPE -->
+        <div id="step-1-type" class="form-step active">
+          <div class="step-title">Шаг 1: Выберите тип товара</div>
+          
+          <div class="form-group">
+            <label for="product-type">Тип товара:</label>
+            <select id="product-type" required>
+              <option value="">-- Выберите тип --</option>
+              <option value="fabric">📦 Ткани</option>
+              <option value="accessory">🧵 Фурнитура</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- STEP 2: BASIC INFO (for both) -->
+        <div id="step-2-basic" class="form-step hidden">
+          <div class="step-title">Шаг 2: Основная информация</div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="product-name">Название товара:</label>
+              <input type="text" id="product-name" required>
+            </div>
+            <div class="form-group">
+              <label for="product-article">Артикул:</label>
+              <input type="text" id="product-article" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: ТКАНИ-SPECIFIC FIELDS -->
+        <div id="step-3-fabric" class="form-step hidden">
+          <div class="step-title">Шаг 3: Характеристики ткани</div>
+
+          <!-- A. Коммерция и наличие -->
+          <div class="section-header">💰 Коммерция и наличие</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-price">Цена за метр (₽):</label>
+              <input type="number" id="fabric-price" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="fabric-old-price">Старая цена (₽):</label>
+              <input type="number" id="fabric-old-price" step="0.01">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-min-cut">Минимальная нарезка:</label>
+              <select id="fabric-min-cut" required>
+                <option value="">-- Выберите --</option>
+                <option value="3">3 метра</option>
+                <option value="6">6 метров</option>
+                <option value="10">10 метров</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fabric-warehouse">Наличие на складе (м):</label>
+              <input type="number" id="fabric-warehouse" step="0.1" required>
+            </div>
+          </div>
+
+          <div class="form-row checkbox-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="fabric-is-new"> Новинка
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="fabric-is-sale"> Скидка
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="fabric-is-rest"> Остатки со скидкой
+            </label>
+          </div>
+
+          <!-- B. Базовые характеристики -->
+          <div class="section-header">🎨 Базовые характеристики</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-color">Цвет:</label>
+              <input type="text" id="fabric-color" required>
+            </div>
+            <div class="form-group">
+              <label for="fabric-shade">Оттенок:</label>
+              <input type="text" id="fabric-shade">
+            </div>
+            <div class="form-group">
+              <label for="fabric-width">Ширина ткани (см):</label>
+              <input type="number" id="fabric-width" step="0.1" required>
+            </div>
+          </div>
+
+          <!-- D. Состав (СЛОЖНЫЙ БЛОК) -->
+          <div class="section-header">🔬 Состав</div>
+          <div id="fabric-composition-container">
+            <div class="composition-item">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Материал:</label>
+                  <input type="text" class="composition-material" placeholder="хлопок, синтетика...">
+                </div>
+                <div class="form-group">
+                  <label>Процент:</label>
+                  <input type="number" class="composition-percent" min="0" max="100" placeholder="%">
+                </div>
+                <button type="button" class="btn-remove-composition" style="margin-top: 24px;">✕</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" id="btn-add-composition" class="btn btn-secondary btn-small">+ Добавить компонент</button>
+
+          <!-- E. Плотность -->
+          <div class="section-header">⚖️ Плотность</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-density-gsm">Плотность г/м²:</label>
+              <input type="number" id="fabric-density-gsm" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="fabric-density-gpm">Плотность г/пог.м (для трикотажа):</label>
+              <input type="number" id="fabric-density-gpm" step="0.1">
+            </div>
+          </div>
+
+          <!-- F. Внешний вид -->
+          <div class="section-header">✨ Внешний вид</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-pattern">Узор:</label>
+              <input type="text" id="fabric-pattern" placeholder="клетка, полоска, цветы...">
+            </div>
+            <div class="form-group">
+              <label for="fabric-print-type">Тип рисунка:</label>
+              <select id="fabric-print-type">
+                <option value="">-- Выберите --</option>
+                <option value="однотонная">Однотонная</option>
+                <option value="принт">Принт</option>
+                <option value="жаккард">Жаккард</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- G. Тип и свойства -->
+          <div class="section-header">🏷️ Тип и свойства</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-subtype">Подтип ткани:</label>
+              <input type="text" id="fabric-subtype" placeholder="футер, интерлок, бифлекс...">
+            </div>
+            <div class="form-group">
+              <label for="fabric-properties">Свойства:</label>
+              <input type="text" id="fabric-properties" placeholder="стрейч, эластичная, тёплая...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="fabric-purpose">Назначение:</label>
+            <input type="text" id="fabric-purpose" placeholder="для платьев, для спорта, для сумок...">
+          </div>
+
+          <!-- H. Технические параметры -->
+          <div class="section-header">⚙️ Технические параметры</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-meters-roll">Метров в рулоне:</label>
+              <input type="number" id="fabric-meters-roll" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="fabric-meters-kg">Метров в 1 кг (минимум):</label>
+              <input type="number" id="fabric-meters-kg" step="0.1">
+            </div>
+            <div class="form-group">
+              <label for="fabric-country">Страна производитель:</label>
+              <input type="text" id="fabric-country" placeholder="Россия, Турция...">
+            </div>
+          </div>
+
+          <!-- I. Категория -->
+          <div class="section-header">📂 Категория</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="fabric-main-category">Основная категория:</label>
+              <select id="fabric-main-category" required>
+                <option value="">-- Выберите --</option>
+                <option value="Одежные_ткани">Одежные ткани</option>
+                <option value="Натуральные_ткани">Натуральные ткани</option>
+                <option value="Европейские_ткани">Европейские ткани</option>
+                <option value="Ткани_для_спецодежды">Ткани для спецодежды</option>
+                <option value="Технические_ткани">Технические ткани</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="fabric-subcategory">Подкатегория:</label>
+              <select id="fabric-subcategory" required>
+                <option value="">-- Выберите категорию выше --</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: ФУРНИТУРА-SPECIFIC FIELDS -->
+        <div id="step-3-accessory" class="form-step hidden">
+          <div class="step-title">Шаг 3: Характеристики фурнитуры</div>
+
+          <!-- B. Коммерция и наличие -->
+          <div class="section-header">💰 Коммерция и наличие</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="acc-price">Цена (₽):</label>
+              <input type="number" id="acc-price" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="acc-warehouse">Наличие на складе:</label>
+              <input type="number" id="acc-warehouse" required>
+            </div>
+          </div>
+
+          <div class="form-row checkbox-row">
+            <label class="checkbox-label">
+              <input type="checkbox" id="acc-is-new"> Новинка
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="acc-is-sale"> Скидка
+            </label>
+          </div>
+
+          <!-- C. Цвет -->
+          <div class="section-header">🎨 Цвет и материал</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="acc-color">Цвет (опционально):</label>
+              <input type="text" id="acc-color">
+            </div>
+            <div class="form-group">
+              <label for="acc-material">Материал:</label>
+              <select id="acc-material" required>
+                <option value="">-- Выберите --</option>
+                <option value="металл">Металл</option>
+                <option value="пластик">Пластик</option>
+                <option value="текстиль">Текстиль</option>
+                <option value="кожа">Кожа</option>
+                <option value="дерево">Дерево</option>
+                <option value="комбинированный">Комбинированный</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- E. Тип / конструкция -->
+          <div class="section-header">🔧 Тип и размер</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="acc-type">Тип фурнитуры:</label>
+              <input type="text" id="acc-type" placeholder="спираль, трактор, металлические..." required>
+            </div>
+            <div class="form-group">
+              <label for="acc-size">Размер/номер/формат:</label>
+              <input type="text" id="acc-size" placeholder="мм, см, номер...">
+            </div>
+          </div>
+
+          <!-- G. Дополнительные атрибуты -->
+          <div class="section-header">📌 Дополнительные атрибуты</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="acc-application">Назначение:</label>
+              <select id="acc-application">
+                <option value="">-- Выберите --</option>
+                <option value="бельевая">Бельевая</option>
+                <option value="декоративная">Декоративная</option>
+                <option value="спортивная">Спортивная</option>
+                <option value="техническая">Техническая</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="acc-finish">Покрытие/обработка:</label>
+              <input type="text" id="acc-finish" placeholder="никель, матовый, лак...">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="acc-brand">Бренд (опционально):</label>
+              <input type="text" id="acc-brand" placeholder="YKK, Riri...">
+            </div>
+            <div class="form-group">
+              <label for="acc-package">Формат продажи:</label>
+              <select id="acc-package">
+                <option value="">-- Выберите --</option>
+                <option value="поштучно">Поштучно</option>
+                <option value="набор">Набор</option>
+                <option value="карта_цветов">Карта цветов</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="acc-mounting">Способ крепления:</label>
+            <input type="text" id="acc-mounting" placeholder="пришивной, термо, клеевой...">
+          </div>
+
+          <!-- H. Категория -->
+          <div class="section-header">📂 Категория</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="acc-category">Категория фурнитуры:</label>
+              <select id="acc-category" required>
+                <option value="">-- Выберите --</option>
+                <option value="молнии">Молнии</option>
+                <option value="пуговицы">Пуговицы</option>
+                <option value="кружево">Кружево</option>
+                <option value="застежки">Застежки</option>
+                <option value="ленты_отделочные">Ленты отделочные</option>
+                <option value="нитки">Нитки</option>
+                <option value="резина">Резина</option>
+                <option value="бейка">Бейка</option>
+                <option value="тесьма">Тесьма</option>
+                <option value="кнопки">Кнопки</option>
+                <option value="другое">Другое</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- IMAGE UPLOAD SECTION -->
+        <div class="form-group">
+          <label>Изображения товара (макс 5 файлов, 5MB за файл)</label>
+          <div id="image-upload-container" class="image-upload-container">
+            <!-- Main image slot -->
+            <div class="image-slot main-image-slot" data-slot="0" data-type="main">
+              <div class="image-drop-zone">
+                <div class="drop-icon">📸</div>
+                <div class="drop-text">Основное изображение<br><small>(обязательно)</small></div>
+                <input type="file" class="image-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+              </div>
+              <div class="image-preview" style="display: none;">
+                <img src="" alt="preview">
+                <div class="image-badge main-badge">Основное</div>
+                <button type="button" class="btn-remove-image">✕</button>
+              </div>
+            </div>
+
+            <!-- Additional image slots -->
+            <div class="image-slot additional-image-slot" data-slot="1" data-type="additional">
+              <div class="image-drop-zone">
+                <div class="drop-icon">🖼️</div>
+                <div class="drop-text">Дополнительное<br><small>(опционально)</small></div>
+                <input type="file" class="image-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+              </div>
+              <div class="image-preview" style="display: none;">
+                <img src="" alt="preview">
+                <button type="button" class="btn-set-main">Установить основным</button>
+                <button type="button" class="btn-remove-image">✕</button>
+              </div>
+            </div>
+
+            <div class="image-slot additional-image-slot" data-slot="2" data-type="additional">
+              <div class="image-drop-zone">
+                <div class="drop-icon">🖼️</div>
+                <div class="drop-text">Дополнительное<br><small>(опционально)</small></div>
+                <input type="file" class="image-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+              </div>
+              <div class="image-preview" style="display: none;">
+                <img src="" alt="preview">
+                <button type="button" class="btn-set-main">Установить основным</button>
+                <button type="button" class="btn-remove-image">✕</button>
+              </div>
+            </div>
+
+            <div class="image-slot additional-image-slot" data-slot="3" data-type="additional">
+              <div class="image-drop-zone">
+                <div class="drop-icon">🖼️</div>
+                <div class="drop-text">Дополнительное<br><small>(опционально)</small></div>
+                <input type="file" class="image-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+              </div>
+              <div class="image-preview" style="display: none;">
+                <img src="" alt="preview">
+                <button type="button" class="btn-set-main">Установить основным</button>
+                <button type="button" class="btn-remove-image">✕</button>
+              </div>
+            </div>
+
+            <div class="image-slot additional-image-slot" data-slot="4" data-type="additional">
+              <div class="image-drop-zone">
+                <div class="drop-icon">🖼️</div>
+                <div class="drop-text">Дополнительное<br><small>(опционально)</small></div>
+                <input type="file" class="image-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+              </div>
+              <div class="image-preview" style="display: none;">
+                <img src="" alt="preview">
+                <button type="button" class="btn-set-main">Установить основным</button>
+                <button type="button" class="btn-remove-image">✕</button>
+              </div>
+            </div>
+          </div>
+          <div id="image-upload-error" class="alert alert-danger hidden" style="margin-top: 10px;">
+            <span id="image-error-message"></span>
+          </div>
+        </div>
+
+        <!-- Hidden input to store image data -->
+        <input type="hidden" id="product-images-data">
+      </form>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="modal-cancel">Отмена</button>
+        <button class="btn btn-primary" id="modal-save">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="order-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Детали заказа</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body" id="order-modal-content">
+        Загрузка...
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="order-modal-close">Закрыть</button>
+        <button class="btn btn-primary" id="btn-print-invoice">Печать счета</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- SCRIPTS -->
+  <script src="/admin/js/api-client.js"></script>
+  <script src="/admin/js/image-upload.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/dashboard.js"></script>
+  <script src="/admin/js/product-form-handler.js"></script>
+  <script src="/admin/js/products-management.js"></script>
+  <script src="/admin/js/orders-management.js"></script>
+  <script src="/admin/js/clients-management.js"></script>
+  <script src="/admin/js/messages-chat.js"></script>
+</body>
+</html>
+
+<style>
+  /* Login Page Styles */
+  .login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .login-container {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .login-box {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .login-box h1 {
+    text-align: center;
+    color: #212121;
+    margin-bottom: 5px;
+  }
+
+  .login-box .subtitle {
+    text-align: center;
+    color: #757575;
+    margin-bottom: 30px;
+    font-size: 14px;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn-login {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .status-item {
+    text-align: center;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+
+  .status-count {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1976d2;
+  }
+
+  .status-label {
+    font-size: 12px;
+    color: #757575;
+    margin-top: 5px;
+  }
+</style>

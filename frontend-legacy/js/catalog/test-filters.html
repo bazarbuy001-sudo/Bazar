@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Тест фильтров каталога</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-section h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .test-result {
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .info {
+      background: #d1ecf1;
+      color: #0c5460;
+      border: 1px solid #bee5eb;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    pre {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Тест фильтров каталога</h1>
+  
+  <div class="test-section">
+    <h2>Инициализация</h2>
+    <button onclick="testInit()">Тест init()</button>
+    <div id="init-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Методы подсчета</h2>
+    <button onclick="testGetFabricTypesWithCount()">Типы ткани</button>
+    <button onclick="testGetColorsWithCount()">Цвета</button>
+    <button onclick="testGetPriceRange()">Диапазон цен</button>
+    <button onclick="testGetMeterageRange()">Диапазон метража</button>
+    <div id="count-results"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Проверка мутаций state</h2>
+    <button onclick="testNoMutations()">Тест: state не мутируется</button>
+    <div id="mutation-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>Фильтрация</h2>
+    <button onclick="testFiltering()">Тест фильтрации</button>
+    <div id="filter-result"></div>
+  </div>
+
+  <!-- Подключение необходимых скриптов -->
+  <script src="data-sources/localJSONSource.js"></script>
+  <script src="dataStore.js"></script>
+  <script src="filters.js"></script>
+
+  <script>
+    // Тестовые данные
+    const testProducts = [
+      {
+        id: 1,
+        name: "Лён натуральный",
+        category: "Лён",
+        fabric_type: "len",
+        colors: ["белый", "натуральный"],
+        price: 1290,
+        price_on_request: false,
+        fabric_meterage: 50.5
+      },
+      {
+        id: 2,
+        name: "Хлопок вафельный",
+        category: "Хлопок",
+        fabric_type: "cotton",
+        colors: ["белый", "голубой"],
+        price: 890,
+        price_on_request: false,
+        fabric_meterage: 30.0
+      },
+      {
+        id: 3,
+        name: "Шёлк премиум",
+        category: "Шёлк",
+        colors: ["золото", "серебро"],
+        price: 3490,
+        price_on_request: false,
+        fabric_meterage: 25.0
+      },
+      {
+        id: 4,
+        name: "Товар по запросу",
+        category: "Лён",
+        colors: ["белый"],
+        price: null,
+        price_on_request: true
+      }
+    ];
+
+    function showResult(elementId, message, type = 'info') {
+      const div = document.getElementById(elementId);
+      div.innerHTML = `<div class="test-result ${type}">${message}</div>`;
+    }
+
+    // Тест 1: Инициализация
+    function testInit() {
+      try {
+        // Загружаем тестовые данные
+        CatalogDataStore.load(testProducts);
+        CatalogFilters.init();
+        
+        const activeFilters = CatalogFilters.getActiveFilters();
+        const isEmpty = Object.keys(activeFilters).length === 0;
+        
+        if (isEmpty) {
+          showResult('init-result', '✅ init() работает корректно: активные фильтры пусты после инициализации', 'success');
+        } else {
+          showResult('init-result', '❌ init() не сбросил активные фильтры', 'error');
+        }
+      } catch (error) {
+        showResult('init-result', `❌ Ошибка: ${error.message}`, 'error');
+      }
+    }
+
+    // Тест 2: Типы ткани с подсчетом
+    function testGetFabricTypesWithCount() {
+      try {
+        CatalogDataStore.load(testProducts);
+        CatalogFilters.init();
+        
+        const types = CatalogFilters.getFabricTypesWithCount(testProducts);
+        
+        const result = `✅ getFabricTypesWithCount() работает\n` +
+          `Найдено типов: ${types.length}\n` +
+          `<pre>${JSON.stringify(types, null, 2)}</pre>`;
+        
+        showResult('count-results', result, 'success');
+      } catch (error) {
+        showResult('count-results', `❌ Ошибка: ${error.message}`, 'error');
+      }
+    }
+
+    // Тест 3: Цвета с подсчетом
+    function testGetColorsWithCount() {
+      try {
+        CatalogDataStore.load(testProducts);
+        CatalogFilters.init();
+        
+        const colors = CatalogFilters.getColorsWithCount(testProducts);
+        
+        const result = `✅ getColorsWithCount() работает\n` +
+          `Найдено цветов: ${colors.length}\n` +
+          `<pre>${JSON.stringify(colors, null, 2)}</pre>`;
+        
+        showResult('count-results', result, 'success');
+      } catch (error) {
+        showResult('count-results', `❌ Ошибка: ${error.message}`, 'error');
+      }
+    }
+
+    // Тест 4: Диапазон цен
+    function testGetPriceRange() {
+      try {
+        CatalogDataStore.load(testProducts);
+        CatalogFilters.init();
+        
+        const range = CatalogFilters.getPriceRange(testProducts);
+        
+        if (range) {
+          const result = `✅ getPriceRange() работает\n` +
+            `Диапазон: ${range.min} - ${range.max} ${range.currency}\n` +
+            `<pre>${JSON.stringify(range, null, 2)}</pre>`;
+          showResult('count-results', result, 'success');
+        } else {
+          showResult('count-results', '⚠️ Диапазон цен не найден (нет товаров с ценой)', 'info');
+        }
+      } catch (error) {
+        showResult('count-results', `❌ Ошибка: ${error.message}`, 'error');
+      }
+    }
+
+    // Тест 5: Диапазон метража
+    function testGetMeterageRange() {
+      try {
+        CatalogDataStore.load(testProducts);
+        CatalogFilters.init();
+        
+        const range = CatalogFilters.getMeterageRange(testProducts);
+        
+        if (range) {
+          const result = `✅ getMeterageRange() работает\n` +
+            `Диапазон: ${range.min} - ${range.max} ${range.unit}\n` +
+            `<pre>${JSON.stringify(range, null, 2)}</pre>`;
+          showResult('count-results', result, 'success');
+        } else {
+          showResult('count-results', '⚠️ Диапазон метража не найден', 'info');
+        }
+      } catch (error) {
+        showResult('count-results', `❌ Ошибка: ${error.message}`, 'error');
+      }
+    }
+
+    // Тест 6: Проверка отсутствия мутаций
+    function testNoMutations() {
+      try {
+        CatalogDataStore.load(testProducts);
+        CatalogFilters.init();
+        
+        // Устанавливаем фильтр
+        CatalogFilters.setFilter('fabric_type', ['len']);
+        const before = JSON.stringify(CatalogFilters.getActiveFilters());
+        
+        // Вызываем методы подсчета
+        CatalogFilters.getFabricTypesWithCount(testProducts);
+        CatalogFilters.getColorsWithCount(testProducts);
+        CatalogFilters.getPriceRange(testProducts);
+        
+        const after = JSON.stringify(CatalogFilters.getActiveFilters());
+        
+        if (before === after) {
+          showResult('mutation-result', '✅ state.active НЕ мутируется при вызове методов подсчета', 'success');
+        } else {
+          showResult('mutation-result', '❌ state.active был изменен! Это ошибка!', 'error');
+        }
+      } catch (error) {
+        showResult('mutation-result', `❌ Ошибка: ${error.message}`, 'error');
+      }
+    }
+
+    // Тест 7: Фильтрация
+    function testFiltering() {
+      try {
+        CatalogDataStore.load(testProducts);
+        CatalogFilters.init();
+        CatalogFilters.buildFilters(testProducts);
+        
+        // Тест фильтра по типу ткани
+        CatalogFilters.setFilter('fabric_type', ['len']);
+        const filtered1 = CatalogFilters.applyFilters(testProducts);
+        
+        // Тест фильтра по цвету
+        CatalogFilters.resetFilters();
+        CatalogFilters.setFilter('colors', ['белый']);
+        const filtered2 = CatalogFilters.applyFilters(testProducts);
+        
+        // Тест фильтра по цене
+        CatalogFilters.resetFilters();
+        CatalogFilters.setFilter('price', {min: 1000, max: 2000});
+        const filtered3 = CatalogFilters.applyFilters(testProducts);
+        
+        const result = `✅ Фильтрация работает:\n` +
+          `- По типу ткани: ${filtered1.length} товаров\n` +
+          `- По цвету: ${filtered2.length} товаров\n` +
+          `- По цене: ${filtered3.length} товаров`;
+        
+        showResult('filter-result', result, 'success');
+      } catch (error) {
+        showResult('filter-result', `❌ Ошибка: ${error.message}`, 'error');
+      }
+    }
+
+    // Автоматический запуск при загрузке
+    window.addEventListener('DOMContentLoaded', () => {
+      console.log('Тест фильтров загружен. Нажмите кнопки для запуска тестов.');
+    });
+  </script>
+</body>
+</html>
+
+

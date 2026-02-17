@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    
+    <!-- Cabinet Styles -->
+    <link rel="stylesheet" href="cabinet.css">
+    
+    <style>
+        /* Тестовая панель (только для разработки) */
+        /* Для продакшена: удалите блок .test-panel из HTML или скройте через display: none */
+        .test-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: 2px solid #1a1a2e;
+            border-radius: 8px;
+            padding: 12px;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 12px;
+            max-width: 250px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .test-panel__title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a2e;
+            font-size: 13px;
+        }
+        .test-panel__btn {
+            display: block;
+            width: 100%;
+            padding: 6px 10px;
+            margin: 4px 0;
+            background: #1a1a2e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            transition: background 0.2s;
+        }
+        .test-panel__btn:hover {
+            background: #16213e;
+        }
+        .test-panel__btn--secondary {
+            background: #6c757d;
+        }
+        .test-panel__btn--secondary:hover {
+            background: #5a6268;
+        }
+        .test-panel__section {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #e9ecef;
+        }
+        .test-panel__section-title {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+        ═══════════════════════════════════════════════════════════════════
+        КОНТЕЙНЕР ЛИЧНОГО КАБИНЕТА
+        
+        Здесь рендерится весь UI кабинета:
+        - Страница авторизации (если не авторизован)
+        - Экран "Продолжить заказ" (если есть draftOrder)
+        - Личный кабинет с разделами (если авторизован)
+        ═══════════════════════════════════════════════════════════════════
+    -->
+    <div id="cabinet-app"></div>
+    
+    <!-- 
+        ═══════════════════════════════════════════════════════════════════
+        ТЕСТОВАЯ ПАНЕЛЬ (ТОЛЬКО ДЛЯ РАЗРАБОТКИ)
+        
+        Удалите этот блок перед продакшеном или скройте через display: none.
+        Для скрытия/показа нажмите Ctrl+Shift+T.
+        ═══════════════════════════════════════════════════════════════════
+    -->
+    <div class="test-panel" id="testPanel">
+        <div class="test-panel__title">🧪 Тестовая панель</div>
+        
+        <div class="test-panel__section">
+            <div class="test-panel__section-title">Быстрый вход</div>
+            <button class="test-panel__btn" onclick="quickLogin()">🚪 Быстрый вход</button>
+            <button class="test-panel__btn test-panel__btn--secondary" onclick="quickLogout()">🚪 Выйти</button>
+        </div>
+        
+        <div class="test-panel__section">
+            <div class="test-panel__section-title">Разделы</div>
+            <button class="test-panel__btn" onclick="showSection('orders')">📦 Заказы</button>
+            <button class="test-panel__btn" onclick="showSection('chat')">💬 Чат</button>
+            <button class="test-panel__btn" onclick="showSection('requisites')">📋 Реквизиты</button>
+            <button class="test-panel__btn" onclick="showSection('profile')">👤 Профиль</button>
+        </div>
+        
+        <div class="test-panel__section">
+            <div class="test-panel__section-title">Тесты</div>
+            <button class="test-panel__btn" onclick="simulateCartOrder()">🛒 Симуляция заказа из корзины</button>
+            <button class="test-panel__btn" onclick="simulateManagerMessage()">👨‍💼 Сообщение менеджера</button>
+            <button class="test-panel__btn" onclick="showOnboarding()">🎓 Показать Onboarding</button>
+            <button class="test-panel__btn" onclick="checkState()">📊 Показать состояние</button>
+        </div>
+        
+        <div class="test-panel__section">
+            <div class="test-panel__section-title">Отладка</div>
+            <button class="test-panel__btn test-panel__btn--secondary" onclick="toggleTestPanel()">❌ Скрыть панель</button>
+        </div>
+    </div>
+    
+    <!-- 
+        ═══════════════════════════════════════════════════════════════════
+        PHASE 3: API Модули
+        ═══════════════════════════════════════════════════════════════════
+    -->
+    <script src="../js/api/client.js"></script>
+    <script src="../js/api/cabinet.js"></script>
+    <script src="../js/api/orders.js"></script>
+    <script src="../js/api/index.js"></script>
+
+    <!-- 
+        ═══════════════════════════════════════════════════════════════════
+        CABINET SCRIPTS (порядок загрузки важен!)
+        ═══════════════════════════════════════════════════════════════════
+    -->
+    <script src="cabinet-api.js"></script>
+    <script src="cabinet-store.js"></script>
+    <script src="cabinet.js"></script>
+    
+    <!-- 
+        ═══════════════════════════════════════════════════════════════════
+        ИНТЕГРАЦИЯ С КОРЗИНОЙ (пример)
+        ═══════════════════════════════════════════════════════════════════
+        
+        Корзина отправляет заявку через событие:
+        window.dispatchEvent(new CustomEvent('cart:submit-order', {
+          detail: { items: [...] }
+        }));
+        
+        Кабинет автоматически подхватывает событие и:
+        1. Если не авторизован → создаёт draftOrder и показывает экран "Продолжить заказ"
+        2. Если авторизован → создаёт Order через API
+        
+        Слушать ответ о создании заказа:
+        window.addEventListener('cabinet:order-submitted', (e) => {
+          const order = e.detail.order;
+          // Очистить корзину, показать уведомление и т.д.
+        });
+    -->
+    
+    <!-- 
+        ═══════════════════════════════════════════════════════════════════
+        ТЕСТОВЫЕ ФУНКЦИИ (только для разработки)
+        ═══════════════════════════════════════════════════════════════════
+    -->
+    <script>
+        // Быстрый вход
+        function quickLogin() {
+            if (typeof CabinetStore !== 'undefined') {
+                CabinetStore.actions.login('test@example.com', '123456');
+                console.log('✅ Быстрый вход выполнен');
+            } else {
+                alert('CabinetStore не загружен. Обновите страницу.');
+            }
+        }
+        
+        // Быстрый выход
+        function quickLogout() {
+            if (typeof CabinetStore !== 'undefined') {
+                CabinetStore.actions.logout();
+                console.log('✅ Выход выполнен');
+            }
+        }
+        
+        // Переключение разделов
+        function showSection(section) {
+            if (typeof CabinetStore !== 'undefined') {
+                CabinetStore.actions.setActiveSection(section);
+                console.log('✅ Переключено на раздел:', section);
+            }
+        }
+        
+        // Симуляция заказа из корзины
+        function simulateCartOrder() {
+            window.dispatchEvent(new CustomEvent('cart:submit-order', {
+                detail: {
+                    items: [
+                        { productId: 'prod_001', name: 'Хлопок Premium', color: 'Белый', meters: 150, price: 15000 },
+                        { productId: 'prod_002', name: 'Лён натуральный', color: 'Серый', meters: 75, rolls: 2, price: 11250 }
+                    ]
+                }
+            }));
+            console.log('✅ Симуляция заказа из корзины выполнена');
+        }
+        
+        // Симуляция сообщения менеджера
+        function simulateManagerMessage() {
+            const messages = [
+                'Здравствуйте! Всё в наличии, готов оформить.',
+                'Уточните, пожалуйста, адрес доставки.',
+                'Цена со скидкой составит 45 000 ₽.',
+                'Когда вам удобно принять доставку?'
+            ];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            window.dispatchEvent(new CustomEvent('cabinet:manager-message', {
+                detail: {
+                    id: 'msg_' + Date.now(),
+                    sender: 'manager',
+                    text: randomMessage,
+                    createdAt: new Date().toISOString()
+                }
+            }));
+            console.log('✅ Сообщение менеджера отправлено:', randomMessage);
+        }
+        
+        // Показать onboarding
+        function showOnboarding() {
+            if (typeof CabinetStore !== 'undefined') {
+                CabinetStore.actions.setSystem({ showOnboarding: true });
+                console.log('✅ Onboarding показан');
+            }
+        }
+        
+        // Показать текущее состояние
+        function checkState() {
+            if (typeof CabinetStore !== 'undefined') {
+                const state = CabinetStore._getState();
+                console.log('📊 Текущее состояние:', state);
+                alert('Состояние выведено в консоль (F12 → Console)');
+            }
+        }
+        
+        // Скрыть/показать тестовую панель
+        function toggleTestPanel() {
+            const panel = document.getElementById('testPanel');
+            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Показать панель по Ctrl+Shift+T
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+                const panel = document.getElementById('testPanel');
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            }
+        });
+        
+        console.log('🧪 Тестовая панель загружена. Нажмите Ctrl+Shift+T для скрытия/показа панели.');
+        
+        // ═══════════════════════════════════════════════════════════════════
+        // ТЕСТОВЫЕ ДАННЫЕ ДЛЯ ДЕМО
+        // ═══════════════════════════════════════════════════════════════════
+        
+        console.log(`
+╔══════════════════════════════════════════════════════════════════╗
+║                     ЛИЧНЫЙ КАБИНЕТ                               ║
+║                                                                  ║
+║  Тестовые данные для входа:                                      ║
+║  Email: test@example.com                                         ║
+║  Пароль: password123 или 123456                                  ║
+║                                                                  ║
+║  Или зарегистрируйте нового пользователя.                        ║
+║                                                                  ║
+║  ВАЖНО: Это frontend-заглушка.                                   ║
+║  Для production замените CabinetAPI на реальный backend.         ║
+║                                                                  ║
+║  Тестовая панель: Ctrl+Shift+T                                   ║
+╚══════════════════════════════════════════════════════════════════╝
+        `);
+    </script>
+</body>
+</html>

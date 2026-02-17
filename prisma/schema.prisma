@@ -1,0 +1,242 @@
+// Prisma Schema for Bazar Buy
+// Version: 1.0
+// Source: CANONICAL/DATA_DICTIONARY.md (D-001, D-002, D-004)
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================
+// ENUMS (D-002: Saga Orchestration)
+// ============================================
+
+enum SagaType {
+  ORDER_CREATION
+  ORDER_CANCELLATION
+  PAYMENT_PROCESSING
+  STOCK_RESERVATION
+}
+
+enum SagaStatus {
+  INITIATED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  COMPENSATING
+  COMPENSATED
+}
+
+enum StepStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  COMPENSATED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum AdminRole {
+  ADMIN
+  SUPERADMIN
+  MANAGER
+}
+
+// ============================================
+// CORE ENTITIES (D-001: B2B Model)
+// ============================================
+
+/// Клиенты (юридические лица / компании)
+model Client {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  publicId            String   @unique @db.VarChar(20) // CL-XXXXXX
+  email               String   @unique @db.VarChar(255)
+  name                String   @db.VarChar(255) // Наименование компании
+  phone               String?  @db.VarChar(20)
+  city                String?  @db.VarChar(100)
+  inn                 String?  @db.VarChar(12) // ИНН
+  primaryAuthMethod   String   @default("email") @db.VarChar(20)
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now()) @db.Timestamptz()
+  updatedAt           DateTime @updatedAt @db.Timestamptz()
+
+  // Relations
+  orders              Order[]
+  idempotentRequests  IdempotentRequest[]
+
+  @@index([email])
+  @@index([publicId])
+  @@map("clients")
+}
+
+/// Администраторы системы
+model AdminUser {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  publicId          String   @unique @db.VarChar(20) // ADM-XXXXXX
+  email             String   @unique @db.VarChar(255)
+  passwordHash      String   @db.VarChar(255)
+  firstName         String?  @db.VarChar(100)
+  lastName          String?  @db.VarChar(100)
+  role              AdminRole @default(ADMIN)
+  isActive          Boolean   @default(true)
+  lastLoginAt       DateTime? @db.Timestamptz()
+  createdAt         DateTime  @default(now()) @db.Timestamptz()
+  updatedAt         DateTime  @updatedAt @db.Timestamptz()
+
+  // Relations
+  orders            Order[]
+  sessions          Session[]
+  idempotentRequests IdempotentRequest[]
+
+  @@index([email])
+  @@index([role])
+  @@map("admin_users")
+}
+
+/// Заказы
+model Order {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  publicId          String   @unique @db.VarChar(20) // ORD-YYYY-NNNNNN
+  clientId          String   @db.Uuid
+  createdByAdminId  String?  @db.Uuid
+  status            OrderStatus @default(PENDING)
+  totalAmount       Decimal   @db.Decimal(12, 2)
+  currency          String    @default("RUB") @db.VarChar(3)
+  shippingAddress   Json?     // JSONB
+  notes             String?   @db.Text
+  createdAt         DateTime  @default(now()) @db.Timestamptz()
+  updatedAt         DateTime  @updatedAt @db.Timestamptz()
+
+  // Relations
+  client            Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdByAdmin    AdminUser? @relation(fields: [createdByAdminId], references: [id])
+  items             OrderItem[]
+
+  @@index([clientId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+/// Позиции заказа (D-004: Метражная модель)
+model OrderItem {
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId               String   @db.Uuid
+  fabricId              String   @db.Uuid
+  color                 String   @db.VarChar(50)
+  requestedMeters       Decimal  @db.Decimal(10, 2) // BR-ITEM-001, BR-ITEM-004
+  fulfilledMeters       Decimal? @db.Decimal(10, 2) // Partial fulfillment
+  unitPricePerMeter     Decimal  @db.Decimal(10, 2)
+  rolls                 Int?     // BR-ITEM-001: ceil(meters / rollLength)
+  rollAllocations       Json?    // JSONB
+  totalPrice            Decimal  @db.Decimal(12, 2)
+  createdAt             DateTime @default(now()) @db.Timestamptz()
+
+  // Relations
+  order                 Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+// ============================================
+// SAGA ORCHESTRATION (D-002)
+// ============================================
+
+/// Основная таблица саг
+model SagaOrchestration {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sagaType          SagaType
+  sagaStatus        SagaStatus @default(INITIATED)
+  requestId         String   @db.Uuid // FK к исходному запросу
+  currentStep       String?  @db.VarChar(100) // DERIVED FIELD via trigger
+  payload           Json     // JSONB
+  startedAt         DateTime @default(now()) @db.Timestamptz()
+  completedAt       DateTime? @db.Timestamptz()
+  timeoutAt         DateTime? @db.Timestamptz()
+  createdAt         DateTime @default(now()) @db.Timestamptz()
+  updatedAt         DateTime @updatedAt @db.Timestamptz()
+
+  // Relations
+  steps             SagaStep[]
+
+  @@index([sagaStatus])
+  @@index([sagaType])
+  @@map("saga_orchestration")
+}
+
+/// Шаги саги (Source of truth для current_step)
+model SagaStep {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  sagaId            String   @db.Uuid
+  stepNumber        Int
+  stepName          String   @db.VarChar(100)
+  stepStatus        StepStatus @default(PENDING)
+  inputData         Json?     // JSONB
+  outputData        Json?     // JSONB
+  errorMessage      String?   @db.Text
+  startedAt         DateTime? @db.Timestamptz()
+  completedAt       DateTime? @db.Timestamptz()
+
+  // Relations
+  saga              SagaOrchestration @relation(fields: [sagaId], references: [id], onDelete: Cascade)
+
+  @@unique([sagaId, stepNumber])
+  @@index([sagaId, stepNumber])
+  @@map("saga_steps")
+}
+
+// ============================================
+// IDEMPOTENCY & SESSIONS
+// ============================================
+
+/// Идемпотентные запросы
+model IdempotentRequest {
+  idempotencyKey    String   @id @db.Char(36) // UUID v4
+  clientId          String   @db.Uuid
+  adminUserId       String?  @db.Uuid
+  requestHash       String   @db.VarChar(64)
+  responseStatus    Int?
+  responseBody      Json?    // JSONB
+  createdAt         DateTime @default(now()) @db.Timestamptz()
+  expiresAt         DateTime @db.Timestamptz()
+
+  // Relations
+  client            Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  adminUser         AdminUser? @relation(fields: [adminUserId], references: [id])
+
+  @@index([clientId])
+  @@index([expiresAt])
+  @@map("idempotent_requests")
+}
+
+/// Сессии администраторов
+model Session {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  adminUserId       String   @db.Uuid
+  tokenHash         String   @unique @db.VarChar(64)
+  ipAddress         String?  @db.Inet
+  userAgent         String?  @db.Text
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now()) @db.Timestamptz()
+  expiresAt         DateTime @db.Timestamptz()
+  lastActivityAt    DateTime? @db.Timestamptz()
+
+  // Relations
+  adminUser         AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, isActive])
+  @@index([tokenHash])
+  @@map("sessions")
+}

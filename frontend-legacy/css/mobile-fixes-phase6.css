@@ -1,0 +1,353 @@
+/**
+ * mobile-fixes-phase6.css
+ * 
+ * Phase 6: Mobile Hardening & Layout Stability
+ * 
+ * This file contains ADDITIONS to mobile-fixes.css
+ * Should be appended to the end of mobile-fixes.css
+ * 
+ * Fixes:
+ * - Scroll lock improvements for iOS
+ * - Layout stability (CLS prevention)
+ * - Viewport height handling
+ * - Safe area insets
+ */
+
+/* ==========================================================================
+   Phase 6.1: CSS Custom Properties for Viewport
+   ========================================================================== */
+
+:root {
+  /* Viewport height variable - updated by JS for iOS compatibility */
+  --vh: 1vh;
+  
+  /* Safe mobile header height for CLS prevention */
+  --mobile-header-height: 56px;
+  
+  /* Safe area insets with fallbacks */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+
+/* ==========================================================================
+   Phase 6.2: Improved Scroll Lock Classes
+   ========================================================================== */
+
+/**
+ * Universal scroll lock class
+ * Works on iOS Safari by using position:fixed + top offset
+ * JS must set --scroll-position custom property before adding class
+ */
+body.scroll-locked {
+  position: fixed;
+  top: calc(var(--scroll-position, 0) * -1px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: none;
+}
+
+/**
+ * Improved mobile-nav-open (Phase 2 enhancement)
+ * Now includes scroll position preservation
+ */
+@media (max-width: 768px) {
+  body.mobile-nav-open {
+    position: fixed;
+    top: calc(var(--scroll-position, 0) * -1px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none;
+    -webkit-overflow-scrolling: none;
+  }
+}
+
+/**
+ * Popup scroll lock class
+ * Used by product-popup.js
+ */
+body.popup-open,
+body.product-popup-open {
+  position: fixed;
+  top: calc(var(--scroll-position, 0) * -1px);
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: none;
+}
+
+/**
+ * Mega menu scroll lock (desktop)
+ * Enhanced version
+ */
+body.no-scroll {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  body.no-scroll {
+    position: fixed;
+    top: calc(var(--scroll-position, 0) * -1px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    overflow: hidden;
+    touch-action: none;
+  }
+}
+
+
+/* ==========================================================================
+   Phase 6.3: Layout Stability (CLS Prevention)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  /**
+   * Mobile header - explicit height to prevent CLS
+   */
+  .site-header--mobile {
+    min-height: var(--mobile-header-height, 56px);
+    /* Ensure header doesn't collapse during load */
+    contain: layout style;
+  }
+
+  /**
+   * Mobile header inner - maintain height
+   */
+  .mobile-header__inner {
+    min-height: var(--mobile-header-height, 56px);
+    height: var(--mobile-header-height, 56px);
+  }
+
+  /**
+   * Product card images - aspect ratio for CLS prevention
+   */
+  .product-card img,
+  .product-card__image img {
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    background-color: #f0f0f0;
+  }
+
+  /**
+   * Product card image container - reserved space
+   */
+  .product-card__image,
+  .product-card .product-image {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f0f0f0;
+  }
+
+  /**
+   * Catalog grid - minimum height to prevent collapse
+   */
+  .catalog-grid,
+  #catalogGrid {
+    min-height: 200px;
+  }
+
+  /**
+   * Filter panel - reserved space
+   */
+  .filters,
+  .filter-panel,
+  .catalog-filters {
+    min-height: 44px;
+  }
+
+  /**
+   * Pagination - reserved space
+   */
+  .pagination {
+    min-height: 44px;
+  }
+
+}
+
+
+/* ==========================================================================
+   Phase 6.4: Viewport Height Fixes
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  /**
+   * Mobile drawer - use CSS variable for height
+   * Fallback chain: --vh variable → 100dvh → 100vh
+   */
+  .mobile-nav-drawer {
+    height: calc(var(--vh, 1vh) * 100);
+    height: 100dvh;
+    max-height: calc(var(--vh, 1vh) * 100);
+    max-height: 100dvh;
+  }
+
+  /**
+   * Product popup - use CSS variable for max-height
+   */
+  .product-popup {
+    max-height: calc(var(--vh, 1vh) * 90);
+    max-height: 90dvh;
+  }
+
+  .product-popup__container {
+    max-height: calc(var(--vh, 1vh) * 90);
+    max-height: 90dvh;
+  }
+
+}
+
+
+/* ==========================================================================
+   Phase 6.5: Safe Area Insets
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  /**
+   * Mobile header - respect top safe area (notch)
+   */
+  .site-header--mobile {
+    padding-top: var(--safe-area-top);
+  }
+
+  /**
+   * Mobile drawer - respect safe areas
+   */
+  .mobile-nav-drawer {
+    padding-top: var(--safe-area-top);
+    padding-bottom: var(--safe-area-bottom);
+    padding-left: var(--safe-area-left);
+  }
+
+  /**
+   * Product popup footer - respect bottom safe area
+   */
+  .product-popup__footer,
+  .product-popup__actions {
+    padding-bottom: calc(16px + var(--safe-area-bottom));
+  }
+
+  /**
+   * Mobile navigation content - safe area padding
+   */
+  .mobile-nav-content {
+    padding-bottom: calc(16px + var(--safe-area-bottom));
+  }
+
+}
+
+
+/* ==========================================================================
+   Phase 6.6: Touch Interaction Improvements
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  /**
+   * Prevent text selection on interactive elements during touch
+   */
+  .mobile-burger,
+  .mobile-search,
+  .mobile-cart,
+  .mobile-nav-overlay {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  /**
+   * Improve touch response on overlay
+   */
+  .mobile-nav-overlay {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /**
+   * Prevent pull-to-refresh on drawer
+   */
+  .mobile-nav-drawer {
+    overscroll-behavior: contain;
+  }
+
+  /**
+   * Prevent body bounce when drawer is open
+   */
+  body.mobile-nav-open {
+    overscroll-behavior: none;
+  }
+
+}
+
+
+/* ==========================================================================
+   Phase 6.7: Z-Index Stack Documentation & Fixes
+   ========================================================================== */
+
+/**
+ * Z-Index Stack (documented for reference):
+ * 
+ * 1000  - Mega menu (desktop)
+ * 10002 - Mobile header
+ * 10002 - Mobile overlay
+ * 10003 - Mobile drawer
+ * 10004 - Product popup overlay
+ * 10005 - Product popup
+ * 10006 - Product popup hints/tooltips (if any)
+ * 
+ * No changes needed - stack is correct.
+ */
+
+
+/* ==========================================================================
+   Phase 6.8: Orientation Change Stability
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  /**
+   * Smooth transitions during orientation change
+   */
+  .site-header--mobile,
+  .mobile-nav-drawer,
+  .product-popup {
+    transition: none; /* Disable during resize, re-enable after */
+  }
+
+  /**
+   * Ensure drawer doesn't get stuck mid-transition
+   */
+  .mobile-nav-drawer:not(.is-open) {
+    transform: translateX(-100%) !important;
+  }
+
+}
+
+/* Re-enable transitions after orientation stabilizes */
+@media (max-width: 768px) and (orientation: portrait),
+       (max-width: 768px) and (orientation: landscape) {
+  
+  .site-header--mobile,
+  .mobile-nav-drawer,
+  .product-popup {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+}

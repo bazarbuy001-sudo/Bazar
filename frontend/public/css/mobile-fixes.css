@@ -1,0 +1,1202 @@
+/**
+ * mobile-fixes.css
+ * 
+ * Mobile adaptation override layer for Bazar Buy
+ * This file must be loaded LAST in the CSS cascade.
+ * 
+ * Phase 1: Mobile Header visibility switching and base layout
+ * Phase 2: Navigation drawer, overlay, mega menu clone styles
+ * 
+ * IMPORTANT: Do NOT add catalog, popup, or cabinet styles here yet.
+ * Those will be added in later phases.
+ */
+
+/* ==========================================================================
+   Phase 1: Mobile Header
+   ========================================================================== */
+
+/**
+ * Mobile header is hidden by default (desktop view)
+ */
+.site-header--mobile {
+  display: none;
+}
+
+/**
+ * Mobile navigation elements hidden by default (desktop view)
+ */
+.mobile-nav-overlay,
+.mobile-nav-drawer {
+  display: none;
+}
+
+/**
+ * Mobile breakpoint: 768px and below
+ */
+@media (max-width: 768px) {
+  
+  /**
+   * Hide desktop header on mobile
+   * 
+   * CRITICAL: We use visibility:hidden instead of display:none
+   * Reason: Desktop header JS uses getBoundingClientRect() and other
+   * layout measurements. Using display:none would return zero values
+   * and break calculations if the viewport is resized back to desktop.
+   * visibility:hidden preserves the element in the layout flow while
+   * making it invisible.
+   */
+  .site-header:not([data-mobile-header]) {
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    /* Collapse vertical space without triggering reflow issues */
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+
+  /**
+   * Show mobile header on mobile viewports
+   */
+  .site-header--mobile {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 10002; /* Above mega menu and other overlays */
+    background: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /**
+   * Mobile header inner container
+   */
+  .mobile-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    min-height: 56px;
+  }
+
+  /**
+   * Mobile burger button
+   */
+  .mobile-burger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .mobile-burger::before,
+  .mobile-burger::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: #333333;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: transform 0.2s ease, opacity 0.2s ease, top 0.2s ease, bottom 0.2s ease;
+  }
+
+  .mobile-burger::before {
+    top: 14px;
+  }
+
+  .mobile-burger::after {
+    bottom: 14px;
+  }
+
+  /**
+   * Burger middle line (using inner span)
+   */
+  .mobile-burger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: #333333;
+    transition: opacity 0.2s ease;
+  }
+
+  /**
+   * Phase 2: Burger animation when drawer is open
+   */
+  .mobile-burger.is-open::before {
+    top: 21px;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  .mobile-burger.is-open::after {
+    bottom: 21px;
+    transform: translateX(-50%) rotate(-45deg);
+  }
+
+  .mobile-burger.is-open span {
+    opacity: 0;
+  }
+
+  /**
+   * Mobile logo
+   */
+  .mobile-logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333333;
+    text-decoration: none;
+    flex: 1;
+    text-align: center;
+  }
+
+  .mobile-logo a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /**
+   * Mobile header action buttons (search, cart)
+   */
+  .mobile-search,
+  .mobile-cart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+  }
+
+  /**
+   * Simple icon placeholders using CSS
+   * In production, replace with actual SVG icons or icon font
+   */
+  .mobile-search::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 2px solid #333333;
+    border-radius: 50%;
+    position: relative;
+  }
+
+  .mobile-search::after {
+    content: '';
+    width: 2px;
+    height: 8px;
+    background: #333333;
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    transform: rotate(-45deg);
+  }
+
+  .mobile-cart::before {
+    content: '';
+    width: 18px;
+    height: 14px;
+    border: 2px solid #333333;
+    border-radius: 0 0 4px 4px;
+    position: relative;
+    top: 2px;
+  }
+
+  .mobile-cart::after {
+    content: '';
+    width: 12px;
+    height: 8px;
+    border: 2px solid #333333;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    position: absolute;
+    top: 10px;
+  }
+
+  /**
+   * Cart badge for item count (optional enhancement)
+   */
+  .mobile-cart[data-count]::before {
+    content: attr(data-count);
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 18px;
+    text-align: center;
+    color: #ffffff;
+    background: #e53935;
+    border-radius: 9px;
+  }
+
+
+  /* ========================================================================
+     Phase 2: Navigation Drawer & Overlay
+     ======================================================================== */
+
+  /**
+   * Scroll lock when drawer is open
+   */
+  body.mobile-nav-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+  /**
+   * Navigation overlay (background dimming)
+   * z-index: 10002 (same level as mobile header)
+   */
+  .mobile-nav-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 10002;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .mobile-nav-overlay[hidden] {
+    display: none;
+  }
+
+  .mobile-nav-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /**
+   * Navigation drawer (off-canvas panel)
+   * z-index: 10003 (above overlay and header)
+   */
+  .mobile-nav-drawer {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 80%;
+    max-width: 320px;
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    background: #ffffff;
+    z-index: 10003;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .mobile-nav-drawer[hidden] {
+    display: none;
+  }
+
+  .mobile-nav-drawer.is-open {
+    transform: translateX(0);
+  }
+
+  /**
+   * Drawer content container
+   */
+  .mobile-nav-content {
+    padding: 16px 0;
+    min-height: 100%;
+  }
+
+  /**
+   * Drawer header (optional close button area)
+   */
+  .mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .mobile-nav-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 24px;
+    color: #333333;
+  }
+
+
+  /* ========================================================================
+     Phase 2: Mega Menu Clone Styles
+     ======================================================================== */
+
+  /**
+   * Cloned mega menu inside mobile drawer
+   * Override desktop hover behaviors with mobile-friendly click toggles
+   */
+  .mobile-mega-menu-clone {
+    /* Reset any desktop positioning */
+    position: static !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  /**
+   * Override mega menu container styles
+   */
+  .mobile-mega-menu-clone.mega-menu {
+    position: static !important;
+    display: block !important;
+  }
+
+  /**
+   * Categories list in mobile drawer
+   */
+  .mobile-mega-menu-clone .mega-menu__categories {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .mobile-mega-menu-clone .mega-menu__categories > * {
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .mobile-mega-menu-clone .mega-menu__categories > *:last-child {
+    border-bottom: none;
+  }
+
+  /**
+   * Category items styling
+   */
+  .mobile-mega-menu-clone .mega-menu__categories a,
+  .mobile-mega-menu-clone .mega-menu__categories button,
+  .mobile-mega-menu-clone .mega-menu__categories > li,
+  .mobile-mega-menu-clone .mega-menu__categories > div {
+    display: block;
+    padding: 14px 16px;
+    font-size: 16px;
+    color: #333333;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    min-height: 44px; /* Touch target size */
+  }
+
+  .mobile-mega-menu-clone .mega-menu__categories a:hover,
+  .mobile-mega-menu-clone .mega-menu__categories a:focus {
+    background: #f5f5f5;
+  }
+
+  /**
+   * Subcategories (hidden by default, shown on click)
+   */
+  .mobile-mega-menu-clone .mega-menu__subcategories,
+  .mobile-mega-menu-clone .mega-menu__fabric-types,
+  .mobile-mega-menu-clone [class*="sub"] {
+    display: none;
+    padding-left: 16px;
+    background: #fafafa;
+  }
+
+  /**
+   * Show subcategories when parent is active
+   */
+  .mobile-mega-menu-clone .mobile-nav-active > .mega-menu__subcategories,
+  .mobile-mega-menu-clone .mobile-nav-active > .mega-menu__fabric-types,
+  .mobile-mega-menu-clone .mobile-nav-active > [class*="sub"],
+  .mobile-mega-menu-clone .mobile-nav-active .mega-menu__subcategories,
+  .mobile-mega-menu-clone .mobile-nav-active .mega-menu__fabric-types {
+    display: block;
+  }
+
+  /**
+   * Subcategory items
+   */
+  .mobile-mega-menu-clone .mega-menu__subcategories a,
+  .mobile-mega-menu-clone .mega-menu__fabric-types a {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #666666;
+  }
+
+  /**
+   * Expand indicator for items with subcategories
+   */
+  .mobile-mega-menu-clone .mega-menu__categories > *:has(.mega-menu__subcategories)::after,
+  .mobile-mega-menu-clone .mega-menu__categories > *:has([class*="sub"])::after {
+    content: '+';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #999999;
+    transition: transform 0.2s ease;
+  }
+
+  .mobile-mega-menu-clone .mobile-nav-active::after {
+    content: '−' !important;
+  }
+
+
+  /* ========================================================================
+     Phase 2: Fallback Navigation Styles
+     ======================================================================== */
+
+  /**
+   * Fallback navigation when mega menu doesn't exist
+   */
+  .mobile-nav-fallback {
+    padding: 0;
+  }
+
+  .mobile-nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-nav-list li {
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .mobile-nav-list li:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-nav-list a {
+    display: block;
+    padding: 14px 16px;
+    font-size: 16px;
+    color: #333333;
+    text-decoration: none;
+    min-height: 44px;
+  }
+
+  .mobile-nav-list a:hover,
+  .mobile-nav-list a:focus {
+    background: #f5f5f5;
+  }
+
+
+  /* ========================================================================
+     Phase 2: Accessibility
+     ======================================================================== */
+
+  /**
+   * Visually hidden but accessible to screen readers
+   */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /**
+   * Focus styles for interactive elements
+   */
+  .mobile-burger:focus,
+  .mobile-search:focus,
+  .mobile-cart:focus,
+  .mobile-nav-close:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+  }
+
+  .mobile-nav-drawer a:focus,
+  .mobile-nav-drawer button:focus {
+    outline: 2px solid #007bff;
+    outline-offset: -2px;
+  }
+
+
+  /* ========================================================================
+     Phase 3A: Touch Optimization
+     ======================================================================== 
+     
+     Goal: Make all interactive elements comfortable for touch interaction.
+     
+     Minimum touch target: 44 × 44 px (Apple HIG / WCAG 2.1)
+     Preferred touch target: 48 × 48 px
+     
+     Techniques used:
+     - min-height / min-width
+     - padding increases
+     - flexbox alignment for centering
+     - ::before/::after pseudo-elements for hit-area expansion (where needed)
+     
+     IMPORTANT: 
+     - CSS only, no HTML changes
+     - No selector renaming
+     - No structural changes
+  */
+
+
+  /* ------------------------------------------------------------------------
+     3A.1: Filter Buttons
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Primary filter buttons (apply, reset, toggle)
+   */
+  .filter-btn,
+  .filter-reset,
+  .filter-apply {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* Ensure touch-friendly spacing */
+    margin: 4px;
+  }
+
+  /**
+   * Filter reset button - ensure adequate size even if text is short
+   */
+  #filterResetBtn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.2: Filter Checkboxes & Labels
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Checkbox labels need larger hit area
+   * The label wraps or follows the checkbox input
+   */
+  .filter-checkbox + label,
+  .filter-checkbox ~ label,
+  label:has(.filter-checkbox),
+  [class*="filter"] label {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 12px;
+    cursor: pointer;
+    /* Ensure tap target extends fully */
+    position: relative;
+  }
+
+  /**
+   * Make checkbox inputs themselves larger touch targets
+   * Uses transform to scale up the visual checkbox
+   */
+  .filter-checkbox,
+  [class*="filter"] input[type="checkbox"],
+  [class*="filter"] input[type="radio"] {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    margin-right: 10px;
+    cursor: pointer;
+    /* Fallback for browsers that support accent-color */
+    accent-color: #007bff;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.3: Color Swatches / Filter Colors
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Color filter swatches
+   */
+  .filter-color,
+  .color-swatch,
+  #filterColors .color-swatch,
+  [class*="filter-color"] {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 4px;
+    margin: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* If the swatch is smaller, expand hit area with padding */
+    box-sizing: border-box;
+  }
+
+  /**
+   * Inner color circle (if separate from hit area)
+   */
+  .filter-color > *,
+  .color-swatch > * {
+    pointer-events: none;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.4: Size & Type Filters
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Size filter buttons/options
+   */
+  .filter-size,
+  [class*="filter-size"],
+  [class*="size-option"] {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px 14px;
+    margin: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  /**
+   * Type/category filter buttons
+   */
+  .filter-type,
+  [class*="filter-type"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 16px;
+    margin: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.5: Sort Select Dropdown
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Sort dropdown selector
+   */
+  #sortSelect,
+  .sort-select,
+  [class*="sort"] select {
+    min-height: 44px;
+    padding: 10px 36px 10px 12px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    cursor: pointer;
+    /* Ensure adequate width for touch */
+    min-width: 120px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.6: Product Card Interactive Elements
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Product card links (entire card or title link)
+   * Note: We do NOT change .product-card structure, only interactive elements
+   */
+  .product-card a {
+    /* Ensure links have adequate padding for touch */
+    display: block;
+    padding: 8px;
+    min-height: 44px;
+  }
+
+  /**
+   * Product card action buttons
+   */
+  .product-card button,
+  .product-card .add-to-cart,
+  .product-card .favorite,
+  .product-card [class*="btn"],
+  .product-card [class*="button"] {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  /**
+   * Favorite/wishlist button (often icon-only)
+   */
+  .product-card .favorite,
+  .product-card [class*="wishlist"],
+  .product-card [class*="heart"] {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.7: General Interactive Element Spacing
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Ensure filter groups have adequate spacing between items
+   */
+  [class*="filter-group"],
+  [class*="filter-list"],
+  [class*="filter-options"] {
+    gap: 8px;
+    padding: 8px 0;
+  }
+
+  /**
+   * Filter section containers
+   */
+  [class*="filter-section"],
+  [class*="sidebar-filter"] {
+    padding: 12px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.8: Pagination (if present)
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Pagination links/buttons
+   */
+  .pagination a,
+  .pagination button,
+  .pagination li,
+  [class*="pagination"] a,
+  [class*="pagination"] button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 10px 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3A.9: Focus States for Touch-Optimized Elements
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Visible focus states for accessibility
+   */
+  .filter-btn:focus,
+  .filter-reset:focus,
+  .filter-apply:focus,
+  .filter-color:focus,
+  .filter-size:focus,
+  .filter-type:focus,
+  .color-swatch:focus,
+  #sortSelect:focus,
+  .product-card button:focus,
+  .product-card a:focus {
+    outline: 2px solid #007bff;
+    outline-offset: 2px;
+  }
+
+  /**
+   * Active/pressed states for better touch feedback
+   */
+  .filter-btn:active,
+  .filter-reset:active,
+  .filter-apply:active,
+  .filter-color:active,
+  .filter-size:active,
+  .filter-type:active,
+  .color-swatch:active,
+  .product-card button:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+
+
+  /* ========================================================================
+     Phase 3B: Catalog Layout
+     ======================================================================== 
+     
+     Mobile catalog grid layout using CSS Grid.
+     
+     SCOPE: Only .catalog-grid is modified.
+     
+     FORBIDDEN:
+     - #catalogGrid
+     - .product-card
+     - .product-card *
+     - Any data attributes
+     - Desktop styles
+     
+     Column layout:
+     - Default (≤768px): 2 columns
+     - Small (≤360px): 1 column
+     
+     Spacing:
+     - Grid gap: 12px
+     - Side padding: 12px
+  */
+
+  /**
+   * Catalog grid - mobile layout
+   * 2 columns by default on mobile
+   */
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 12px;
+    /* Prevent horizontal overflow */
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+}
+
+
+/* ==========================================================================
+   Phase 3B: Small Device Breakpoint (≤360px)
+   ========================================================================== 
+   
+   Single column layout for very small screens.
+   Separate media query to avoid nesting issues.
+*/
+
+@media (max-width: 360px) {
+
+  /**
+   * Catalog grid - single column for very small devices
+   */
+  .catalog-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 12px;
+  }
+
+}
+
+
+/* ==========================================================================
+   Phase 3C: Popup Adaptation
+   ========================================================================== 
+   
+   Mobile popup layout adjustments.
+   
+   SCOPE: Only existing popup selectors.
+   
+   FORBIDDEN:
+   - HTML changes
+   - JS changes
+   - New wrappers
+   - DOM changes
+   - Class/ID renaming
+   - Desktop style changes
+   
+   REQUIREMENTS:
+   - Max height: 90dvh
+   - Internal scroll for content
+   - Buttons: minimum 44px height
+   - No content overflow outside screen
+*/
+
+@media (max-width: 768px) {
+
+  /* ------------------------------------------------------------------------
+     3C.1: Popup Overlay
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Popup overlay - ensure full coverage on mobile
+   */
+  .product-popup-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10004;
+    background: rgba(0, 0, 0, 0.5);
+    /* Prevent body scroll when popup is open */
+    overflow: hidden;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.2: Popup Container
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Main popup container
+   * Constrained to 90dvh to fit mobile viewport
+   */
+  .product-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100% - 24px);
+    max-width: 100%;
+    max-height: 90dvh;
+    max-height: 90vh; /* Fallback for older browsers */
+    z-index: 10005;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Prevent popup from going off-screen */
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  /**
+   * Alternative selector if popup uses different class
+   */
+  .product-popup__container {
+    max-height: 90dvh;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.3: Popup Content Area
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Scrollable content area
+   * Takes remaining space after header/footer
+   */
+  .product-popup__content {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 16px;
+    /* Prevent content from pushing footer off-screen */
+    min-height: 0;
+  }
+
+  /**
+   * Popup body (if separate from content)
+   */
+  .product-popup__body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    min-height: 0;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.4: Popup Header
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Popup header - stays fixed at top
+   */
+  .product-popup__header {
+    flex: 0 0 auto;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  /**
+   * Popup close button
+   */
+  .product-popup__close,
+  .product-popup [class*="close"] {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.5: Popup Actions / Footer
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Popup action area - stays fixed at bottom
+   */
+  .product-popup__actions,
+  .product-popup__footer {
+    flex: 0 0 auto;
+    padding: 16px;
+    border-top: 1px solid #e0e0e0;
+    background: #ffffff;
+    /* Ensure actions don't get scrolled away */
+    position: relative;
+    z-index: 1;
+  }
+
+  /**
+   * Action buttons - touch-friendly sizing
+   */
+  .product-popup__actions button,
+  .product-popup__actions .btn,
+  .product-popup__actions [class*="button"],
+  .product-popup__footer button,
+  .product-popup__footer .btn {
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* Full width buttons on mobile for easier tapping */
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+  }
+
+  .product-popup__actions button:last-child,
+  .product-popup__actions .btn:last-child,
+  .product-popup__footer button:last-child {
+    margin-bottom: 0;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.6: Popup Images / Media
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Constrain images within popup
+   */
+  .product-popup img,
+  .product-popup__content img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /**
+   * Video carousel controls (if present)
+   */
+  #videoCarousel {
+    max-height: 40vh;
+    overflow: hidden;
+  }
+
+  #prevVideo,
+  #nextVideo {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.7: Popup Form Elements
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Form inputs inside popup
+   */
+  .product-popup input,
+  .product-popup select,
+  .product-popup textarea {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 16px; /* Prevents iOS zoom */
+    box-sizing: border-box;
+  }
+
+  /**
+   * Quantity selectors
+   */
+  .product-popup [class*="quantity"] button,
+  .product-popup [class*="qty"] button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.8: Popup Product Options
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Size/color selectors inside popup
+   */
+  .product-popup .color-swatch,
+  .product-popup [class*="color-option"],
+  .product-popup [class*="size-option"] {
+    min-width: 44px;
+    min-height: 44px;
+    margin: 4px;
+  }
+
+
+  /* ------------------------------------------------------------------------
+     3C.9: Body Scroll Lock (when popup open)
+     ------------------------------------------------------------------------ */
+
+  /**
+   * Prevent body scroll when popup is visible
+   * Note: This relies on existing JS adding a class to body
+   * If no such class exists, this is a no-op (safe)
+   */
+  body.popup-open,
+  body.modal-open,
+  body.product-popup-open {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+
+}

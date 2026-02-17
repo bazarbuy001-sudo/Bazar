@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оплата - Bazar Buy - Удобные способы оплаты</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cabinet/cabinet.css">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/didot');
+
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #d4a574;
+            --background: #fafafa;
+            --border-color: #e5e5e5;
+            --text-primary: #2c2c2c;
+            --text-secondary: #6b6b6b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* ============================================
+           HEADER - STICKY
+           ============================================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+        }
+
+        .nav-container {
+            max-width: 60%;
+            width: 60%;
+            margin: 0 auto;
+        }
+
+        .header-sticky {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-row-2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            gap: 12px;
+            transition: padding 0.3s ease, gap 0.3s ease;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-decoration: none;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .row2-brand {
+            font-family: 'Didot', serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            max-width: 150px;
+            opacity: 1;
+            margin-right: 10px;
+        }
+
+        .catalog-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 18px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition: background 0.2s ease;
+        }
+
+        .catalog-btn:hover {
+            background: var(--primary-color);
+        }
+
+        .search-box {
+            position: relative;
+            width: 280px;
+            transition: width 0.3s ease;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn,
+        #cabinet-header-btn a.cabinet-header-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+            transition: border-color 0.2s ease, color 0.2s ease !important;
+            text-decoration: none !important;
+        }
+
+        #cabinet-header-btn .cabinet-header-btn:hover,
+        #cabinet-header-btn a.cabinet-header-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+        }
+
+        .cart-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .cart-btn:hover {
+            background: var(--primary-color);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f5f0eb 0%, #e8dfd6 100%);
+            padding: 80px 20px 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 197, 185, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 300;
+            color: #3a3a3a;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #6a6a6a;
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Main Content area */
+        .main-content {
+            max-width: 1000px;
+            margin: -60px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-card {
+            background: #ffffff;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            margin-bottom: 40px;
+        }
+
+        .content-card h2 {
+            font-size: 32px;
+            font-weight: 300;
+            color: #2a2a2a;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 15px;
+            text-align: center;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .payment-card {
+            background: #fafafa;
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid #e5e5e5;
+            transition: all 0.3s ease;
+        }
+
+        .payment-card:hover {
+            border-color: var(--accent-color);
+            background: white;
+            box-shadow: 0 12px 30px rgba(139, 115, 85, 0.1);
+        }
+
+        .card-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .payment-card h3 {
+            font-size: 20px;
+            font-weight: 400;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .payment-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        .order-process {
+            list-style: none;
+            padding: 0;
+        }
+
+        .process-item {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 30px;
+            align-items: flex-start;
+        }
+
+        .process-number {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .process-item strong {
+            display: block;
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        /* Footer Section */
+        .page-footer-cta {
+            background: linear-gradient(135deg, #8b7355 0%, #6b5a45 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            border-radius: 20px;
+            margin-top: 40px;
+        }
+
+        .page-footer-cta h2 {
+            font-size: 28px;
+            font-weight: 300;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+
+            .content-card {
+                padding: 30px 20px;
+            }
+
+            .main-content {
+                margin-top: -40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="header-sticky" id="headerSticky">
+            <div class="nav-container">
+                <div class="header-row-2">
+                    <a href="index.html" class="logo-icon">
+                        <img src="icons/LogoBazarbuy.svg" alt="Bazar Buy">
+                    </a>
+                    <a href="index.html" class="row2-brand">Bazar Buy</a>
+
+                    <button class="catalog-btn">
+                        <span>☰</span>
+                        <span>Каталог товаров</span>
+                    </button>
+
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Поиск товаров...">
+                        <span class="search-icon">🔍</span>
+                    </div>
+
+                    <div id="cabinet-header-btn"></div>
+
+                    <a href="cart.html" class="cart-btn">
+                        <span>🛒</span>
+                        <span>Корзина</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Оплата</h1>
+            <p>Оплата заказов осуществляется после согласования ассортимента, количества и стоимости. Мы работаем по
+                прозрачной схеме — вы оплачиваете только подтверждённый заказ.</p>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <!-- 2. Когда происходит оплата -->
+        <div class="content-card">
+            <h2>Когда производится оплата</h2>
+            <p>Оплата производится после подтверждения заказа менеджером. До момента согласования вы можете свободно
+                добавлять, убирать и корректировать позиции в заказе.</p>
+        </div>
+
+        <!-- 3. Способы оплаты -->
+        <div class="content-card">
+            <h2>Доступные способы оплаты</h2>
+            <div class="payment-grid">
+                <div class="payment-card">
+                    <span class="card-icon">🏦</span>
+                    <h3>Оплата по счёту</h3>
+                    <p>Для юридических лиц и ИП предоставляем счет на оплату со всеми необходимыми документами.</p>
+                </div>
+                <div class="payment-card">
+                    <span class="card-icon">💳</span>
+                    <h3>Банковский перевод</h3>
+                    <p>Прямой перевод по реквизитам. Быстрый и удобный способ для физических лиц.</p>
+                </div>
+                <div class="payment-card">
+                    <span class="card-icon">💬</span>
+                    <h3>Индивидуально</h3>
+                    <p>Другие способы — по согласованию с менеджером. Мы подберем оптимальный вариант для вас.</p>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 14px; color: var(--text-secondary);">Конкретный способ оплаты
+                подбирается индивидуально в зависимости от объёма и типа заказа.</p>
+        </div>
+
+        <!-- 4, 5, 6. Валюта, Подтверждение, Безопасность -->
+        <div class="two-columns"
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+            <div class="content-card" style="margin-bottom: 0;">
+                <h2>Валюта оплаты</h2>
+                <p>Оплата осуществляется в согласованной валюте. Итоговая сумма фиксируется при подтверждении заказа и
+                    не изменяется после выставления счёта.</p>
+            </div>
+            <div class="content-card" style="margin-bottom: 0;">
+                <h2>Подтверждение оплаты</h2>
+                <p>После поступления оплаты заказ передаётся в обработку. Подтверждение оплаты может занимать до одного
+                    рабочего дня в зависимости от выбранного способа.</p>
+            </div>
+            <div class="content-card" style="margin-bottom: 0;">
+                <h2>Безопасность оплаты</h2>
+                <p>Мы не принимаем оплату до согласования заказа. Все платежи проходят официально и подтверждаются
+                    документально.</p>
+            </div>
+        </div>
+
+        <!-- 7. Важная информация -->
+        <div class="notice-box"
+            style="background: #f5f0eb; padding: 40px; border-radius: 20px; border-left: 4px solid var(--accent-color); margin-bottom: 40px;">
+            <h2 style="font-size: 28px; font-weight: 400; color: #2a2a2a; margin-bottom: 25px; text-align: center;">
+                Обратите внимание</h2>
+            <ul style="list-style: none; padding: 0;">
+                <li
+                    style="font-size: 15px; color: #4a4a4a; line-height: 1.8; margin-bottom: 12px; padding-left: 30px; position: relative;">
+                    <span
+                        style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold; font-size: 20px;">•</span>
+                    Оплата производится только после подтверждения заказа.
+                </li>
+                <li
+                    style="font-size: 15px; color: #4a4a4a; line-height: 1.8; margin-bottom: 12px; padding-left: 30px; position: relative;">
+                    <span
+                        style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold; font-size: 20px;">•</span>
+                    Стоимость фиксируется до оплаты.
+                </li>
+                <li
+                    style="font-size: 15px; color: #4a4a4a; line-height: 1.8; margin-bottom: 12px; padding-left: 30px; position: relative;">
+                    <span
+                        style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold; font-size: 20px;">•</span>
+                    Без подтверждённой оплаты заказ не отправляется.
+                </li>
+                <li
+                    style="font-size: 15px; color: #4a4a4a; line-height: 1.8; margin-bottom: 12px; padding-left: 30px; position: relative;">
+                    <span
+                        style="position: absolute; left: 0; color: var(--accent-color); font-weight: bold; font-size: 20px;">•</span>
+                    Условия оплаты могут отличаться для оптовых заказов.
+                </li>
+            </ul>
+        </div>
+
+        <!-- 8. Завершающий блок -->
+        <div class="page-footer-cta">
+            <h2>Остались вопросы?</h2>
+            <p>Если у вас остались вопросы по оплате, вы всегда можете уточнить детали у менеджера перед подтверждением
+                заказа.</p>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scroll for header
+        document.addEventListener('DOMContentLoaded', () => {
+            const headerSticky = document.getElementById('headerSticky');
+            if (headerSticky) {
+                window.addEventListener('scroll', () => {
+                    if (window.scrollY > 60) {
+                        headerSticky.classList.add('scrolled');
+                    } else {
+                        headerSticky.classList.remove('scrolled');
+                    }
+                }, { passive: true });
+            }
+
+            // Animation Observer
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.payment-card, .process-item, .content-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-icon')?.addEventListener('click', function () {
+            const searchInput = document.querySelector('.search-input');
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = 'catalog.html?search=' + encodeURIComponent(query);
+            }
+        });
+
+        document.querySelector('.search-input')?.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-icon')?.click();
+            }
+        });
+
+        // Catalog button
+        document.querySelector('.catalog-btn')?.addEventListener('click', function () {
+            window.location.href = 'catalog.html';
+        });
+    </script>
+    <!-- Cabinet Scripts -->
+    <script src="cabinet/cabinet-api.js"></script>
+    <script src="cabinet/cabinet-store.js"></script>
+    <script src="cabinet/cabinet.js"></script>
+</body>
+
+</html>

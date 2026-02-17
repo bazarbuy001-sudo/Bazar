@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bazar Buy - Каталог тканей</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/product-popup.css">
+    <link rel="stylesheet" href="cabinet/cabinet.css">
+    <link rel="stylesheet" href="css/megaMenu.css">
+    <link rel="stylesheet" href="css/catalog-fallback.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/mobile-fixes.css">
+    <link rel="stylesheet" href="css/mobile-fixes-phase6.css">
+    <!-- Phase 6: Viewport height utility (load early) -->
+    <script src="js/utils/viewportHeight.js"></script>
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/didot');
+
+        :root {
+            --primary-color: #1a1a1a;
+            --accent-color: #d4a574;
+            --background: #fafafa;
+            --border-color: #e5e5e5;
+            --text-primary: #2c2c2c;
+            --text-secondary: #6b6b6b;
+            --transition-speed: 0.3s;
+            --transition-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+        }
+
+        /* ============================================
+           HEADER - STICKY (весь header закреплен)
+           ============================================ */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 10001;
+            background: white;
+            width: 100%;
+            overflow: visible;
+        }
+
+        /* ============================================
+           КОНТЕЙНЕР - 60% ШИРИНЫ ЭКРАНА, ЦЕНТРИРОВАН
+           ============================================ */
+        .nav-container {
+            max-width: 60%;
+            width: 60%;
+            margin: 0 auto;
+            position: relative;
+            overflow: visible;
+        }
+
+        /* ============================================
+           СТРОКА 1: Bazar Buy (слева) | Навигация (центр)
+           ============================================ */
+        .header-row-1 {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            padding: 8px 20px 8px 20px;
+            border-bottom: none;
+            background: white;
+            min-height: 50px;
+            max-height: 100px;
+            width: 100%;
+            overflow: visible;
+            box-sizing: border-box;
+            /* Предустановленные значения CSS-переменных для предотвращения layout shift */
+            --brand-center-left: 120px;
+            --nav-center-left: 400px;
+            --line-start: 120px;
+            --line-width: 400px;
+            transition:
+                max-height 0.3s ease,
+                opacity 0.3s ease,
+                padding 0.3s ease,
+                min-height 0.3s ease,
+                height 0.3s ease;
+        }
+
+        /* Линия между кнопками "Каталог товаров" и "Корзина" - создается через JavaScript */
+        .header-row-1::after {
+            content: '';
+            position: absolute;
+            left: var(--line-start, 50%);
+            bottom: 0;
+            height: 1px;
+            background: var(--border-color);
+            width: var(--line-width, 0px);
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .header-row-1.line-ready::after {
+            opacity: 1;
+        }
+
+        .header-row-1.collapsed {
+            max-height: 0 !important;
+            opacity: 0 !important;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin: 0 !important;
+            overflow: hidden !important;
+            min-height: 0 !important;
+            height: 0 !important;
+            pointer-events: none;
+        }
+
+        .header-row-1.collapsed::after {
+            opacity: 0 !important;
+            display: none !important;
+        }
+
+        .row1-brand {
+            font-family: 'Didot', serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            position: absolute;
+            left: var(--brand-center-left, 50%);
+            top: 0;
+            margin-top: 10px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            cursor: default;
+            transition: opacity 0.3s ease, visibility 0.3s ease, margin-top 0.3s ease;
+            z-index: 5;
+        }
+
+        .row1-brand.positioned {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: none;
+            cursor: default;
+        }
+
+        .header-sticky.scrolled .header-row-1 .row1-brand,
+        .header-row-1.collapsed .row1-brand {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+
+        .row1-nav {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            position: absolute;
+            left: var(--nav-center-left, 50%);
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .nav-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 13px;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color);
+        }
+
+        /* ============================================
+           STICKY WRAPPER - сразу в липком состоянии
+           ============================================ */
+        .header-sticky {
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            transition: box-shadow 0.3s ease;
+            width: 100%;
+            overflow: visible;
+            box-sizing: border-box;
+        }
+
+        .header-sticky.scrolled {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        /* ============================================
+           СТРОКА 2: Все элементы на одном уровне с равным gap
+           ============================================ */
+        .header-row-2 {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0px 20px 10px 20px;
+            gap: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: visible;
+            margin-top: -30px;
+            position: relative;
+            transition:
+                padding 0.3s ease,
+                gap 0.3s ease,
+                margin-top 0.3s ease;
+            opacity: 0;
+        }
+
+        .header-row-2.ready {
+            opacity: 1;
+            transition:
+                padding 0.3s ease,
+                gap 0.3s ease,
+                opacity 0.3s ease,
+                margin-top 0.3s ease;
+        }
+
+        .header-sticky.scrolled .header-row-2 {
+            gap: 10px;
+            margin-top: 0;
+            padding-top: 7px;
+        }
+
+        .logo-icon {
+            width: 72px;
+            height: 72px;
+            background: transparent;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            text-decoration: none;
+            padding: 0;
+            overflow: visible;
+            box-sizing: border-box;
+            margin-top: 5px;
+            transform: translateX(20px);
+            transition: width 0.3s ease, height 0.3s ease, margin-top 0.3s ease, transform 0.3s ease;
+            position: relative;
+            z-index: 15;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .header-sticky.scrolled .logo-icon {
+            width: 40px;
+            height: 40px;
+            margin-top: 0;
+            transform: translateX(6px);
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            max-width: 100%;
+            max-height: 100%;
+            margin: 0;
+            padding: 0;
+            border: none;
+        }
+
+        .row2-brand {
+            font-family: 'Didot', serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--primary-color);
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+            max-width: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition:
+                max-width 0.3s ease,
+                opacity 0.3s ease,
+                margin 0.3s ease;
+            margin-right: 0;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .header-sticky.scrolled .row2-brand {
+            max-width: 150px;
+            opacity: 1;
+            margin-right: 10px;
+        }
+
+        .catalog-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition:
+                background 0.2s ease,
+                transform 0.3s ease;
+        }
+
+        .catalog-btn:hover {
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid var(--accent-color);
+            padding: 8px 15px;
+        }
+
+        /* Более специфичные селекторы для переопределения styles.css */
+        .site-header .search-box,
+        .header-row-2 .search-box {
+            position: relative !important;
+            width: 280px !important;
+            min-width: 250px !important;
+            max-width: 320px !important;
+            flex: none !important;
+            flex-shrink: 0 !important;
+            display: block !important;
+            transition:
+                width 0.3s ease,
+                min-width 0.3s ease;
+        }
+
+        .header-sticky.scrolled .search-box {
+            width: 200px !important;
+            min-width: 200px !important;
+        }
+
+        .site-header .search-input,
+        .header-row-2 .search-input {
+            width: 100% !important;
+            padding: 10px 40px 10px 14px !important;
+            border: 1px solid var(--border-color) !important;
+            border-right: 1px solid var(--border-color) !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-size: 13px !important;
+            box-sizing: border-box !important;
+            transition: border-color 0.2s ease !important;
+            flex: none !important;
+        }
+
+        .site-header .search-input:focus,
+        .header-row-2 .search-input:focus {
+            outline: none !important;
+            border-color: var(--accent-color) !important;
+        }
+
+        .site-header .search-icon,
+        .header-row-2 .search-icon {
+            position: absolute !important;
+            right: 14px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            color: var(--text-secondary) !important;
+            width: 16px !important;
+            height: 16px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            pointer-events: none !important;
+        }
+
+        .search-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+        }
+
+        /* Переопределение медиа-запросов из styles.css */
+        @media (max-width: 768px) {
+
+            .site-header .search-box,
+            .header-row-2 .search-box {
+                width: 280px !important;
+                min-width: 250px !important;
+                max-width: 320px !important;
+                order: unset !important;
+                margin-top: 0 !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .site-header .search-box,
+            .header-row-2 .search-box {
+                width: 200px !important;
+                min-width: 200px !important;
+                max-width: 280px !important;
+            }
+        }
+
+        .row2-contacts {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            flex-shrink: 0;
+            opacity: 0;
+            max-width: 0;
+            overflow: hidden;
+            pointer-events: none;
+            transition:
+                opacity 0.3s ease,
+                max-width 0.3s ease,
+                margin 0.3s ease;
+        }
+
+        .header-sticky.scrolled .row2-contacts {
+            opacity: 1;
+            max-width: 100px;
+            pointer-events: auto;
+            align-self: center;
+        }
+
+        .account-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 9px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            transition:
+                border-color 0.2s ease,
+                color 0.2s ease,
+                transform 0.3s ease;
+        }
+
+        .account-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* Переопределение стилей кнопки "Личный кабинет" для соответствия старому виду */
+        /* Базовые стили - применяются всегда */
+        .site-header #cabinet-header-btn .cabinet-header-btn,
+        .site-header #cabinet-header-btn a.cabinet-header-btn,
+        .header-sticky #cabinet-header-btn .cabinet-header-btn,
+        .header-sticky #cabinet-header-btn a.cabinet-header-btn,
+        .header-row-2 #cabinet-header-btn .cabinet-header-btn,
+        .header-row-2 #cabinet-header-btn a.cabinet-header-btn,
+        #cabinet-header-btn .cabinet-header-btn,
+        #cabinet-header-btn a.cabinet-header-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+            padding: 9px 16px !important;
+            border-radius: 8px !important;
+            font-family: 'DM Sans', sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px !important;
+            white-space: nowrap !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-shrink: 0 !important;
+            transition:
+                border-color 0.2s ease,
+                color 0.2s ease,
+                transform 0.3s ease !important;
+            text-decoration: none !important;
+            box-shadow: none !important;
+            position: relative !important;
+        }
+
+        /* Hover состояние */
+        .site-header #cabinet-header-btn .cabinet-header-btn:hover,
+        .site-header #cabinet-header-btn a.cabinet-header-btn:hover,
+        .header-sticky #cabinet-header-btn .cabinet-header-btn:hover,
+        .header-sticky #cabinet-header-btn a.cabinet-header-btn:hover,
+        .header-row-2 #cabinet-header-btn .cabinet-header-btn:hover,
+        .header-row-2 #cabinet-header-btn a.cabinet-header-btn:hover,
+        #cabinet-header-btn .cabinet-header-btn:hover,
+        #cabinet-header-btn a.cabinet-header-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Состояние авторизован */
+        .site-header #cabinet-header-btn .cabinet-header-btn--authorized,
+        .site-header #cabinet-header-btn a.cabinet-header-btn--authorized,
+        .header-sticky #cabinet-header-btn .cabinet-header-btn--authorized,
+        .header-sticky #cabinet-header-btn a.cabinet-header-btn--authorized,
+        .header-row-2 #cabinet-header-btn .cabinet-header-btn--authorized,
+        .header-row-2 #cabinet-header-btn a.cabinet-header-btn--authorized,
+        #cabinet-header-btn .cabinet-header-btn--authorized,
+        #cabinet-header-btn a.cabinet-header-btn--authorized {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Hover для авторизованного */
+        .site-header #cabinet-header-btn .cabinet-header-btn--authorized:hover,
+        .site-header #cabinet-header-btn a.cabinet-header-btn--authorized:hover,
+        .header-sticky #cabinet-header-btn .cabinet-header-btn--authorized:hover,
+        .header-sticky #cabinet-header-btn a.cabinet-header-btn--authorized:hover,
+        .header-row-2 #cabinet-header-btn .cabinet-header-btn--authorized:hover,
+        .header-row-2 #cabinet-header-btn a.cabinet-header-btn--authorized:hover,
+        #cabinet-header-btn .cabinet-header-btn--authorized:hover,
+        #cabinet-header-btn a.cabinet-header-btn--authorized:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+        }
+
+        /* Убираем индикатор авторизации */
+        .site-header #cabinet-header-btn .cabinet-header-btn--authorized::after,
+        .header-sticky #cabinet-header-btn .cabinet-header-btn--authorized::after,
+        .header-row-2 #cabinet-header-btn .cabinet-header-btn--authorized::after,
+        #cabinet-header-btn .cabinet-header-btn--authorized::after {
+            display: none !important;
+        }
+
+        /* Иконка */
+        .site-header #cabinet-header-btn .cabinet-header-btn__icon,
+        .header-sticky #cabinet-header-btn .cabinet-header-btn__icon,
+        .header-row-2 #cabinet-header-btn .cabinet-header-btn__icon,
+        #cabinet-header-btn .cabinet-header-btn__icon {
+            width: auto !important;
+            height: auto !important;
+            opacity: 1 !important;
+        }
+
+        /* Дополнительная защита для scrolled состояния */
+        .header-sticky.scrolled #cabinet-header-btn .cabinet-header-btn,
+        .header-sticky.scrolled #cabinet-header-btn a.cabinet-header-btn {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        .header-sticky.scrolled #cabinet-header-btn .cabinet-header-btn:hover,
+        .header-sticky.scrolled #cabinet-header-btn a.cabinet-header-btn:hover {
+            border-color: var(--accent-color) !important;
+            color: var(--accent-color) !important;
+            background: transparent !important;
+        }
+
+        .header-sticky.scrolled #cabinet-header-btn .cabinet-header-btn--authorized,
+        .header-sticky.scrolled #cabinet-header-btn a.cabinet-header-btn--authorized {
+            background: transparent !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Фиксация контейнера кнопки - не меняется при скролле */
+        #cabinet-header-btn {
+            flex-shrink: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .header-sticky #cabinet-header-btn,
+        .header-sticky.scrolled #cabinet-header-btn {
+            flex-shrink: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+
+        .cart-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 9px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            transition:
+                background 0.2s ease,
+                transform 0.3s ease;
+        }
+
+        .cart-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-btn:hover {
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid var(--accent-color);
+            padding: 8px 15px;
+        }
+
+        .cart-badge {
+            background: white;
+            color: var(--accent-color);
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .cart-badge.hidden {
+            display: none;
+        }
+
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* ============================================
+           VIDEO REVIEWS SECTION - 3D DEPTH EFFECT
+           ============================================ */
+
+        .video-reviews-section {
+            display: block;
+            padding: 0.25px 0 0px 0;
+            background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+        }
+
+        .video-reviews-section .page-container {
+            padding: 60px 20px;
+        }
+
+        .section-main-title {
+            font-family: 'Didot', serif;
+            font-size: 42px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: -24px;
+            color: var(--primary-color);
+        }
+
+        .video-carousel-container {
+            position: relative;
+            width: 100%;
+            height: 455px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1200px;
+        }
+
+        .video-carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-card {
+            position: absolute;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            background: #000;
+        }
+
+        .video-card video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            transition: opacity 0.6s;
+        }
+
+        .video-card.inactive .video-card-overlay {
+            opacity: 0.5;
+        }
+
+        .video-play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--accent-color);
+            transition: all 0.3s;
+        }
+
+        .video-card:hover .video-play-icon {
+            background: white;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .video-card.active .video-play-icon {
+            opacity: 0;
+        }
+
+        .video-sound-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: rgba(0, 0, 0, 0.6);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .video-sound-toggle:hover {
+            background: rgba(0, 0, 0, 0.8);
+            transform: scale(1.1);
+        }
+
+        .video-card-title {
+            font-family: 'Didot', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-card-description {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .video-card[data-position="0"] {
+            width: 225px;
+            /* 9:16 от 400px высоты */
+            height: 400px;
+            z-index: 50;
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            filter: brightness(1) contrast(1);
+        }
+
+        .video-card[data-position="-1"],
+        .video-card[data-position="1"] {
+            width: 191px;
+            height: 340px;
+            z-index: 40;
+            opacity: 0.85;
+            filter: brightness(0.9) contrast(0.95);
+        }
+
+        .video-card[data-position="-1"] {
+            transform: translateX(-240px) scale(0.95);
+        }
+
+        .video-card[data-position="1"] {
+            transform: translateX(240px) scale(0.95);
+        }
+
+        .video-card[data-position="-2"],
+        .video-card[data-position="2"] {
+            width: 157px;
+            height: 280px;
+            z-index: 30;
+            opacity: 0.6;
+            filter: brightness(0.75) contrast(0.9);
+        }
+
+        .video-card[data-position="-2"] {
+            transform: translateX(-410px) scale(0.85);
+        }
+
+        .video-card[data-position="2"] {
+            transform: translateX(410px) scale(0.85);
+        }
+
+        .video-card[data-position="-3"],
+        .video-card[data-position="3"] {
+            width: 124px;
+            height: 220px;
+            z-index: 20;
+            opacity: 0.4;
+            filter: brightness(0.6) contrast(0.85);
+        }
+
+        .video-card[data-position="-3"] {
+            transform: translateX(-540px) scale(0.75);
+        }
+
+        .video-card[data-position="3"] {
+            transform: translateX(540px) scale(0.75);
+        }
+
+        .video-card[data-position="-4"],
+        .video-card[data-position="4"],
+        .video-card[data-position="-5"],
+        .video-card[data-position="5"],
+        .video-card[data-position="-6"],
+        .video-card[data-position="6"] {
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            font-size: 28px;
+            color: var(--accent-color);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .carousel-nav:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-nav-left {
+            left: 40px;
+        }
+
+        .carousel-nav-right {
+            right: 40px;
+        }
+
+        .video-all-link-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .btn-all-videos {
+            display: inline-block;
+            padding: 14px 36px;
+            background: var(--accent-color);
+            color: white;
+            text-decoration: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 30px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(212, 165, 116, 0.3);
+        }
+
+        .btn-all-videos:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(212, 165, 116, 0.4);
+        }
+    </style>
+</head>
+
+<body class="home-page">
+
+    <!-- MOBILE HEADER (Phase 1) -->
+    <header class="site-header site-header--mobile" data-mobile-header>
+        <div class="mobile-header__inner">
+            <button class="mobile-burger" aria-label="Open menu" aria-expanded="false">
+                <span></span>
+                <span class="visually-hidden">Menu</span>
+            </button>
+
+            <div class="mobile-logo">
+                <a href="/">Bazar Buy</a>
+            </div>
+
+            <button class="mobile-search" aria-label="Search">
+                <span class="visually-hidden">Search</span>
+            </button>
+
+            <button class="mobile-cart" aria-label="Cart">
+                <span class="visually-hidden">Cart</span>
+            </button>
+        </div>
+    </header>
+    <!-- END MOBILE HEADER -->
+
+    <!-- MOBILE NAVIGATION OVERLAY (Phase 2) -->
+    <div class="mobile-nav-overlay" hidden aria-hidden="true"></div>
+
+    <!-- MOBILE NAVIGATION DRAWER (Phase 2) -->
+    <nav class="mobile-nav-drawer" hidden aria-label="Mobile navigation">
+        <div class="mobile-nav-content">
+            <!-- Mega menu will be cloned here by JavaScript -->
+        </div>
+    </nav>
+    <!-- END MOBILE NAVIGATION DRAWER -->
+
+    <header class="site-header">
+        <div class="nav-container">
+            <!-- СТРОКА 1 -->
+            <div class="header-row-1" id="headerRow1">
+                <span class="row1-brand">Bazar Buy</span>
+                <nav class="row1-nav">
+                    <a href="discounts.html" class="nav-link">Оптовые скидки</a>
+                    <a href="payment.html" class="nav-link">Оплата</a>
+                    <a href="delivery.html" class="nav-link">Доставка</a>
+                    <a href="faq.html" class="nav-link">FAQ</a>
+                    <a href="contacts.html" class="nav-link">Контакты</a>
+                </nav>
+            </div>
+        </div>
+
+        <!-- СТРОКА 2 - STICKY -->
+        <div class="header-sticky" id="headerSticky">
+            <div class="nav-container">
+                <div class="header-row-2">
+                    <span class="logo-icon">
+                        <img src="icons/LogoBazarbuy.svg" alt="Bazar Buy">
+                    </span>
+                    <span class="row2-brand">Bazar Buy</span>
+
+                    <button class="catalog-btn" data-catalog-btn data-mega-menu-trigger>
+                        <span>☰</span>
+                        <span>Каталог товаров</span>
+                    </button>
+
+                    <div class="mega-menu">
+                        <!-- Содержимое генерируется автоматически -->
+                    </div>
+
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Поиск товаров...">
+                        <span class="search-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <span class="row2-contacts" onclick="window.location.href='contacts.html'">Контакты</span>
+
+                    <div id="cabinet-header-btn"></div>
+
+                    <button class="cart-btn" onclick="window.location.href='cart.html'">
+                        <span class="cart-icon">
+                            <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+                                <rect fill="none" height="256" width="256" />
+                                <path d="M184,184H69.8L41.9,30.6A8,8,0,0,0,34.1,24H16" fill="none" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                <circle cx="80" cy="204" fill="none" r="20" stroke="currentColor" stroke-linecap="round"
+                                    stroke-linejoin="round" stroke-width="16" />
+                                <circle cx="184" cy="204" fill="none" r="20" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                <path d="M62.5,144H188.1a15.9,15.9,0,0,0,15.7-13.1L216,64H48" fill="none"
+                                    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="16" />
+                            </svg>
+                        </span>
+                        <span>Корзина</span>
+                        <span class="cart-badge hidden" id="cartBadge">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Video Reviews Block -->
+    <div class="video-reviews-section">
+        <div class="page-container">
+            <h2 class="section-main-title">Видео-обзоры новинок</h2>
+
+            <div class="video-carousel-container">
+                <button class="carousel-nav carousel-nav-left" id="prevVideo">
+                    <span>‹</span>
+                </button>
+
+                <div class="video-carousel" id="videoCarousel">
+                    <!-- Видео карточки будут добавлены через JavaScript -->
+                </div>
+
+                <button class="carousel-nav carousel-nav-right" id="nextVideo">
+                    <span>›</span>
+                </button>
+            </div>
+
+            <div class="video-all-link-container">
+                <a href="videos.html" class="btn-all-videos">
+                    Смотреть все видео-обзоры
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW ARRIVALS SECTION -->
+    <section class="products-section">
+        <div class="container">
+            <h2 class="section-title">Поступления за неделю</h2>
+            <div class="filter-tags" id="filterTagsNew">
+                <button class="tag active">Все</button>
+                <button class="tag">Лён</button>
+                <button class="tag">Полулён</button>
+                <button class="tag">Хлопок</button>
+                <button class="tag">Вискоза</button>
+                <button class="tag">Шёлк</button>
+                <button class="tag">Шерсть</button>
+                <button class="tag">Синтетика</button>
+            </div>
+            <div class="products-grid" id="newArrivals"></div>
+            <button class="show-more-btn">Показать ещё</button>
+        </div>
+    </section>
+
+    <!-- PRICE DROPS SECTION -->
+    <section class="products-section gray-bg">
+        <div class="container">
+            <h2 class="section-title">Снизили цены</h2>
+            <div class="filter-tags" id="filterTagsSale">
+                <button class="tag active">Все</button>
+                <button class="tag">Лён</button>
+                <button class="tag">Хлопок</button>
+                <button class="tag">Велюр</button>
+                <button class="tag">Габардин</button>
+            </div>
+            <div class="products-grid" id="priceDrops"></div>
+            <button class="show-more-btn">Показать ещё</button>
+        </div>
+    </section>
+
+    <!-- ADVANTAGES SECTION -->
+    <!-- CSS для блока "Наши преимущества" -->
+    <style>
+        .advantages-section {
+            background: #d9d3c8;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .advantages-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(44, 95, 124, 0.1), transparent);
+        }
+
+        .advantages-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(44, 95, 124, 0.1), transparent);
+        }
+
+        .advantages-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .advantages-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #d4a574;
+            margin-bottom: 60px;
+            letter-spacing: -0.02em;
+        }
+
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 25px;
+            align-items: center;
+        }
+
+        .advantage-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: default;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            position: relative;
+            padding: 35px 25px;
+            min-height: 280px;
+        }
+
+        .advantage-card:hover {
+            background: #ffffff;
+            box-shadow: 0 15px 40px rgba(44, 95, 124, 0.12);
+        }
+
+        .advantage-icon {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* allow shadow to extend without clipping */
+            overflow: visible;
+            padding: 8px;
+        }
+
+        .advantage-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            /* Hover effect + stronger shadow (only for "Наши преимущества") */
+            transition: transform 180ms ease, filter 180ms ease;
+            transform: scale(1);
+            filter: drop-shadow(0px 20px 28px rgba(0, 0, 0, 0.30));
+        }
+
+        .advantage-icon:hover img {
+            transform: scale(1.18);
+            filter: drop-shadow(0px 26px 36px rgba(0, 0, 0, 0.36));
+        }
+
+        .advantage-text {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            color: #1a1a1a;
+            font-weight: 600;
+            max-width: 220px;
+            margin-top: auto;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .advantages-section {
+                padding: 60px 20px;
+            }
+
+            .advantages-title {
+                font-size: 1.75rem;
+                margin-bottom: 40px;
+            }
+
+            .advantages-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .advantage-card {
+                padding: 25px 18px;
+                min-height: 240px;
+            }
+
+            .advantage-card:nth-child(5) {
+                grid-column: 1 / -1;
+                max-width: 280px;
+                margin: 0 auto;
+                width: 100%;
+            }
+
+            .advantage-icon {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 18px;
+            }
+
+            .advantage-text {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .advantages-title {
+                font-size: 1.5rem;
+            }
+
+            .advantage-card {
+                padding: 20px 15px;
+                min-height: 220px;
+            }
+
+            .advantage-icon {
+                width: 85px;
+                height: 85px;
+            }
+
+            .advantage-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+
+    <!-- HTML блока "Наши преимущества" -->
+    <section class="advantages-section">
+        <div class="advantages-container">
+            <h2 class="advantages-title">Наши преимущества</h2>
+
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <img src="icons/stock.png" alt="Тысячи позиций ткани в наличии">
+                    </div>
+                    <p class="advantage-text">Тысячи позиций ткани в наличии</p>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <img src="icons/wholesale.png" alt="Оптовые и розничные поставки">
+                    </div>
+                    <p class="advantage-text">Оптовые и розничные поставки</p>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <img src="icons/documents.png" alt="Работа по договору и полный пакет документов">
+                    </div>
+                    <p class="advantage-text">Работа по договору и полный пакет документов</p>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <img src="icons/delivery.png" alt="Доставка по всем странам СНГ">
+                    </div>
+                    <p class="advantage-text">Доставка по всем странам СНГ</p>
+                </div>
+
+                <div class="advantage-card">
+                    <div class="advantage-icon">
+                        <img src="icons/manager.png" alt="Персональный менеджер и быстрая связь">
+                    </div>
+                    <p class="advantage-text">Персональный менеджер и быстрая связь</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMING SOON SECTION -->
+    <section class="products-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Новинки в пути на склад</h2>
+                <a href="#" class="see-all-link">Смотреть все</a>
+            </div>
+            <div class="filter-tags" id="filterTagsComing">
+                <button class="tag active">Все</button>
+                <button class="tag">Лён</button>
+                <button class="tag">Габардин</button>
+                <button class="tag">Органза</button>
+            </div>
+            <div class="products-grid" id="comingSoon"></div>
+            <button class="show-more-btn">Показать ещё</button>
+        </div>
+    </section>
+
+    <!-- HOW WE WORK SECTION -->
+    <style>
+        .how-we-work {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .how-we-work__title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 700;
+            color: #d4a574;
+            margin-bottom: 80px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .how-we-work__steps {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            flex-wrap: nowrap;
+        }
+
+        .how-we-work__step {
+            flex: 0 0 160px;
+            width: 160px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .how-we-work__icon {
+            width: 160px;
+            height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .how-we-work__icon img {
+            width: 160px;
+            height: 160px;
+            display: block;
+            object-fit: contain;
+            /* Hover effect + stronger shadow (only for "Как мы работаем") */
+            transition: transform 180ms ease, filter 180ms ease;
+            transform: scale(1);
+            filter: drop-shadow(0px 22px 30px rgba(0, 0, 0, 0.28));
+        }
+
+        .how-we-work__icon:hover img {
+            transform: scale(1.12);
+            filter: drop-shadow(0px 28px 38px rgba(0, 0, 0, 0.32));
+        }
+
+        .how-we-work__step-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #d4a574;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .how-we-work__step-description {
+            font-size: 13px;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .how-we-work__steps {
+                gap: 40px;
+            }
+
+            .how-we-work__step {
+                flex: 0 0 140px;
+                width: 140px;
+            }
+
+            .how-we-work__icon {
+                width: 140px;
+                height: 140px;
+            }
+
+            .how-we-work__icon img {
+                width: 140px;
+                height: 140px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .how-we-work__steps {
+                flex-wrap: wrap;
+                gap: 50px 30px;
+            }
+
+            .how-we-work__step {
+                flex: 0 0 120px;
+                width: 120px;
+            }
+
+            .how-we-work__icon {
+                width: 120px;
+                height: 120px;
+            }
+
+            .how-we-work__icon img {
+                width: 120px;
+                height: 120px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .how-we-work__title {
+                font-size: 28px;
+                margin-bottom: 50px;
+            }
+
+            .how-we-work__steps {
+                gap: 40px;
+            }
+
+            .how-we-work__step {
+                flex: 0 0 130px;
+                width: 130px;
+            }
+
+            .how-we-work__icon {
+                width: 130px;
+                height: 130px;
+            }
+
+            .how-we-work__icon img {
+                width: 130px;
+                height: 130px;
+            }
+
+            .how-we-work__step-title {
+                font-size: 14px;
+            }
+
+            .how-we-work__step-description {
+                font-size: 12px;
+            }
+        }
+    </style>
+
+    <section class="how-we-work">
+        <h2 class="how-we-work__title">Как мы работаем</h2>
+
+        <div class="how-we-work__steps">
+            <div class="how-we-work__step">
+                <div class="how-we-work__icon">
+                    <img src="icons/registration.png" alt="Регистрация">
+                </div>
+                <h3 class="how-we-work__step-title">Регистрация</h3>
+                <p class="how-we-work__step-description">Создайте аккаунт на нашей платформе</p>
+            </div>
+
+            <div class="how-we-work__step">
+                <div class="how-we-work__icon">
+                    <img src="icons/fabric.png" alt="Выбор ткани">
+                </div>
+                <h3 class="how-we-work__step-title">Выбор ткани</h3>
+                <p class="how-we-work__step-description">Выберите подходящую ткань из каталога</p>
+            </div>
+
+            <div class="how-we-work__step">
+                <div class="how-we-work__icon">
+                    <img src="icons/cart.png" alt="Формирование заказа">
+                </div>
+                <h3 class="how-we-work__step-title">Формирование заказа</h3>
+                <p class="how-we-work__step-description">Оформите заказ с указанием деталей</p>
+            </div>
+
+            <div class="how-we-work__step">
+                <div class="how-we-work__icon">
+                    <img src="icons/approval.png" alt="Согласование">
+                </div>
+                <h3 class="how-we-work__step-title">Согласование</h3>
+                <p class="how-we-work__step-description">Согласуем все детали заказа</p>
+            </div>
+
+            <div class="how-we-work__step">
+                <div class="how-we-work__icon">
+                    <img src="icons/contract.png" alt="Договор">
+                </div>
+                <h3 class="how-we-work__step-title">Договор</h3>
+                <p class="how-we-work__step-description">Подписываем договор</p>
+            </div>
+
+            <div class="how-we-work__step">
+                <div class="how-we-work__icon">
+                    <img src="icons/shipping.png" alt="Отгрузка">
+                </div>
+                <h3 class="how-we-work__step-title">Отгрузка</h3>
+                <p class="how-we-work__step-description">Доставляем товар вовремя</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA SECTION -->
+    <section class="cta-section">
+        <style>
+            /* CTA only: force all social icons to be the same size */
+            .cta-section .social-icon {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                overflow: hidden;
+            }
+
+            .cta-section .social-icon img {
+                width: 100%;
+                height: 100%;
+                display: block;
+                object-fit: contain;
+            }
+        </style>
+        <div class="container">
+            <h2 class="section-title-white">Нужна консультация по тканям?</h2>
+            <p class="cta-subtitle">Подберём ткани, рассчитаем стоимость и сроки поставки<br>Напишите нам удобным
+                способом</p>
+            <div class="social-links">
+                <a href="https://wa.me/79691263030" target="_blank" rel="noopener noreferrer" class="social-btn">
+                    <div class="social-icon whatsapp-icon">
+                        <img src="icon/whatsapp.png" alt="WhatsApp"
+                            onerror="this.onerror=null;this.src='icons/whatsapp.png';">
+                    </div>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="https://t.me/bazarbuy" target="_blank" rel="noopener noreferrer" class="social-btn">
+                    <div class="social-icon telegram-icon" style="background: transparent;">
+                        <img src="icon/telegram.png" alt="Telegram"
+                            onerror="this.onerror=null;this.src='icons/telegram.png';">
+                    </div>
+                    <span>Telegram</span>
+                </a>
+                <a href="mailto:bazarbuy001@gmail.com?subject=пишу%20вам%20с%20сайта" class="social-btn">
+                    <div class="social-icon email-icon">
+                        <img src="icon/email.png" alt="Email" onerror="this.onerror=null;this.src='icons/email.png';">
+                    </div>
+                    <span>Email</span>
+                </a>
+                <a href="https://www.youtube.com/@BazarBuy" target="_blank" rel="noopener noreferrer"
+                    class="social-btn">
+                    <div class="social-icon youtube-icon">
+                        <img src="icon/YouTube.png" alt="YouTube"
+                            onerror="this.onerror=null;this.src='icons/YouTube.png';">
+                    </div>
+                    <span>YouTube</span>
+                </a>
+                <a href="https://vk.com/bazarbuy001" target="_blank" rel="noopener noreferrer" class="social-btn">
+                    <div class="social-icon vk-icon">
+                        <img src="icon/vk.png" alt="ВКонтакте" onerror="this.onerror=null;this.src='icons/vk.png';">
+                    </div>
+                    <span>ВКонтакте</span>
+                </a>
+                <a href="https://www.instagram.com/bazarbuy001?igsh=MWpocHR5eHQ4bGU4ZQ==" target="_blank"
+                    rel="noopener noreferrer" class="social-btn">
+                    <div class="social-icon instagram-icon">
+                        <img src="icon/instagram.png" alt="Instagram"
+                            onerror="this.onerror=null;this.src='icons/instagram.png';">
+                    </div>
+                    <span>Instagram</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 Bazar Buy. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- ===== ПОПАП КАРТОЧКИ ТОВАРА ===== -->
+    <div id="productPopup" class="product-popup-overlay">
+        <div class="product-popup">
+            <!-- Кнопка закрытия -->
+            <button class="popup-close-btn" onclick="closeProductPopup()">×</button>
+
+            <!-- Уведомление о добавлении -->
+            <div id="popupNotification" class="popup-notification">
+                ✓ Товар добавлен в корзину
+            </div>
+
+            <div class="popup-content">
+                <!-- Левая часть: изображение -->
+                <div class="popup-image-section">
+                    <div class="popup-image-wrapper">
+                        <img id="popupProductImage" src="" alt="" class="popup-product-image">
+                        <div id="popupProductBadges" class="popup-badges"></div>
+                    </div>
+                </div>
+
+                <!-- Правая часть: информация -->
+                <div class="popup-info-section">
+                    <!-- Категория и название -->
+                    <p id="popupProductCategory" class="popup-category"></p>
+                    <h2 id="popupProductName" class="popup-product-name"></h2>
+
+                    <!-- Выбор цвета -->
+                    <div class="popup-option-group">
+                        <label class="popup-label">Цвет:</label>
+                        <div id="popupColors" class="popup-colors"></div>
+                    </div>
+
+                    <!-- Метраж -->
+                    <div class="popup-option-group">
+                        <label class="popup-label">Метраж:</label>
+                        <div class="popup-counter">
+                            <button class="popup-counter-btn" onclick="changeMeters(-1)">−</button>
+                            <span id="popupMeters" class="popup-counter-value">1</span>
+                            <button class="popup-counter-btn" onclick="changeMeters(1)">+</button>
+                            <span class="popup-counter-unit">м</span>
+                        </div>
+                    </div>
+
+                    <!-- Рулоны -->
+                    <div class="popup-option-group">
+                        <label class="popup-label">Рулоны:</label>
+                        <div class="popup-counter">
+                            <button class="popup-counter-btn" onclick="changeRolls(-1)">−</button>
+                            <span id="popupRolls" class="popup-counter-value">1</span>
+                            <button class="popup-counter-btn" onclick="changeRolls(1)">+</button>
+                            <span class="popup-counter-unit">шт</span>
+                        </div>
+                    </div>
+
+                    <!-- Цена -->
+                    <div class="popup-price-section">
+                        <span class="popup-price-label">Итого:</span>
+                        <div id="popupPrice" class="popup-price"></div>
+                    </div>
+
+                    <!-- Кнопка добавления -->
+                    <button class="popup-add-btn" onclick="addToCartFromPopup()">
+                        ДОБАВИТЬ В КОРЗИНУ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Video data
+        const videos = [
+            { id: 1, title: 'Премиум велюр', description: 'Роскошная текстура итальянского велюра', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' },
+            { id: 2, title: 'Шелк класса люкс', description: 'Натуральный шелк высшего качества', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4' },
+            { id: 3, title: 'Жаккард премиум', description: 'Эксклюзивные узоры ручной работы', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' },
+            { id: 4, title: 'Бархат королевский', description: 'Глубокие оттенки премиум бархата', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4' },
+            { id: 5, title: 'Лен натуральный', description: 'Экологичный европейский лен', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' },
+        ];
+
+        // Video carousel state
+        let currentVideoIndex = 0;
+        let soundEnabled = localStorage.getItem('videoSoundEnabled') === 'true';
+        let videoElements = [];
+
+        // Initialize video carousel when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initVideoCarousel);
+        } else {
+            initVideoCarousel();
+        }
+
+        // Video Carousel Functions
+        function initVideoCarousel() {
+            if (!document.getElementById('videoCarousel')) return;
+
+            const carousel = document.getElementById('videoCarousel');
+            carousel.innerHTML = '';
+
+            videos.forEach((video, index) => {
+                const card = document.createElement('div');
+                card.className = 'video-card';
+                card.setAttribute('data-index', index);
+                card.setAttribute('data-position', index - currentVideoIndex);
+
+                card.innerHTML = `
+                    <video loop playsinline ${index === currentVideoIndex ? 'autoplay' : ''} muted>
+                        <source src="${video.video || '#'}" type="video/mp4">
+                    </video>
+                    <div class="video-card-overlay">
+                        <div class="video-play-icon">▶</div>
+                        <button class="video-sound-toggle" onclick="toggleSound(event, ${index})">
+                            ${soundEnabled ? '🔊' : '🔇'}
+                        </button>
+                        <h3 class="video-card-title">${video.title}</h3>
+                        <p class="video-card-description">${video.description}</p>
+                    </div>
+                `;
+
+                if (index === currentVideoIndex) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.add('inactive');
+                }
+
+                carousel.appendChild(card);
+                videoElements.push(card.querySelector('video'));
+            });
+
+            updateVideoPositions();
+
+            // Navigation
+            const prevBtn = document.getElementById('prevVideo');
+            const nextBtn = document.getElementById('nextVideo');
+            if (prevBtn) prevBtn.addEventListener('click', () => navigateVideo(-1));
+            if (nextBtn) nextBtn.addEventListener('click', () => navigateVideo(1));
+        }
+
+        function navigateVideo(direction) {
+            // Бесконечная зацикленная карусель (барабан)
+            const prevIndex = currentVideoIndex;
+
+            // Циклическое перемещение
+            currentVideoIndex = (currentVideoIndex + direction + videos.length) % videos.length;
+
+            // Pause previous video
+            if (videoElements[prevIndex]) {
+                videoElements[prevIndex].pause();
+                videoElements[prevIndex].muted = true;
+            }
+
+            // Play new video
+            if (videoElements[currentVideoIndex]) {
+                videoElements[currentVideoIndex].play();
+                videoElements[currentVideoIndex].muted = !soundEnabled;
+            }
+
+            updateVideoPositions();
+        }
+
+        function updateVideoPositions() {
+            const cards = document.querySelectorAll('.video-card');
+            const totalVideos = videos.length;
+
+            cards.forEach((card, index) => {
+                // Calculate relative position from center (circular)
+                let position = index - currentVideoIndex;
+
+                // Normalize position to always be in range (wrap around for infinite loop)
+                if (position > totalVideos / 2) {
+                    position -= totalVideos;
+                } else if (position < -totalVideos / 2) {
+                    position += totalVideos;
+                }
+
+                card.setAttribute('data-position', position);
+
+                if (position === 0) {
+                    card.classList.add('active');
+                    card.classList.remove('inactive');
+                    // Update sound icon for active card
+                    const soundBtn = card.querySelector('.video-sound-toggle');
+                    if (soundBtn) {
+                        soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+                    }
+                } else {
+                    card.classList.remove('active');
+                    card.classList.add('inactive');
+                }
+            });
+        }
+
+        function toggleSound(event, index) {
+            event.stopPropagation();
+
+            if (index !== currentVideoIndex) return;
+
+            soundEnabled = !soundEnabled;
+            localStorage.setItem('videoSoundEnabled', soundEnabled);
+
+            if (videoElements[currentVideoIndex]) {
+                videoElements[currentVideoIndex].muted = !soundEnabled;
+            }
+
+            // Update icon
+            const btn = event.currentTarget;
+            btn.textContent = soundEnabled ? '🔊' : '🔇';
+        }
+
+        // Обработка скролла header и центрирование "Bazar Buy"
+        (function () {
+            let isInitialized = false;
+            let resizeObserver = null;
+
+            function initHeader() {
+                // === MOBILE GUARD CLAUSE ===
+                // Skip desktop header initialization on mobile viewports.
+                // Reason: Desktop header uses getBoundingClientRect() and pixel-based
+                // positioning that would fail or produce incorrect results on mobile.
+                // Mobile header has its own separate initialization in mobile-header.js.
+                if (window.innerWidth <= 768) return;
+                // === END GUARD CLAUSE ===
+
+                if (isInitialized) return;
+
+                const headerSticky = document.getElementById('headerSticky');
+                const headerRow1 = document.getElementById('headerRow1');
+                const headerRow2 = document.querySelector('.header-row-2');
+                const catalogBtn = document.querySelector('.catalog-btn');
+                const row1Brand = document.querySelector('.row1-brand');
+
+                if (!headerSticky || !headerRow1 || !headerRow2 || !catalogBtn || !row1Brand) {
+                    return false;
+                }
+
+                // Центрирование "Bazar Buy" и создание линии между кнопками
+                function centerBrandOnCatalogBtn() {
+                    try {
+                        const cartBtn = document.querySelector('.cart-btn');
+                        if (!cartBtn) return false;
+
+                        // Принудительно вызываем reflow для получения актуальных размеров
+                        void headerRow1.offsetHeight;
+                        void headerRow2.offsetHeight;
+
+                        const headerRow1Rect = headerRow1.getBoundingClientRect();
+                        const catalogBtnRect = catalogBtn.getBoundingClientRect();
+                        const cartBtnRect = cartBtn.getBoundingClientRect();
+
+                        // Вычисляем левый край кнопки "Каталог товаров" относительно header-row-1
+                        const catalogBtnLeft = catalogBtnRect.left - headerRow1Rect.left;
+
+                        // Устанавливаем позицию левого края "Bazar Buy" (без transform для выравнивания по левому краю)
+                        headerRow1.style.setProperty('--brand-center-left', catalogBtnLeft + 'px');
+
+                        // Вычисляем центр между концом кнопки "Каталог товаров" и началом кнопки "Корзина" для центрирования навигации
+                        const row1Nav = document.querySelector('.row1-nav');
+                        if (row1Nav) {
+                            const catalogBtnEnd = catalogBtnRect.right;
+                            const cartBtnStart = cartBtnRect.left;
+                            const centerBetweenBtns = (catalogBtnEnd + cartBtnStart) / 2;
+                            const navCenterPosition = centerBetweenBtns - headerRow1Rect.left - 15; // Сдвинуто на 15px влево от центра
+                            headerRow1.style.setProperty('--nav-center-left', navCenterPosition + 'px');
+                        }
+
+                        // Вычисляем позицию линии: от начала кнопки "Каталог товаров" до конца кнопки "Корзина"
+                        const lineStart = catalogBtnRect.left - headerRow1Rect.left;
+                        const lineEnd = cartBtnRect.left + cartBtnRect.width - headerRow1Rect.left;
+                        const lineWidth = lineEnd - lineStart;
+
+                        headerRow1.style.setProperty('--line-start', lineStart + 'px');
+                        headerRow1.style.setProperty('--line-width', lineWidth + 'px');
+                        headerRow1.classList.add('line-ready');
+
+                        // Показываем элементы после вычисления позиций
+                        row1Brand.classList.add('positioned');
+                        headerRow2.classList.add('ready');
+
+                        return true;
+                    } catch (error) {
+                        console.warn('Error centering brand:', error);
+                        return false;
+                    }
+                }
+
+                // Обработка скролла
+                function handleScroll() {
+                    // === MOBILE GUARD CLAUSE ===
+                    // Skip desktop scroll handling on mobile viewports.
+                    // Reason: Desktop sticky header behavior relies on specific DOM structure
+                    // and measurements that don't apply to the mobile header layout.
+                    if (window.innerWidth <= 768) return;
+                    // === END GUARD CLAUSE ===
+
+                    // === POPUP GUARD CLAUSE ===
+                    // Skip scroll handling when any popup is open
+                    // Reason: When popup opens, body gets position:fixed which resets scrollY to 0
+                    // This would incorrectly trigger header expansion
+                    if (document.body.classList.contains('popup-open') ||
+                        document.body.classList.contains('modal-open') ||
+                        document.body.classList.contains('product-popup-open')) {
+                        return;
+                    }
+                    // === END POPUP GUARD CLAUSE ===
+
+                    if (window.scrollY > 60) {
+                        headerSticky.classList.add('scrolled');
+                        headerRow1.classList.add('collapsed');
+                    } else {
+                        headerSticky.classList.remove('scrolled');
+                        headerRow1.classList.remove('collapsed');
+                    }
+                }
+
+                window.addEventListener('scroll', handleScroll, { passive: true });
+                handleScroll(); // Вызываем сразу для начального состояния
+
+                // Используем ResizeObserver для однократной инициализации позиций
+                function initializePositions() {
+                    if (!isInitialized && centerBrandOnCatalogBtn()) {
+                        isInitialized = true;
+                        // Отключаем observer после успешной инициализации
+                        if (resizeObserver && catalogBtn) {
+                            resizeObserver.unobserve(catalogBtn);
+                            resizeObserver = null;
+                        }
+                    }
+                }
+
+                // Используем ResizeObserver для отслеживания готовности layout (однократная инициализация)
+                if (window.ResizeObserver && catalogBtn) {
+                    resizeObserver = new ResizeObserver(() => {
+                        initializePositions();
+                    });
+                    resizeObserver.observe(catalogBtn);
+                }
+
+                // Fallback: пытаемся инициализировать сразу, если страница уже загружена
+                if (document.readyState === 'complete') {
+                    initializePositions();
+                } else {
+                    // Fallback для браузеров без ResizeObserver или если observer не сработал
+                    window.addEventListener('load', () => {
+                        setTimeout(initializePositions, 0);
+                    });
+                }
+
+                // Обновляем позиции при изменении размера окна (всегда)
+                window.addEventListener('resize', () => {
+                    // === MOBILE GUARD CLAUSE ===
+                    // Skip desktop brand centering on mobile viewports.
+                    // Reason: centerBrandOnCatalogBtn() calculates pixel positions relative
+                    // to desktop header elements that are hidden on mobile. Running it would
+                    // either fail silently or produce incorrect positioning values.
+                    if (window.innerWidth <= 768) return;
+                    // === END GUARD CLAUSE ===
+
+                    centerBrandOnCatalogBtn();
+                });
+
+                return true;
+            }
+
+            // Инициализация
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initHeader);
+            } else {
+                initHeader();
+            }
+        })();
+    </script>
+    <!-- Phase 6: Scroll lock utility (before modules that use it) -->
+    <script src="js/utils/scrollLock.js"></script>
+    <!-- Mobile Header JS -->
+    <script src="js/mobile-header.js"></script>
+    <script src="js/catalog/eventBus.js"></script>
+    <!-- Источники данных -->
+    <script src="js/catalog/data-sources/localJSONSource.js"></script>
+    <script src="js/catalog/data-sources/wordpressRESTSource.js"></script>
+    <!-- Хранилище данных (использует источники) -->
+    <script src="js/catalog/dataStore.js"></script>
+    <!-- Phase 5A: Error handling extension (decorator) -->
+    <script src="js/catalog/dataStore-errorHandling.js"></script>
+    <!-- Phase 5B: Initialization helper (load early) -->
+    <script src="js/catalog/catalogReady.js"></script>
+    <script src="js/catalog/filters.js"></script>
+    <!-- Phase 5B: Guards (load AFTER modules) -->
+    <script src="js/catalog/filters-guards.js"></script>
+    <script src="js/catalog/sorting.js"></script>
+    <script src="js/catalog/pagination.js"></script>
+    <!-- Phase 5B: Guards (load AFTER modules) -->
+    <script src="js/catalog/pagination-guards.js"></script>
+    <script src="js/catalog/productCard.js"></script>
+    <script src="js/catalog/catalog-core.js"></script>
+    <!-- Phase 5A: Fallback UI extension -->
+    <script src="js/catalog/catalogFallbackUI.js"></script>
+    <script src="js/catalog/integration.js"></script>
+    <!-- Существующие модули -->
+    <script src="js/catalog.js"></script>
+    <script src="js/product-popup.js"></script>
+    <!-- ============================================ -->
+    <!-- НОВЫЕ МОДУЛИ КАТАЛОГА (добавлено ПОСЛЕ существующих) -->
+    <!-- ============================================ -->
+
+    <!-- 1. Расширение DataStore -->
+    <script src="js/catalog/dataStoreNavigation.js"></script>
+
+    <!-- 2. Исправление пагинации -->
+    <script src="js/catalog/paginationFix.js"></script>
+
+    <!-- 3. Меню -->
+    <script src="js/menu/megaMenu.js"></script>
+    <!-- Phase 5B: Guards (load AFTER modules) -->
+    <!-- ВРЕМЕННО ОТКЛЮЧЕНО: Guard-файл вызывает проблемы с async/await -->
+    <!-- <script src="js/menu/megaMenu-guards.js"></script> -->
+    <script src="js/menu/catalogButton.js"></script>
+    <!-- Phase 5B: Guards (load AFTER modules) -->
+    <script src="js/menu/catalogButton-guards.js"></script>
+
+    <!-- 4. Поиск -->
+    <script src="js/search/searchController.js"></script>
+    <!-- Phase 5B: Guards (load AFTER modules) -->
+    <script src="js/search/searchController-guards.js"></script>
+
+    <!-- 5. SEO -->
+    <script src="js/seo/seoController.js"></script>
+
+    <script src="js/cart-store.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await Catalog.load('data/products.json');
+            Catalog.renderPromo();
+
+            // Обновление бейджа корзины
+            function updateCartBadge() {
+                const badge = document.getElementById('cartBadge');
+                if (badge) {
+                    const count = CartStore.getCount();
+                    badge.textContent = count;
+                    badge.classList.toggle('hidden', count === 0);
+                }
+            }
+
+            // Обновляем бейдж при загрузке страницы
+            updateCartBadge();
+
+            // Обновляем бейдж при изменении корзины
+            document.addEventListener('cart:updated', updateCartBadge);
+        });
+    </script>
+    <!-- Инициализация новых модулей каталога -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            console.log('[INDEX] DOMContentLoaded начало инициализации');
+
+            // КРИТИЧЕСКИ ВАЖНО: MegaMenu.init() асинхронный, ждём его завершения
+            if (window.MegaMenu) {
+                console.log('[INDEX] Начинаем инициализацию MegaMenu');
+                await MegaMenu.init('.mega-menu');
+                console.log('[INDEX] MegaMenu инициализирован');
+            }
+
+            // Инициализируем CatalogButton только ПОСЛЕ MegaMenu
+            if (window.CatalogButton) {
+                console.log('[INDEX] Начинаем инициализацию CatalogButton');
+                CatalogButton.init();
+                console.log('[INDEX] CatalogButton инициализирован');
+            }
+            if (window.SearchController) {
+                SearchController.init({
+                    inputSelector: '.search-input',
+                    debounceDelay: 300,
+                    minQueryLength: 2
+                });
+            }
+            if (window.SEOController) {
+                SEOController.init({ siteName: 'BazarBuy' });
+            }
+        });
+    </script>
+
+    <!-- ⭐ PHASE 3: API Модули -->
+    <script src="js/api/client.js"></script>
+    <script src="js/api/products.js"></script>
+    <script src="js/api/cart.js"></script>
+    <script src="js/api/index.js"></script>
+
+    <!-- Cabinet Scripts -->
+    <script src="cabinet/cabinet-api.js"></script>
+    <script src="cabinet/cabinet-store.js"></script>
+    <script src="cabinet/cabinet.js"></script>
+</body>
+
+</html>

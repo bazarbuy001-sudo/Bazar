@@ -1046,17 +1046,13 @@
             <h2 class="section-main-title">Видео-обзоры новинок</h2>
 
             <div class="video-carousel-container">
-                <button class="carousel-nav carousel-nav-left" id="prevVideo">
-                    <span>‹</span>
-                </button>
-
+                <button class="carousel-nav carousel-nav-left" id="prevVideo">‹</button>
+                
                 <div class="video-carousel" id="videoCarousel">
-                    <!-- Видео карточки будут добавлены через JavaScript -->
+                    <!-- Видео будут добавлены через JavaScript -->
                 </div>
-
-                <button class="carousel-nav carousel-nav-right" id="nextVideo">
-                    <span>›</span>
-                </button>
+                
+                <button class="carousel-nav carousel-nav-right" id="nextVideo">›</button>
             </div>
 
             <div class="video-all-link-container">
@@ -1685,13 +1681,14 @@
 
 
     <script>
-        // Video data
+        // Video data - YouTube IDs
         const videos = [
-            { id: 1, title: 'Премиум велюр', description: 'Роскошная текстура итальянского велюра', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' },
-            { id: 2, title: 'Шелк класса люкс', description: 'Натуральный шелк высшего качества', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4' },
-            { id: 3, title: 'Жаккард премиум', description: 'Эксклюзивные узоры ручной работы', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' },
-            { id: 4, title: 'Бархат королевский', description: 'Глубокие оттенки премиум бархата', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_2mb.mp4' },
-            { id: 5, title: 'Лен натуральный', description: 'Экологичный европейский лен', video: 'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4' },
+            { id: 1, title: 'Премиум велюр', description: 'Роскошная текстура итальянского велюра', youtubeId: 'dQw4w9WgXcQ' },
+            { id: 2, title: 'Шелк класса люкс', description: 'Натуральный шелк высшего качества', youtubeId: 'jNQXAC9IVRw' },
+            { id: 3, title: 'Жаккард премиум', description: 'Эксклюзивные узоры ручной работы', youtubeId: 'FSeNDZ5UwVw' },
+            { id: 4, title: 'Бархат королевский', description: 'Глубокие оттенки премиум бархата', youtubeId: '9bZkp7q19f0' },
+            { id: 5, title: 'Лен натуральный', description: 'Экологичный европейский лен', youtubeId: 'ZZ5B0XvKwB0' },
+            { id: 6, title: 'Трикотаж премиум', description: 'Мягкие эластичные ткани', youtubeId: '4f2WGISGBVc' },
         ];
 
         // Video carousel state
@@ -1720,14 +1717,9 @@
                 card.setAttribute('data-position', index - currentVideoIndex);
 
                 card.innerHTML = `
-                    <video loop playsinline ${index === currentVideoIndex ? 'autoplay' : ''} muted>
-                        <source src="${video.video || '#'}" type="video/mp4">
-                    </video>
+                    <iframe style="width: 100%; height: 100%; border: none;" src="https://www.youtube.com/embed/${video.youtubeId}?autoplay=0&controls=1&mute=1" title="${video.title}" frameborder="0" allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <div class="video-card-overlay">
                         <div class="video-play-icon">▶</div>
-                        <button class="video-sound-toggle" onclick="toggleSound(event, ${index})">
-                            ${soundEnabled ? '🔊' : '🔇'}
-                        </button>
                         <h3 class="video-card-title">${video.title}</h3>
                         <p class="video-card-description">${video.description}</p>
                     </div>
@@ -1740,7 +1732,6 @@
                 }
 
                 carousel.appendChild(card);
-                videoElements.push(card.querySelector('video'));
             });
 
             updateVideoPositions();
@@ -1754,23 +1745,7 @@
 
         function navigateVideo(direction) {
             // Бесконечная зацикленная карусель (барабан)
-            const prevIndex = currentVideoIndex;
-
-            // Циклическое перемещение
             currentVideoIndex = (currentVideoIndex + direction + videos.length) % videos.length;
-
-            // Pause previous video
-            if (videoElements[prevIndex]) {
-                videoElements[prevIndex].pause();
-                videoElements[prevIndex].muted = true;
-            }
-
-            // Play new video
-            if (videoElements[currentVideoIndex]) {
-                videoElements[currentVideoIndex].play();
-                videoElements[currentVideoIndex].muted = !soundEnabled;
-            }
-
             updateVideoPositions();
         }
 
