@@ -11,6 +11,154 @@ datasource db {
 }
 
 // ===================================
+// PRODUCTS & CATEGORIES (CORE STRUCTURE)
+// ===================================
+
+/// Основные категории товаров
+model Category {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  name            String   @unique // "Одежные ткани", "Швейная фурнитура"
+  type            String   // "fabric" или "accessory"
+  description     String? 
+  
+  createdAt       DateTime @default(now())
+
+  // Relations
+  subcategories   SubCategory[]
+  products        Product[]
+
+  @@index([type])
+  @@map("categories")
+}
+
+/// Подкатегории товаров (70+ для тканей, 30+ для фурнитуры)
+model SubCategory {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  categoryId      String  
+  name            String   // "атлас", "креп", "молнии"
+  
+  createdAt       DateTime @default(now())
+
+  // Relations
+  category        Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  products        Product[]
+
+  @@unique([categoryId, name])
+  @@index([categoryId])
+  @@map("subcategories")
+}
+
+/// Товары (ткани и фурнитура)
+model Product {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  publicId        String   @unique // SKU
+  
+  name            String   // Название товара
+  articleNumber   String? 
+  productType     ProductType @default(FABRIC) // "fabric" или "accessory"
+  
+  // Категории
+  categoryId      String  
+  subcategoryId   String  
+  
+  // Коммерческие данные
+  price           Decimal  @db.Decimal(10, 2) // Текущая цена
+  oldPrice        Decimal? @db.Decimal(10, 2) // Старая цена (для скидок)
+  isOnSale        Boolean  @default(false)
+  isNew           Boolean  @default(false)
+  isRestRoll      Boolean  @default(false)
+  
+  warehouseAvailability Decimal @db.Decimal(10, 2) @default(0) // Метры или штуки
+  
+  // ТКАНИ: специфичные поля
+  color           String? 
+  shade           String? 
+  widthCm         Decimal? @db.Decimal(10, 2) // Ширина ткани в см
+  densityGsm      Decimal? @db.Decimal(10, 2) // Плотность г/м²
+  densityGpm      Decimal? @db.Decimal(10, 2) // Плотность г/пог.м
+  pattern         String?  // "клетка", "полоска"
+  printType       String?  // "однотонная", "принт", "жаккард"
+  fabricSubtype   String?  // "футер", "интерлок"
+  fabricProperties String? // "стрейч", "эластичная"
+  purpose         String?  // "для платьев", "для спорта"
+  metersPerRoll   Decimal? @db.Decimal(10, 2)
+  metersPerKg     Decimal? @db.Decimal(10, 2)
+  minimumCut      Int?     // 3, 6 или 10 метров (для тканей)
+  countryOfOrigin String? 
+  
+  // ФУРНИТУРА: специфичные поля
+  material        String?  // "металл", "пластик", "текстиль"
+  accessoryType   String?  // "спираль", "трактор"
+  size            String?  // универсальное поле для размера
+  application     String?  // "бельевая", "декоративная"
+  finish          String?  // "никель", "матовый"
+  brand           String? 
+  packageType     String?  // "поштучно", "набор"
+  mountingType    String?  // "пришивной", "термо"
+  
+  // Цвета товара (JSONB: ["красный", "синий", "зеленый"])
+  colors          Json?    @default("[]")
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  category        Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  subcategory     SubCategory @relation(fields: [subcategoryId], references: [id], onDelete: Restrict)
+  compositions    FabricComposition[]
+  images          ProductImage[]
+
+  @@unique([articleNumber])
+  @@index([productType])
+  @@index([categoryId])
+  @@index([subcategoryId])
+  @@index([isOnSale])
+  @@index([isNew])
+  @@map("products")
+}
+
+enum ProductType {
+  FABRIC
+  ACCESSORY
+}
+
+/// Состав ткани (компоненты с процентами)
+model FabricComposition {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  productId       String  
+  
+  material        String   // "хлопок", "полиэстер"
+  percentage      Int      // 0-100%
+  
+  // Relations
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, material])
+  @@index([productId])
+  @@index([material])
+  @@map("fabric_compositions")
+}
+
+/// Изображения товаров
+model ProductImage {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  productId       String  
+  
+  imageUrl        String   // Путь/URL к изображению
+  position        Int      // 0 = основное, 1-4 = дополнительные
+  isMain          Boolean  @default(false)
+  
+  createdAt       DateTime @default(now())
+
+  // Relations
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, position])
+  @@index([productId])
+  @@map("product_images")
+}
+
+// ===================================
 // CORE ENTITIES (D-001: B2B Model)
 // ===================================
 
@@ -32,6 +180,7 @@ model Client {
   // Relations
   orders          Order[]
   idempotentRequests IdempotentRequest[]
+  chats           Chat[]
 
   @@index([email])
   @@index([publicId])
@@ -57,6 +206,7 @@ model AdminUser {
   orders          Order[]
   sessions        Session[]
   idempotentRequests IdempotentRequest[]
+  assignedChats   Chat[]
 
   @@index([email])
   @@index([role])
@@ -131,6 +281,58 @@ model OrderItem {
 
   @@index([orderId])
   @@map("order_items")
+}
+
+// ===================================
+// CHAT & MESSAGES
+// ===================================
+
+/// Чаты между клиентами и менеджерами
+model Chat {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  clientId        String  
+  assignedAdminId String? 
+  
+  subject         String?  // Тема чата (например, номер заказа)
+  isActive        Boolean  @default(true)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assignedAdmin   AdminUser? @relation(fields: [assignedAdminId], references: [id], onDelete: SetNull)
+  messages        Message[]
+
+  @@index([clientId])
+  @@index([assignedAdminId])
+  @@index([isActive])
+  @@map("chats")
+}
+
+/// Сообщения в чате
+model Message {
+  id              String   @id @default(dbgenerated("gen_random_uuid()"))
+  chatId          String  
+  senderId        String   // Client ID или Admin ID
+  senderType      SenderType // CLIENT или ADMIN
+  
+  content         String   // Текст сообщения
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  chat            Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+enum SenderType {
+  CLIENT
+  ADMIN
 }
 
 // ===================================

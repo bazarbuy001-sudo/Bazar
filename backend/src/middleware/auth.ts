@@ -84,3 +84,80 @@ export const adminOnly = (req: Request, res: Response, next: NextFunction): void
 
   next();
 };
+
+/**
+ * Middleware: Authenticate Admin (JWT required + admin role)
+ */
+export const authenticateAdmin = (req: Request, res: Response, next: NextFunction): void => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).json({ 
+      success: false,
+      error: 'Missing or invalid authorization header' 
+    });
+    return;
+  }
+
+  const token = authHeader.substring(7);
+  const decoded = verifyJWT(token);
+
+  if (!decoded) {
+    res.status(401).json({ 
+      success: false,
+      error: 'Invalid or expired token' 
+    });
+    return;
+  }
+
+  if (decoded.role !== 'admin' && decoded.role !== 'superadmin' && decoded.role !== 'manager') {
+    res.status(403).json({ 
+      success: false,
+      error: 'Admin access required' 
+    });
+    return;
+  }
+
+  req.user = decoded;
+  req.user.adminId = decoded.id;
+  next();
+};
+
+/**
+ * Middleware: Authenticate Client (JWT required + client type)
+ */
+export const authenticateClient = (req: Request, res: Response, next: NextFunction): void => {
+  const authHeader = req.headers.authorization;
+  
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    res.status(401).json({ 
+      success: false,
+      error: 'Missing or invalid authorization header' 
+    });
+    return;
+  }
+
+  const token = authHeader.substring(7);
+  const decoded = verifyJWT(token);
+
+  if (!decoded) {
+    res.status(401).json({ 
+      success: false,
+      error: 'Invalid or expired token' 
+    });
+    return;
+  }
+
+  // Проверить что это клиент (не админ)
+  if (decoded.role && (decoded.role === 'admin' || decoded.role === 'superadmin' || decoded.role === 'manager')) {
+    res.status(403).json({ 
+      success: false,
+      error: 'Client access required' 
+    });
+    return;
+  }
+
+  req.user = decoded;
+  req.user.clientId = decoded.id;
+  next();
+};
