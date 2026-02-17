@@ -236,21 +236,64 @@ class AdminAPIClient {
   }
 
   // ==================== ORDERS ====================
+  // ==================== ORDERS (V2) ====================
   async getOrders(filters = {}) {
     const query = new URLSearchParams(filters).toString();
-    return this.request('GET', `/orders${query ? '?' + query : ''}`);
+    const url = `http://localhost:3000/api/v2/orders${query ? '?' + query : ''}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch orders: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   async getOrderById(id) {
-    return this.request('GET', `/orders/${id}`);
+    const url = `http://localhost:3000/api/v2/orders/${id}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch order: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   async updateOrderStatus(id, status) {
-    return this.request('PUT', `/orders/${id}`, { status });
+    const url = `http://localhost:3000/api/v2/orders/${id}/status`;
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify({ status })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   async getOrderStats() {
-    return this.request('GET', '/orders/stats');
+    const url = `http://localhost:3000/api/v2/orders/stats`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch order stats: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   // ==================== CLIENTS ====================
