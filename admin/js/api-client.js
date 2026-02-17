@@ -84,18 +84,98 @@ class AdminAPIClient {
     return this.request('POST', '/logout');
   }
 
-  // ==================== PRODUCTS ====================
+  // ==================== PRODUCTS (V2) ====================
   async getProducts(filters = {}) {
     const query = new URLSearchParams(filters).toString();
-    return this.request('GET', `/products${query ? '?' + query : ''}`);
+    // Admin endpoint
+    const url = `http://localhost:3000/api/v2/admin/products${query ? '?' + query : ''}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   async getProductById(id) {
-    return this.request('GET', `/products/${id}`);
+    const url = `http://localhost:3000/api/v2/admin/products/${id}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch product: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   async createProduct(data) {
-    return this.request('POST', '/products', data);
+    const url = `http://localhost:3000/api/v2/admin/products`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  async updateProduct(id, data) {
+    const url = `http://localhost:3000/api/v2/admin/products/${id}`;
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: this.getHeaders(),
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  async deleteProduct(id) {
+    const url = `http://localhost:3000/api/v2/admin/products/${id}`;
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: this.getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete product: ${response.status}`);
+    }
+
+    return await response.json();
+  }
+
+  async getCategories(type = null) {
+    const url = type 
+      ? `http://localhost:3000/api/v2/categories?type=${type}`
+      : `http://localhost:3000/api/v2/categories`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: this.getHeaders()
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch categories: ${response.status}`);
+    }
+
+    return await response.json();
   }
 
   async updateProduct(id, data) {

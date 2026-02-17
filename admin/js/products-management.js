@@ -58,7 +58,7 @@ class ProductsManager {
   async loadProducts() {
     try {
       const response = await apiClient.getProducts();
-      this.products = response.products || [];
+      this.products = response.data || response.products || [];
       this.renderProductsTable();
       this.loadCategories();
     } catch (error) {
@@ -71,17 +71,18 @@ class ProductsManager {
     const tbody = document.getElementById('products-tbody');
 
     if (this.products.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center">Товары не найдены</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center">Товары не найдены</td></tr>';
       return;
     }
 
     tbody.innerHTML = this.products.map(product => `
       <tr>
-        <td>${this.truncate(product.id, 8)}</td>
+        <td>${this.truncate(product.publicId, 8)}</td>
         <td>${product.name}</td>
+        <td>${product.productType === 'FABRIC' ? 'Ткань' : 'Фурнитура'}</td>
         <td>${dashboardManager.formatPrice(product.price)}</td>
-        <td>${product.category || '—'}</td>
-        <td>${(product.colors || []).join(', ') || '—'}</td>
+        <td>${product.category?.name || '—'}</td>
+        <td>${(product.colors && Array.isArray(product.colors) ? product.colors.join(', ') : '—')}</td>
         <td>
           <button class="btn btn-primary btn-small" onclick="productsManager.editProduct('${product.id}')">
             Редактировать
@@ -96,14 +97,14 @@ class ProductsManager {
 
   async loadCategories() {
     try {
-      const response = await apiClient.request('GET', '/products/categories');
+      const response = await apiClient.getCategories();
       const select = document.getElementById('products-category');
 
-      if (select && response.categories) {
-        response.categories.forEach(category => {
+      if (select && response.data) {
+        response.data.forEach(category => {
           const option = document.createElement('option');
-          option.value = category;
-          option.textContent = category;
+          option.value = category.id;
+          option.textContent = category.name;
           select.appendChild(option);
         });
       }
@@ -118,25 +119,27 @@ class ProductsManager {
 
     const filtered = this.products.filter(product => {
       const matchSearch = product.name.toLowerCase().includes(search) ||
+                         product.publicId?.toLowerCase().includes(search) ||
                          product.id.toLowerCase().includes(search);
-      const matchCategory = !category || product.category === category;
+      const matchCategory = !category || product.categoryId === category;
       return matchSearch && matchCategory;
     });
 
     // Render filtered products
     const tbody = document.getElementById('products-tbody');
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center">Товары не найдены</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center">Товары не найдены</td></tr>';
       return;
     }
 
     tbody.innerHTML = filtered.map(product => `
       <tr>
-        <td>${this.truncate(product.id, 8)}</td>
+        <td>${this.truncate(product.publicId, 8)}</td>
         <td>${product.name}</td>
+        <td>${product.productType === 'FABRIC' ? 'Ткань' : 'Фурнитура'}</td>
         <td>${dashboardManager.formatPrice(product.price)}</td>
-        <td>${product.category || '—'}</td>
-        <td>${(product.colors || []).join(', ') || '—'}</td>
+        <td>${product.category?.name || '—'}</td>
+        <td>${(product.colors && Array.isArray(product.colors) ? product.colors.join(', ') : '—')}</td>
         <td>
           <button class="btn btn-primary btn-small" onclick="productsManager.editProduct('${product.id}')">
             Редактировать

@@ -8,7 +8,7 @@ const router = Router();
 // ============================================
 // V2 PRODUCTS ROUTES (New structure)
 // ============================================
-router.use('/products', productsRoutes);
+router.use('/v2/products', productsRoutes);
 
 // ============================================
 // V2 CABINET ROUTES (New structure)
