@@ -60,6 +60,13 @@ app.get('/api/v1/health', (req: Request, res: Response) => {
 // API Routes
 app.use('/api/v1', apiRoutes);
 
+// V2 Routes (New structure with database)
+import productsRoutesV2 from './routes/products.routes';
+import cabinetRoutesV2 from './routes/cabinet.routes';
+
+app.use('/api/v2/products', productsRoutesV2);
+app.use('/api/v2/cabinet', cabinetRoutesV2);
+
 // Error Handling Middleware
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err);
