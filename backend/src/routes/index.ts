@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import productsRoutes from './products.routes.js';
+import cartRoutes from './cart.routes.js';
 import cabinetRoutes from './cabinet.routes.js';
 import adminRoutes from './admin.routes.js';
 import authRoutes from './auth.routes.js';
@@ -16,6 +17,11 @@ router.use('/auth', authRoutes);
 // PRODUCTS ROUTES (public access)
 // ============================================
 router.use('/', productsRoutes);
+
+// ============================================
+// CART ROUTES (mixed - guest + auth)
+// ============================================
+router.use('/cart', cartRoutes);
 
 // ============================================
 // CABINET ROUTES (client auth required)
