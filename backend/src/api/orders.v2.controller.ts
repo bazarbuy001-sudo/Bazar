@@ -89,24 +89,24 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
 
       // Рассчитать рулоны для тканей
       const calculatedRolls = product.productType === 'FABRIC' 
-        ? Math.ceil(meters / (product.metersPerRoll || 100))
+        ? Math.ceil(meters / (product.metersPerRoll?.toNumber() || 100))
         : rolls || 1;
 
       // Рассчитать цену
+      const pricePerUnit = Number(product.price.toString());
       const itemPrice = product.productType === 'FABRIC'
-        ? product.price * meters  // Цена за метр
-        : product.price * (rolls || 1);  // Цена за штуку
+        ? pricePerUnit * meters  // Цена за метр
+        : pricePerUnit * (rolls || 1);  // Цена за штуку
 
       totalAmount += itemPrice;
 
       orderItemsData.push({
-        productId,
-        color,
         fabricId: productId,
-        requestedMeters: Number(meters),
+        color,
+        requestedMeters: meters,
         rolls: calculatedRolls,
-        unitPricePerMeter: product.price,
-        totalPrice: itemPrice
+        unitPricePerMeter: product.price.toString(),
+        totalPrice: itemPrice.toString()
       });
     }
 
@@ -118,7 +118,7 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
         status: 'PENDING',
         totalAmount: totalAmount,
         currency: 'RUB',
-        shippingAddress: shippingAddress ? JSON.stringify(shippingAddress) : null,
+        shippingAddress: shippingAddress || null,
         items: {
           create: orderItemsData
         }
@@ -135,7 +135,8 @@ export const createOrder = async (req: Request, res: Response): Promise<void> =>
       });
 
       if (product) {
-        const newAvailability = Math.max(0, product.warehouseAvailability - item.meters);
+        const currentAvailability = Number(product.warehouseAvailability.toString());
+        const newAvailability = Math.max(0, currentAvailability - item.meters);
         await prisma.product.update({
           where: { id: item.productId },
           data: {
@@ -332,7 +333,7 @@ export const updateOrderStatus = async (req: Request, res: Response): Promise<vo
           await prisma.product.update({
             where: { id: item.fabricId },
             data: {
-              warehouseAvailability: product.warehouseAvailability + item.requestedMeters
+              warehouseAvailability: Number(product.warehouseAvailability.toString()) + Number(item.requestedMeters.toString())
             }
           });
         }
