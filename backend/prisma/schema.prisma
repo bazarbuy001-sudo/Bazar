@@ -358,17 +358,3 @@ enum SagaStepStatus {
   FAILED
   COMPENSATED
 }
-
-// Таблица для автосохранения пользовательских сессий
-model UserSession {
-  id           Int      @id @default(autoincrement())
-  sessionId    String   @unique @map("session_id")
-  autosaveData Json?    @map("autosave_data")
-  expiresAt    DateTime? @map("expires_at")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-
-  @@map("user_sessions")
-  @@index([sessionId])
-  @@index([expiresAt])
-}
