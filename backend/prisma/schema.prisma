@@ -167,6 +167,7 @@ model Client {
   id              String   @id @default(dbgenerated("gen_random_uuid()"))
   publicId        String   @unique
   email           String   @unique
+  passwordHash    String?  // Хеш пароля для авторизации
   name            String   // Наименование компании
   phone           String? 
   city            String? 

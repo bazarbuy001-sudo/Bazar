@@ -617,7 +617,7 @@ export const getClients = (req: Request, res: Response): void => {
         (c) =>
           c.name.toLowerCase().includes(q) ||
           c.email.toLowerCase().includes(q) ||
-          c.phone.includes(q as string)
+          c.phone.includes(q)
       );
     }
 
@@ -1316,7 +1316,7 @@ export const refreshToken = (req: Request, res: Response): void => {
     // For this mock implementation, we'll just generate a new token
 
     // Try to decode and extract user info from token
-    let adminInfo: any = {
+    const adminInfo: any = {
       id: 'admin-001',
       email: 'admin@fabrics.local',
       name: 'Admin User',

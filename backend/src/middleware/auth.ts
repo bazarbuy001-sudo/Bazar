@@ -6,7 +6,13 @@ declare global {
     interface Request {
       userId?: string;
       userRole?: string;
-      user?: any;
+      user?: {
+        id: string;
+        role: string;
+        email?: string;
+        adminId?: string;
+        clientId?: string;
+      };
     }
   }
 }
@@ -34,7 +40,7 @@ export const verifyJWT = (token: string): DecodedToken | null => {
 /**
  * Generate JWT token
  */
-export const generateJWT = (payload: any): string => {
+export const generateJWT = (payload: object): string => {
   return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
 };
 

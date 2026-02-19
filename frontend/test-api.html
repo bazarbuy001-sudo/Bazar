@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест API интеграции</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .loading { background: #fff3cd; color: #856404; }
+        .product { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Тест API интеграции Bazar Buy</h1>
+    <div id="status" class="status loading">Загрузка...</div>
+    <div id="products"></div>
+
+    <!-- API Modules -->
+    <script type="module" src="js/api/client.js"></script>
+    <script type="module" src="js/api/products.js"></script>
+    <script type="module" src="js/api/index.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const statusDiv = document.getElementById('status');
+            const productsDiv = document.getElementById('products');
+
+            try {
+                // Проверка доступности API модулей
+                if (typeof ProductsAPI === 'undefined') {
+                    throw new Error('ProductsAPI не загружен');
+                }
+
+                statusDiv.textContent = 'API модули загружены, запрос товаров...';
+                
+                // Запрос товаров
+                const result = await ProductsAPI.getProducts({ limit: 5 });
+                
+                if (!result.success) {
+                    throw new Error('API ошибка: ' + result.error);
+                }
+
+                const products = result.data.products || result.data;
+                statusDiv.className = 'status success';
+                statusDiv.textContent = `✅ Успешно! Загружено ${products.length} товаров`;
+
+                // Отображение товаров
+                productsDiv.innerHTML = products.map(product => `
+                    <div class="product">
+                        <h3>${product.name}</h3>
+                        <p><strong>Цена:</strong> ${product.price} ₽</p>
+                        <p><strong>Категория:</strong> ${product.category?.name || 'Не указана'}</p>
+                        <p><strong>Цвет:</strong> ${product.color || 'Не указан'}</p>
+                        <p><strong>В наличии:</strong> ${product.warehouseAvailability} м</p>
+                        ${product.isOnSale ? '<p style="color: red;">🔥 СКИДКА</p>' : ''}
+                        ${product.isNew ? '<p style="color: green;">✨ НОВИНКА</p>' : ''}
+                    </div>
+                `).join('');
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Ошибка: ' + error.message;
+                
+                // Дополнительная диагностика
+                productsDiv.innerHTML = `
+                    <h3>Диагностика:</h3>
+                    <ul>
+                        <li>ApiClient доступен: ${typeof ApiClient !== 'undefined' ? '✅' : '❌'}</li>
+                        <li>ProductsAPI доступен: ${typeof ProductsAPI !== 'undefined' ? '✅' : '❌'}</li>
+                        <li>Backend доступен: проверяем...</li>
+                    </ul>
+                    <div id="backendStatus">Проверка backend...</div>
+                `;
+
+                // Проверка backend
+                try {
+                    const response = await fetch('http://localhost:3000/api/v1/products?limit=1');
+                    const data = await response.json();
+                    document.getElementById('backendStatus').innerHTML = 
+                        response.ok ? '✅ Backend отвечает' : '❌ Backend ошибка: ' + data.error;
+                } catch (backendError) {
+                    document.getElementById('backendStatus').innerHTML = '❌ Backend недоступен: ' + backendError.message;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

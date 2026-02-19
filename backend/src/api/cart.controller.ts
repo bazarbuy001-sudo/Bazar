@@ -65,7 +65,7 @@ export const addToCart = async (
 
     const clientId = req.headers['x-client-id'] as string || 'anonymous';
 
-    let cart = cartsStore.get(clientId) || {
+    const cart = cartsStore.get(clientId) || {
       items: [],
       totalAmount: 0,
       itemCount: 0,

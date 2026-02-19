@@ -1189,6 +1189,13 @@
     <!-- 5. SEO -->
     <script type="module" src="js/seo/seoController.js"></script>
 
+    <!-- 6. API Modules -->
+    <script type="module" src="js/api/index.js"></script>
+    <script type="module" src="js/api/client.js"></script>
+    <script type="module" src="js/api/products.js"></script>
+    <script type="module" src="js/api/cart.js"></script>
+    <script type="module" src="js/api/checkout.js"></script>
+
     <script type="module" src="js/cart-store.js"></script>
 
     <script>
@@ -1231,9 +1238,34 @@
                     throw new Error('CatalogProductCard не загружен');
                 }
 
-                // Загрузка товаров для инициализации фильтров
-                await CatalogDataStore.load('data/products.json');
-                const allProducts = CatalogDataStore.getAllProducts();
+                // PHASE 4 INTEGRATION: Загрузка товаров из API для инициализации фильтров
+                let allProducts = [];
+                try {
+                    console.log('[Catalog] Загружаем товары из ProductsAPI...');
+                    const result = await ProductsAPI.getProducts({ limit: 100 });
+                    if (result.success) {
+                        // Адаптируем данные из API в формат CatalogDataStore
+                        const apiProducts = result.data.products || result.data;
+                        allProducts = apiProducts.map(product => ({
+                            id: product.id,
+                            name: product.name,
+                            price: parseFloat(product.price || 0),
+                            category: product.category?.name || 'Без категории',
+                            color: product.color || 'Не указан',
+                            image: product.images?.[0]?.url || '/images/placeholder.jpg',
+                            isNew: product.isNew || false,
+                            isOnSale: product.isOnSale || false,
+                            warehouseAvailability: product.warehouseAvailability || 0
+                        }));
+                        console.log('[Catalog] Загружено товаров из API:', allProducts.length);
+                    } else {
+                        throw new Error('API error: ' + result.error);
+                    }
+                } catch (error) {
+                    console.error('[Catalog] Ошибка загрузки из API, fallback на JSON:', error);
+                    await CatalogDataStore.load('data/products.json');
+                    allProducts = CatalogDataStore.getAllProducts();
+                }
 
                 // ВОССТАНОВЛЕНИЕ ФИЛЬТРОВ ИЗ URL
                 restoreFiltersFromURL();
@@ -1566,11 +1598,38 @@
                         // const response = await fetch(`/catalog/v1/products?${queryString}`);
                         // const data = await response.json();
 
-                        // ВРЕМЕННО: используем локальные данные
-                        await CatalogDataStore.load('data/products.json');
-                        let products = CatalogDataStore.getAllProducts();
-
-                        console.log('[LOAD CATALOG] Товаров загружено из файла:', products.length);
+                        // PHASE 4 INTEGRATION: Используем API вместо локальных данных
+                        let products = [];
+                        try {
+                            const result = await ProductsAPI.getProducts({ 
+                                limit: 50, 
+                                page: filtersState.page || 1,
+                                category: filtersState.category,
+                                search: filtersState.search
+                            });
+                            if (result.success) {
+                                const apiProducts = result.data.products || result.data;
+                                products = apiProducts.map(product => ({
+                                    id: product.id,
+                                    name: product.name,
+                                    price: parseFloat(product.price || 0),
+                                    category: product.category?.name || 'Без категории',
+                                    color: product.color || 'Не указан',
+                                    image: product.images?.[0]?.url || '/images/placeholder.jpg',
+                                    isNew: product.isNew || false,
+                                    isOnSale: product.isOnSale || false,
+                                    warehouseAvailability: product.warehouseAvailability || 0
+                                }));
+                                console.log('[LOAD CATALOG] Товаров загружено из API:', products.length);
+                            } else {
+                                throw new Error('API error: ' + result.error);
+                            }
+                        } catch (error) {
+                            console.error('[LOAD CATALOG] Ошибка API, fallback на JSON:', error);
+                            await CatalogDataStore.load('data/products.json');
+                            products = CatalogDataStore.getAllProducts();
+                            console.log('[LOAD CATALOG] Товаров загружено из файла:', products.length);
+                        }
                         console.log('[LOAD CATALOG] Состояние фильтров ДО применения:', JSON.stringify(filtersState));
 
                         if (!products || products.length === 0) {

@@ -21,8 +21,8 @@ const CabinetAPI = (function() {
     // ═══════════════════════════════════════════════════════════════════════════
 
     const CONFIG = {
-        baseURL: '/wp-json/cabinet/v1',  // WordPress REST API базовый путь
-        useMock: true,                    // true для разработки без backend
+        baseURL: '/api/v1',              // Backend API базовый путь
+        useMock: false,                   // false для использования реального backend
         mockDelay: 300,                   // Задержка mock ответов (мс)
         timeout: 15000,                   // Таймаут запросов (мс)
         
@@ -490,7 +490,15 @@ const CabinetAPI = (function() {
             try {
                 const result = await request('GET', CONFIG.endpoints.authCheck);
                 
-                // Адаптация формата WordPress к текущему формату
+                // Наш backend возвращает {success: true, data: {id, email, name, ...}}
+                if (result.success === true && result.data) {
+                    return {
+                        isAuthenticated: true,
+                        user: result.data
+                    };
+                }
+                
+                // Если ошибка авторизации
                 if (result.success === false) {
                     return {
                         isAuthenticated: false,
@@ -498,20 +506,7 @@ const CabinetAPI = (function() {
                     };
                 }
                 
-                // Если WordPress вернул данные пользователя напрямую
-                if (result.id || result.email) {
-                    return {
-                        isAuthenticated: true,
-                        user: result
-                    };
-                }
-                
-                // Если уже в нужном формате (для обратной совместимости)
-                if (result.isAuthenticated !== undefined) {
-                    return result;
-                }
-                
-                // Fallback
+                // Fallback (не должен сюда попасть с нашим API)
                 return {
                     isAuthenticated: false,
                     user: null
@@ -533,8 +528,9 @@ const CabinetAPI = (function() {
          */
         async login(email, password) {
             const result = await request('POST', CONFIG.endpoints.login, { email, password });
-            if (result.token) {
-                setAuthToken(result.token);
+            // Backend возвращает {success: true, data: {token, user}}
+            if (result.success && result.data && result.data.token) {
+                setAuthToken(result.data.token);
             }
             return result;
         },
@@ -546,8 +542,9 @@ const CabinetAPI = (function() {
          */
         async register(data) {
             const result = await request('POST', CONFIG.endpoints.register, data);
-            if (result.token) {
-                setAuthToken(result.token);
+            // Backend возвращает {success: true, data: {token, user}}
+            if (result.success && result.data && result.data.token) {
+                setAuthToken(result.data.token);
             }
             return result;
         },
