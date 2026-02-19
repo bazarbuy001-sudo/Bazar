@@ -1,29 +1,131 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../server.js';
-import { ApiResponse, OrderCreateRequest } from '../types.js';
-import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
+import prisma from '../lib/prisma.js';
+import { ApiResponse } from '../types.js';
 
-interface CheckoutSession {
-  sessionId: string;
-  step: 'contact' | 'confirmation';
-  contactData?: {
-    email: string;
-    name: string;
-    phone: string;
-    city: string;
-  };
-  cartItems?: any[];
-  totalAmount?: number;
-  createdAt: Date;
-  expiresAt: Date;
+// ============================================
+// ZOD VALIDATION SCHEMAS
+// ============================================
+
+const ShippingAddressSchema = z.object({
+  city: z.string().min(1, 'City is required'),
+  street: z.string().min(1, 'Street address is required'),
+  phone: z.string().min(1, 'Phone is required'),
+});
+
+const CheckoutSubmitSchema = z.object({
+  shippingAddress: ShippingAddressSchema,
+  comment: z.string().optional(),
+});
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Генерация номера заказа в формате ORD-YYYYMMDD-XXXX
+ */
+function generateOrderNumber(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const dateStr = `${year}${month}${day}`;
+  
+  // Генерируем 4 случайные цифры
+  const randomNum = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  
+  return `ORD-${dateStr}-${randomNum}`;
 }
 
-// Mock checkout sessions store (in production: Redis/DB)
-const checkoutSessions = new Map<string, CheckoutSession>();
+/**
+ * Проверка наличия товара и актуальности цены
+ */
+async function validateCartItems(cartItems: any[]) {
+  const validationResults = [];
+  let hasStockIssues = false;
+  let hasPriceChanges = false;
+
+  for (const item of cartItems) {
+    // Получаем актуальную информацию о товаре
+    const product = await prisma.product.findUnique({
+      where: { id: item.productId },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        warehouseAvailability: true,
+      },
+    });
+
+    if (!product) {
+      validationResults.push({
+        itemId: item.id,
+        productId: item.productId,
+        productName: item.product.name,
+        issue: 'PRODUCT_NOT_FOUND',
+        message: 'Товар больше не доступен',
+      });
+      hasStockIssues = true;
+      continue;
+    }
+
+    // Проверяем наличие
+    if (Number(product.warehouseAvailability) < item.quantity) {
+      validationResults.push({
+        itemId: item.id,
+        productId: item.productId,
+        productName: product.name,
+        issue: 'INSUFFICIENT_STOCK',
+        message: `Недостаточно товара на складе. Доступно: ${product.warehouseAvailability}, запрашивается: ${item.quantity}`,
+        available: Number(product.warehouseAvailability),
+        requested: item.quantity,
+      });
+      hasStockIssues = true;
+    }
+
+    // Проверяем цену
+    if (Number(product.price) !== Number(item.priceAtAdd)) {
+      validationResults.push({
+        itemId: item.id,
+        productId: item.productId,
+        productName: product.name,
+        issue: 'PRICE_CHANGED',
+        message: `Цена изменилась с ${item.priceAtAdd} до ${product.price}`,
+        oldPrice: Number(item.priceAtAdd),
+        newPrice: Number(product.price),
+      });
+      hasPriceChanges = true;
+    }
+
+    // Если всё ок, добавляем актуальную информацию
+    if (Number(product.warehouseAvailability) >= item.quantity) {
+      validationResults.push({
+        itemId: item.id,
+        productId: item.productId,
+        productName: product.name,
+        issue: null,
+        currentPrice: Number(product.price),
+        quantity: item.quantity,
+        total: Number(product.price) * item.quantity,
+      });
+    }
+  }
+
+  return {
+    validationResults,
+    hasStockIssues,
+    hasPriceChanges,
+  };
+}
+
+// ============================================
+// API CONTROLLERS
+// ============================================
 
 /**
  * POST /api/v1/checkout/init
- * Инициализировать checkout сессию (Step 1: Contact)
+ * Инициализация чекаута - проверка корзины и цен
  */
 export const initCheckout = async (
   req: Request,
@@ -31,107 +133,109 @@ export const initCheckout = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { email, name, phone, city } = req.body;
+    const clientId = req.user?.id;
 
-    // Validation
-    if (!email || !name || !phone || !city) {
+    if (!clientId) {
+      res.status(401).json({
+        success: false,
+        error: 'Authentication required',
+      });
+      return;
+    }
+
+    // Получаем корзину пользователя
+    const cart = await prisma.cart.findUnique({
+      where: { clientId },
+      include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                warehouseAvailability: true,
+                images: {
+                  where: { isMain: true },
+                  select: { imageUrl: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!cart || cart.items.length === 0) {
       res.status(400).json({
         success: false,
-        error: 'Missing required fields: email, name, phone, city',
+        error: 'Cart is empty',
       });
       return;
     }
 
-    const sessionId = uuidv4();
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + 30 * 60 * 1000); // 30 minutes
+    // Проверяем каждый товар в корзине
+    const validation = await validateCartItems(cart.items);
 
-    const session: CheckoutSession = {
-      sessionId,
-      step: 'contact',
-      contactData: { email, name, phone, city },
-      createdAt: now,
-      expiresAt,
-    };
+    // Подсчитываем итоги по актуальным ценам
+    const validItems = validation.validationResults.filter(item => !item.issue || item.issue === 'PRICE_CHANGED');
+    const subtotal = validItems.reduce((sum, item) => sum + (item.currentPrice || item.newPrice || 0) * item.quantity, 0);
 
-    checkoutSessions.set(sessionId, session);
+    const warnings = validation.validationResults
+      .filter(item => item.issue === 'PRICE_CHANGED')
+      .map(item => ({
+        type: 'PRICE_CHANGED',
+        productName: item.productName,
+        message: item.message,
+        oldPrice: item.oldPrice,
+        newPrice: item.newPrice,
+      }));
 
-    const response: ApiResponse<{ sessionId: string; step: string }> = {
-      success: true,
-      data: { sessionId, step: 'contact' },
-      message: 'Checkout session initialized',
-    };
-
-    res.json(response);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * POST /api/v1/checkout/confirmation
- * Перейти к подтверждению (Step 2: Confirmation)
- * Получить информацию из корзины и перейти на страницу подтверждения
- */
-export const getCheckoutConfirmation = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { sessionId } = req.body;
-
-    if (!sessionId) {
-      res.status(400).json({
-        success: false,
-        error: 'Missing sessionId',
-      });
-      return;
-    }
-
-    const session = checkoutSessions.get(sessionId);
-
-    if (!session) {
-      res.status(404).json({
-        success: false,
-        error: 'Checkout session not found or expired',
-      });
-      return;
-    }
-
-    if (new Date() > session.expiresAt) {
-      checkoutSessions.delete(sessionId);
-      res.status(410).json({
-        success: false,
-        error: 'Checkout session expired',
-      });
-      return;
-    }
-
-    // Get cart data from headers (in production: from session/Redis)
-    const clientId = req.headers['x-client-id'] as string || 'anonymous';
-
-    // Mock cart data (in production: from actual cart store)
-    const cartItems = JSON.parse(req.body.cartItems || '[]');
-    const totalAmount = cartItems.reduce((sum: number, item: any) => sum + item.totalPrice, 0);
-
-    session.step = 'confirmation';
-    session.cartItems = cartItems;
-    session.totalAmount = totalAmount;
-
-    checkoutSessions.set(sessionId, session);
+    const errors = validation.validationResults
+      .filter(item => item.issue && item.issue !== 'PRICE_CHANGED')
+      .map(item => ({
+        type: item.issue,
+        productName: item.productName,
+        message: item.message,
+        available: item.available,
+        requested: item.requested,
+      }));
 
     const response: ApiResponse<any> = {
-      success: true,
+      success: !validation.hasStockIssues,
       data: {
-        sessionId,
-        step: 'confirmation',
-        contactData: session.contactData,
-        cartItems,
-        totalAmount,
+        cart: {
+          id: cart.id,
+          items: cart.items.map(item => ({
+            id: item.id,
+            productId: item.productId,
+            product: {
+              name: item.product.name,
+              imageUrl: item.product.images[0]?.imageUrl || null,
+              currentPrice: Number(item.product.price),
+              available: Number(item.product.warehouseAvailability),
+            },
+            quantity: item.quantity,
+            priceAtAdd: Number(item.priceAtAdd),
+            currentPrice: Number(item.product.price),
+            priceChanged: Number(item.product.price) !== Number(item.priceAtAdd),
+            total: Number(item.product.price) * item.quantity,
+          })),
+          subtotal: Number(subtotal.toFixed(2)),
+          total: Number(subtotal.toFixed(2)),
+        },
+        validation: {
+          hasStockIssues: validation.hasStockIssues,
+          hasPriceChanges: validation.hasPriceChanges,
+          warnings,
+          errors,
+        },
       },
-      message: 'Ready for order confirmation',
     };
+
+    if (validation.hasStockIssues) {
+      response.error = 'Some items are out of stock or unavailable';
+    }
 
     res.json(response);
   } catch (error) {
@@ -141,123 +245,161 @@ export const getCheckoutConfirmation = async (
 
 /**
  * POST /api/v1/checkout/submit
- * Подтвердить заказ и создать Order в БД
+ * Оформление заказа
  */
-export const submitOrder = async (
+export const submitCheckout = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { sessionId, shippingAddress, notes } = req.body;
-
-    if (!sessionId || !shippingAddress) {
+    // Валидация входных данных
+    const result = CheckoutSubmitSchema.safeParse(req.body);
+    if (!result.success) {
       res.status(400).json({
         success: false,
-        error: 'Missing required fields: sessionId, shippingAddress',
+        error: 'Validation error',
+        details: result.error.issues,
       });
       return;
     }
 
-    const session = checkoutSessions.get(sessionId);
+    const { shippingAddress, comment } = result.data;
+    const clientId = req.user?.id;
 
-    if (!session) {
-      res.status(404).json({
+    if (!clientId) {
+      res.status(401).json({
         success: false,
-        error: 'Checkout session not found',
+        error: 'Authentication required',
       });
       return;
     }
 
-    if (session.step !== 'confirmation') {
-      res.status(400).json({
-        success: false,
-        error: 'Invalid checkout step. Must be at confirmation stage.',
+    // Используем транзакцию для атомарности
+    const result_transaction = await prisma.$transaction(async (tx) => {
+      // 1. Получаем корзину пользователя с блокировкой
+      const cart = await tx.cart.findUnique({
+        where: { clientId },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  warehouseAvailability: true,
+                },
+              },
+            },
+          },
+        },
       });
-      return;
-    }
 
-    const clientId = req.headers['x-client-id'] as string;
+      if (!cart || cart.items.length === 0) {
+        throw new Error('Cart is empty');
+      }
 
-    // For MVP: Create order without actual client validation
-    // In production: validate client exists and is authenticated
-    
-    const publicId = `ORD-${new Date().getFullYear()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+      // 2. Проверяем наличие товаров еще раз (в рамках транзакции)
+      const validation = await validateCartItems(cart.items);
+      
+      if (validation.hasStockIssues) {
+        throw new Error('Some items are out of stock');
+      }
 
-    // Create order (will use real client in production)
-    // For now, skip actual order creation and just return success
-    const order = {
-      id: uuidv4(),
-      publicId,
-      clientId: clientId || 'client-anonymous',
-      status: 'PENDING',
-      totalAmount: session.totalAmount || 0,
-      currency: 'RUB',
-      shippingAddress,
-      notes,
-      items: session.cartItems || [],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+      // 3. Подсчитываем итоги
+      const totalAmount = cart.items.reduce((sum, item) => {
+        return sum + (Number(item.product.price) * item.quantity);
+      }, 0);
 
-    // Clean up checkout session
-    checkoutSessions.delete(sessionId);
+      // 4. Генерируем номер заказа
+      const orderNumber = generateOrderNumber();
+
+      // 5. Создаем заказ
+      const order = await tx.order.create({
+        data: {
+          publicId: orderNumber,
+          clientId: clientId,
+          status: 'PENDING',
+          totalAmount: totalAmount,
+          currency: 'RUB',
+          shippingAddress: shippingAddress,
+          notes: comment || null,
+        },
+      });
+
+      // 6. Создаем позиции заказа
+      const orderItems = [];
+      for (const item of cart.items) {
+        const orderItem = await tx.orderItem.create({
+          data: {
+            orderId: order.id,
+            fabricId: item.productId,
+            color: 'default', // TODO: добавить поддержку цветов в корзине
+            requestedMeters: item.quantity,
+            unitPricePerMeter: Number(item.product.price),
+            totalPrice: Number(item.product.price) * item.quantity,
+          },
+        });
+        orderItems.push(orderItem);
+      }
+
+      // 7. Уменьшаем остатки на складе
+      for (const item of cart.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: {
+            warehouseAvailability: {
+              decrement: item.quantity,
+            },
+          },
+        });
+      }
+
+      // 8. Очищаем корзину
+      await tx.cartItem.deleteMany({
+        where: { cartId: cart.id },
+      });
+
+      return {
+        order: {
+          ...order,
+          items: orderItems,
+        },
+      };
+    });
 
     const response: ApiResponse<any> = {
       success: true,
       data: {
-        orderId: order.id,
-        publicId: order.publicId,
-        status: order.status,
-        totalAmount: order.totalAmount,
+        orderId: result_transaction.order.id,
+        orderNumber: result_transaction.order.publicId,
+        total: Number(result_transaction.order.totalAmount),
+        currency: result_transaction.order.currency,
+        status: result_transaction.order.status.toLowerCase(),
+        itemsCount: result_transaction.order.items.length,
+        createdAt: result_transaction.order.createdAt.toISOString(),
       },
-      message: 'Order created successfully',
     };
 
-    res.json(response);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * GET /api/v1/checkout/session/:sessionId
- * Получить информацию о сессии checkout
- */
-export const getCheckoutSession = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { sessionId } = req.params;
-
-    const session = checkoutSessions.get(sessionId);
-
-    if (!session) {
-      res.status(404).json({
+    res.status(201).json(response);
+  } catch (error: any) {
+    if (error.message === 'Cart is empty') {
+      res.status(400).json({
         success: false,
-        error: 'Checkout session not found',
+        error: 'Cart is empty',
       });
       return;
     }
 
-    if (new Date() > session.expiresAt) {
-      checkoutSessions.delete(sessionId);
-      res.status(410).json({
+    if (error.message === 'Some items are out of stock') {
+      res.status(400).json({
         success: false,
-        error: 'Checkout session expired',
+        error: 'Some items are out of stock or unavailable',
       });
       return;
     }
 
-    const response: ApiResponse<CheckoutSession> = {
-      success: true,
-      data: session,
-    };
-
-    res.json(response);
-  } catch (error) {
     next(error);
   }
 };

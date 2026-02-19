@@ -140,7 +140,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     const token = generateJWT({
       id: client.id,
       email: client.email,
-      type: 'client'
+      role: 'client'
     });
 
     res.status(201).json({
@@ -214,7 +214,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const token = generateJWT({
       id: client.id,
       email: client.email,
-      type: 'client'
+      role: 'client'
     });
 
     res.status(200).json({

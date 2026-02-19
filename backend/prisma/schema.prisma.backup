@@ -1,0 +1,397 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Основные категории товаров
+model Category {
+  id            String        @id @default(dbgenerated("gen_random_uuid()"))
+  name          String        @unique
+  type          String
+  description   String?
+  createdAt     DateTime      @default(now())
+  products      Product[]
+  subcategories SubCategory[]
+
+  @@index([type])
+  @@map("categories")
+}
+
+/// Подкатегории товаров (70+ для тканей, 30+ для фурнитуры)
+model SubCategory {
+  id         String    @id @default(dbgenerated("gen_random_uuid()"))
+  categoryId String
+  name       String
+  createdAt  DateTime  @default(now())
+  products   Product[]
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([categoryId, name])
+  @@index([categoryId])
+  @@map("subcategories")
+}
+
+/// Товары (ткани и фурнитура)
+model Product {
+  id                    String              @id @default(dbgenerated("gen_random_uuid()"))
+  publicId              String              @unique
+  name                  String
+  articleNumber         String?             @unique
+  productType           ProductType         @default(FABRIC)
+  categoryId            String
+  subcategoryId         String
+  price                 Decimal             @db.Decimal(10, 2)
+  oldPrice              Decimal?            @db.Decimal(10, 2)
+  isOnSale              Boolean             @default(false)
+  isNew                 Boolean             @default(false)
+  isRestRoll            Boolean             @default(false)
+  warehouseAvailability Decimal             @default(0) @db.Decimal(10, 2)
+  color                 String?
+  shade                 String?
+  widthCm               Decimal?            @db.Decimal(10, 2)
+  densityGsm            Decimal?            @db.Decimal(10, 2)
+  densityGpm            Decimal?            @db.Decimal(10, 2)
+  pattern               String?
+  printType             String?
+  fabricSubtype         String?
+  fabricProperties      String?
+  purpose               String?
+  metersPerRoll         Decimal?            @db.Decimal(10, 2)
+  metersPerKg           Decimal?            @db.Decimal(10, 2)
+  minimumCut            Int?
+  countryOfOrigin       String?
+  material              String?
+  accessoryType         String?
+  size                  String?
+  application           String?
+  finish                String?
+  brand                 String?
+  packageType           String?
+  mountingType          String?
+  colors                Json?               @default("[]")
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  cartItems             CartItem[]
+  compositions          FabricComposition[]
+  images                ProductImage[]
+  category              Category            @relation(fields: [categoryId], references: [id])
+  subcategory           SubCategory         @relation(fields: [subcategoryId], references: [id])
+
+  @@index([productType])
+  @@index([categoryId])
+  @@index([subcategoryId])
+  @@index([isOnSale])
+  @@index([isNew])
+  @@map("products")
+}
+
+/// Состав ткани (компоненты с процентами)
+model FabricComposition {
+  id         String  @id @default(dbgenerated("gen_random_uuid()"))
+  productId  String
+  material   String
+  percentage Int
+  product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, material])
+  @@index([productId])
+  @@index([material])
+  @@map("fabric_compositions")
+}
+
+/// Изображения товаров
+model ProductImage {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  productId String
+  imageUrl  String
+  position  Int
+  isMain    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, position])
+  @@index([productId])
+  @@map("product_images")
+}
+
+/// Клиенты (Юридические лица / ИП)
+model Client {
+  id                 String              @id @default(dbgenerated("gen_random_uuid()"))
+  publicId           String              @unique
+  email              String              @unique
+  name               String
+  phone              String?
+  city               String?
+  inn                String?
+  primaryAuthMethod  String              @default("email")
+  isActive           Boolean             @default(true)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  passwordHash       String?
+  carts              Cart[]
+  chats              Chat[]
+  idempotentRequests IdempotentRequest[]
+  orders             Order[]
+
+  @@index([email])
+  @@index([publicId])
+  @@map("clients")
+}
+
+/// Администраторы системы
+model AdminUser {
+  id                 String              @id @default(dbgenerated("gen_random_uuid()"))
+  publicId           String              @unique
+  email              String              @unique
+  passwordHash       String
+  firstName          String?
+  lastName           String?
+  role               AdminRole           @default(ADMIN)
+  isActive           Boolean             @default(true)
+  lastLoginAt        DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  assignedChats      Chat[]
+  idempotentRequests IdempotentRequest[]
+  orders             Order[]
+  sessions           Session[]
+
+  @@index([email])
+  @@index([role])
+  @@map("admin_users")
+}
+
+/// Корзины покупателей
+model Cart {
+  id        String     @id @default(dbgenerated("gen_random_uuid()"))
+  clientId  String?                  // FK к Client, null для гостей
+  sessionId String                   // Session ID для гостевых корзин
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  expiresAt DateTime                 // Гостевые корзины живут 30 дней
+  items     CartItem[]
+  client    Client?    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId]) // Один клиент = одна корзина
+  @@index([sessionId]) // Поиск по sessionId для гостей
+  @@index([expiresAt]) // Для cleanup истекших корзин
+  @@map("carts")
+}
+
+/// Элементы корзины
+model CartItem {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  cartId     String                  // FK к Cart
+  productId  String                  // FK к Product
+  quantity   Int                     // Количество единиц товара
+  priceAtAdd Decimal  @db.Decimal(10, 2) // Цена на момент добавления (фиксируется)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId]) // Один товар = один элемент в корзине
+  @@index([cartId])
+  @@index([productId])
+  @@map("cart_items")
+}
+
+model Order {
+  id               String      @id @default(dbgenerated("gen_random_uuid()"))
+  publicId         String      @unique
+  clientId         String
+  createdByAdminId String?
+  status           OrderStatus @default(PENDING)
+  totalAmount      Decimal     @db.Decimal(12, 2)
+  currency         String      @default("RUB")
+  shippingAddress  Json?
+  notes            String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  items            OrderItem[]
+  client           Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdByAdmin   AdminUser?  @relation(fields: [createdByAdminId], references: [id])
+
+  @@index([clientId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+/// Позиции в заказе (метражная модель)
+model OrderItem {
+  id                String   @id @default(dbgenerated("gen_random_uuid()"))
+  orderId           String
+  fabricId          String
+  color             String
+  requestedMeters   Decimal  @db.Decimal(10, 2)
+  fulfilledMeters   Decimal? @db.Decimal(10, 2)
+  unitPricePerMeter Decimal  @db.Decimal(10, 2)
+  rolls             Int?
+  rollAllocations   Json?
+  totalPrice        Decimal  @db.Decimal(12, 2)
+  createdAt         DateTime @default(now())
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+/// Чаты между клиентами и менеджерами
+model Chat {
+  id              String     @id @default(dbgenerated("gen_random_uuid()"))
+  clientId        String
+  assignedAdminId String?
+  subject         String?
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  assignedAdmin   AdminUser? @relation(fields: [assignedAdminId], references: [id])
+  client          Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  messages        Message[]
+
+  @@index([clientId])
+  @@index([assignedAdminId])
+  @@index([isActive])
+  @@map("chats")
+}
+
+/// Сообщения в чате
+model Message {
+  id         String     @id @default(dbgenerated("gen_random_uuid()"))
+  chatId     String
+  senderId   String
+  senderType SenderType
+  content    String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  chat       Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+  @@index([createdAt])
+  @@map("messages")
+}
+
+model SagaOrchestration {
+  id          String     @id @default(dbgenerated("gen_random_uuid()"))
+  sagaType    SagaType
+  sagaStatus  SagaStatus @default(INITIATED)
+  requestId   String
+  currentStep String?
+  payload     Json
+  startedAt   DateTime   @default(now())
+  completedAt DateTime?
+  timeoutAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  steps       SagaStep[]
+
+  @@index([sagaStatus])
+  @@index([sagaType])
+  @@map("saga_orchestration")
+}
+
+/// Шаги саги (SOURCE OF TRUTH для current_step)
+model SagaStep {
+  id           String            @id @default(dbgenerated("gen_random_uuid()"))
+  sagaId       String
+  stepNumber   Int
+  stepName     String
+  stepStatus   SagaStepStatus    @default(PENDING)
+  inputData    Json?
+  outputData   Json?
+  errorMessage String?
+  startedAt    DateTime?
+  completedAt  DateTime?
+  saga         SagaOrchestration @relation(fields: [sagaId], references: [id], onDelete: Cascade)
+
+  @@unique([sagaId, stepNumber])
+  @@index([sagaId, stepNumber])
+  @@map("saga_steps")
+}
+
+model IdempotentRequest {
+  idempotencyKey String     @id
+  clientId       String
+  adminUserId    String?
+  requestHash    String
+  responseStatus Int?
+  responseBody   Json?
+  createdAt      DateTime   @default(now())
+  expiresAt      DateTime
+  adminUser      AdminUser? @relation(fields: [adminUserId], references: [id])
+  client         Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([expiresAt])
+  @@map("idempotent_requests")
+}
+
+model Session {
+  id             String    @id @default(dbgenerated("gen_random_uuid()"))
+  adminUserId    String
+  tokenHash      String    @unique
+  ipAddress      String?
+  userAgent      String?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  expiresAt      DateTime
+  lastActivityAt DateTime?
+  adminUser      AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId, isActive])
+  @@index([tokenHash])
+  @@map("sessions")
+}
+
+enum ProductType {
+  FABRIC
+  ACCESSORY
+}
+
+enum AdminRole {
+  ADMIN
+  SUPERADMIN
+  MANAGER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum SenderType {
+  CLIENT
+  ADMIN
+}
+
+enum SagaType {
+  ORDER_CREATION
+  ORDER_CANCELLATION
+  PAYMENT_PROCESSING
+  STOCK_RESERVATION
+}
+
+enum SagaStatus {
+  INITIATED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  COMPENSATING
+  COMPENSATED
+}
+
+enum SagaStepStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  COMPENSATED
+}
