@@ -244,7 +244,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
  * POST /api/v1/auth/logout
  * Выход из системы
  */
-export const logout = async (req: Request, res: Response): Promise<void> => {
+export const logout = (req: Request, res: Response): void => {
   try {
     // В простой JWT реализации logout происходит на клиенте
     // (удаление токена из localStorage)

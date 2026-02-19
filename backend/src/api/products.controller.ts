@@ -5,7 +5,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '../lib/prisma.js';
-import { Product, ProductVariant, Category } from '@prisma/client';
 
 // ============================================
 // ZOD VALIDATION SCHEMAS
@@ -49,7 +48,7 @@ export const getProducts = async (
     const query = ProductsQuerySchema.parse(req.query);
 
     // Построение WHERE условий
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     // Фильтр по категории (по slug или id)
     if (query.category) {
@@ -99,12 +98,12 @@ export const getProducts = async (
 
     // Фильтр по цене
     if (query.minPrice !== undefined || query.maxPrice !== undefined) {
-      where.price = {};
+      where.price = {} as { gte?: number; lte?: number };
       if (query.minPrice !== undefined) {
-        where.price.gte = query.minPrice;
+        (where.price as { gte?: number; lte?: number }).gte = query.minPrice;
       }
       if (query.maxPrice !== undefined) {
-        where.price.lte = query.maxPrice;
+        (where.price as { gte?: number; lte?: number }).lte = query.maxPrice;
       }
     }
 
@@ -120,7 +119,7 @@ export const getProducts = async (
     // where.isActive = true; // Поле не существует в схеме
 
     // Сортировка
-    let orderBy: any = {};
+    const orderBy: Record<string, string> = {};
     switch (query.sortBy) {
       case 'price_asc':
         orderBy.price = 'asc';
@@ -168,7 +167,7 @@ export const getProducts = async (
     ]);
 
     // Форматирование результата
-    const formattedProducts = products.map((product: any) => ({
+    const formattedProducts = products.map(product => ({
       id: product.id,
       name: product.name,
       slug: product.slug,
@@ -185,7 +184,7 @@ export const getProducts = async (
       description: product.description,
       mainImage: product.mainImage,
       images: product.images ? (Array.isArray(product.images) ? product.images : [product.images]) : [],
-      variants: product.variants.map((variant: any) => ({
+      variants: product.variants.map(variant => ({
         id: variant.id,
         colorName: variant.colorName,
         colorHex: variant.colorHex,
@@ -193,7 +192,7 @@ export const getProducts = async (
         inStock: variant.inStock,
         images: variant.images ? (Array.isArray(variant.images) ? variant.images : [variant.images]) : [],
       })),
-      categories: product.categories.map((cp: any) => cp.category),
+      categories: product.categories.map(cp => cp.category),
       createdAt: product.createdAt.toISOString(),
     }));
 
@@ -309,7 +308,7 @@ export const getProduct = async (
       description: product.description,
       mainImage: product.mainImage,
       images: product.images ? (Array.isArray(product.images) ? product.images : [product.images]) : [],
-      variants: product.variants.map((variant: any) => ({
+      variants: product.variants.map(variant => ({
         id: variant.id,
         colorName: variant.colorName,
         colorHex: variant.colorHex,
@@ -317,7 +316,7 @@ export const getProduct = async (
         inStock: variant.inStock,
         images: variant.images ? (Array.isArray(variant.images) ? variant.images : [variant.images]) : [],
       })),
-      categories: product.categories.map((cp: any) => cp.category),
+      categories: product.categories.map(cp => cp.category),
       createdAt: product.createdAt.toISOString(),
       updatedAt: product.updatedAt.toISOString(),
     };
@@ -365,10 +364,10 @@ export const getCategories = async (
     });
 
     // Строим дерево категорий
-    const buildTree = (parentId: number | null = null): any[] => {
+    const buildTree = (parentId: number | null = null): unknown[] => {
       return categories
-        .filter((cat: any) => cat.parentId === parentId)
-        .map((cat: any) => ({
+        .filter(cat => cat.parentId === parentId)
+        .map(cat => ({
           id: cat.id,
           name: cat.name,
           slug: cat.slug,
