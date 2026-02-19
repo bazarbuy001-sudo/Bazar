@@ -4,6 +4,8 @@ import cartRoutes from './cart.routes.js';
 import cabinetRoutes from './cabinet.routes.js';
 import adminRoutes from './admin.routes.js';
 import authRoutes from './auth.routes.js';
+import ordersRoutes from './orders.routes.js';
+import messagesRoutes from './messages.routes.js';
 // import autosaveRoutes from './autosave.routes.js'; // Disabled - not compatible with current schema
 
 const router = Router();
@@ -27,6 +29,16 @@ router.use('/cart', cartRoutes);
 // CABINET ROUTES (client auth required)
 // ============================================
 router.use('/cabinet', cabinetRoutes);
+
+// ============================================
+// ORDERS ROUTES (client auth required)
+// ============================================
+router.use('/orders', ordersRoutes);
+
+// ============================================
+// MESSAGES ROUTES (client auth required)
+// ============================================
+router.use('/messages', messagesRoutes);
 
 // ============================================
 // ADMIN ROUTES (admin auth required)

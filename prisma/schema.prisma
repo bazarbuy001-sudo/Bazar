@@ -122,6 +122,7 @@ model Order {
   client            Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
   createdByAdmin    AdminUser? @relation(fields: [createdByAdminId], references: [id])
   items             OrderItem[]
+  messages          Message[]
 
   @@index([clientId])
   @@index([status])
@@ -239,4 +240,33 @@ model Session {
   @@index([adminUserId, isActive])
   @@index([tokenHash])
   @@map("sessions")
+}
+
+// ============================================
+// MESSAGES & COMMUNICATION (Per Order Chat)
+// ============================================
+
+enum SenderType {
+  CLIENT
+  ADMIN
+  SYSTEM
+}
+
+/// Сообщения привязанные к заказам
+model Message {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId           String   @db.Uuid
+  senderType        SenderType
+  senderId          String?  @db.Uuid // clientId или adminUserId (null для SYSTEM)
+  content           String   @db.Text
+  isRead            Boolean  @default(false)
+  readAt            DateTime? @db.Timestamptz()
+  createdAt         DateTime @default(now()) @db.Timestamptz()
+
+  // Relations
+  order             Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+  @@index([senderId, isRead])
+  @@map("messages")
 }

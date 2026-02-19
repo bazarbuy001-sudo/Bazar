@@ -797,9 +797,9 @@ export const checkout = async (req: Request, res: Response, next: NextFunction):
       await tx.message.create({
         data: {
           orderId: order.id,
-          senderId: clientId,
           senderType: 'SYSTEM',
-          content: `Заказ ${publicId} создан. Общая сумма: ${Number(cart.total)} ${cart.currency}`,
+          senderId: null, // System messages have no sender
+          content: `Заказ ${publicId} создан. Общая сумма: ${Number(cart.total)} ${cart.currency}. Менеджер свяжется с вами в ближайшее время для согласования деталей.`,
         },
       });
 

@@ -18,17 +18,18 @@ class AuthManager {
     try {
       const response = await apiClient.login(email, password);
       
-      if (response.token) {
+      if (response.success && response.token) {
         this.token = response.token;
         this.currentUser = response.user;
         apiClient.setToken(this.token);
+        localStorage.setItem('admin_token', this.token);
         localStorage.setItem('admin_user', JSON.stringify(response.user));
         
         this.startRefreshTimer();
         return { success: true, user: response.user };
       }
       
-      return { success: false, error: response.message || 'Login failed' };
+      return { success: false, error: response.error || response.message || 'Login failed' };
     } catch (error) {
       return { success: false, error: error.message };
     }

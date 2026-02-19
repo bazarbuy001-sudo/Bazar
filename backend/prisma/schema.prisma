@@ -28,7 +28,6 @@ model Client {
   
   orders              Order[]
   carts               Cart[]
-  sentMessages        Message[] @relation("SenderMessages")
   
   @@index([email])
   @@index([publicId])
@@ -50,7 +49,6 @@ model AdminUser {
   updatedAt     DateTime  @updatedAt
   
   ordersCreated Order[]   @relation("OrderCreatedBy")
-  messages      Message[] @relation("AdminMessages")
   
   @@index([email])
   @@index([role])
@@ -296,23 +294,25 @@ model OrderStatusHistory {
   @@map("order_status_history")
 }
 
-// === СООБЩЕНИЯ (чат менеджер-клиент) ===
+// === СООБЩЕНИЯ (чат менеджер-клиент по заказам) ===
+enum SenderType {
+  CLIENT
+  ADMIN
+  SYSTEM
+}
+
 model Message {
   id         String      @id @default(uuid())
-  orderId    String?
-  order      Order?      @relation(fields: [orderId], references: [id])
-  senderId   String?
-  sender     Client?     @relation("SenderMessages", fields: [senderId], references: [id])
-  adminId    String?
-  admin      AdminUser?  @relation("AdminMessages", fields: [adminId], references: [id])
-  senderType String      // CLIENT | ADMIN | SYSTEM
-  content    String
+  orderId    String      // REQUIRED: привязано к заказу
+  order      Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  senderType SenderType
+  senderId   String?     // clientId или adminUserId (null для SYSTEM)
+  content    String      @db.Text
   isRead     Boolean     @default(false)
   readAt     DateTime?
   createdAt  DateTime    @default(now())
   
-  @@index([orderId])
-  @@index([senderId])
-  @@index([adminId])
+  @@index([orderId, createdAt])
+  @@index([senderId, isRead])
   @@map("messages")
 }
