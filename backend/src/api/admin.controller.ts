@@ -79,8 +79,8 @@ const mockOrders = [
     totalPrice: 4500,
     status: 'pending',
     items: [
-      { productId: 'fabric-001', quantity: 10, price: 150 },
-      { productId: 'fabric-002', quantity: 5, price: 200 },
+      { fabricId: 'fabric-001', quantity: 10, price: 150 },
+      { fabricId: 'fabric-002', quantity: 5, price: 200 },
     ],
     createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
@@ -94,7 +94,7 @@ const mockOrders = [
     totalPrice: 7000,
     status: 'shipped',
     items: [
-      { productId: 'fabric-003', quantity: 20, price: 350 },
+      { fabricId: 'fabric-003', quantity: 20, price: 350 },
     ],
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
@@ -108,7 +108,7 @@ const mockOrders = [
     totalPrice: 3000,
     status: 'delivered',
     items: [
-      { productId: 'fabric-001', quantity: 20, price: 150 },
+      { fabricId: 'fabric-001', quantity: 20, price: 150 },
     ],
     createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
@@ -758,7 +758,7 @@ export const uploadProductImages = (req: Request, res: Response): void => {
       // Create image object (in real app, save to disk)
       const imageObject = {
         id: `img-${Date.now()}-${index}`,
-        productId: productId,
+        fabricId: productId,
         url: `/uploads/${filename}`,
         filename: filename,
         originalName: file.originalname,
@@ -789,7 +789,7 @@ export const uploadProductImages = (req: Request, res: Response): void => {
       success: true,
       message: 'Images uploaded successfully',
       data: {
-        productId: productId,
+        fabricId: productId,
         images: uploadedImages.map((img) => ({
           id: img.id,
           url: img.url,

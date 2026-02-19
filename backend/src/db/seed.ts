@@ -56,7 +56,7 @@ async function main() {
 
     console.log('✅ Sample client created:');
     console.log(`   Email: ${client.email}`);
-    console.log(`   Company: ${client.companyName}`);
+    console.log(`   Company: ${client.name}`);
   }
 
   console.log('🌱 Seed completed!');

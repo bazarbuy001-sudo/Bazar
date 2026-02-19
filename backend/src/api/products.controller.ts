@@ -105,7 +105,7 @@ export const getProducts = async (
       category: req.query.category as string,
       minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
       maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
-      colors: req.query.colors ? (Array.isArray(req.query.colors) ? req.query.colors : [req.query.colors]) : undefined,
+      colors: req.query.colors ? (Array.isArray(req.query.colors) ? req.query.colors as string[] : [req.query.colors as string]) : undefined,
       search: req.query.search as string,
       sortBy: (req.query.sortBy as any) || 'popularity',
       sortOrder: (req.query.sortOrder as any) || 'asc',

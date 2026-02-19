@@ -36,7 +36,7 @@ export interface Product {
 }
 
 export interface CartItem {
-  productId: string;
+  fabricId: string;
   color: string;
   meters: number;
   pricePerMeter: number;

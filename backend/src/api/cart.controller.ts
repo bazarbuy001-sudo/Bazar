@@ -73,7 +73,7 @@ export const addToCart = async (
 
     // Check if item already exists
     const existingItem = cart.items.find(
-      (item) => item.productId === productId && item.color === color
+      (item) => item.fabricId === productId && item.color === color
     );
 
     if (existingItem) {
@@ -83,7 +83,7 @@ export const addToCart = async (
     } else {
       // Add new item
       cart.items.push({
-        productId,
+        fabricId: productId,
         color,
         meters,
         pricePerMeter,
@@ -150,7 +150,7 @@ export const updateCartItem = async (
     }
 
     const item = cart.items.find(
-      (i) => i.productId === productId && i.color === color
+      (i) => i.fabricId === productId && i.color === color
     );
 
     if (!item) {
@@ -213,7 +213,7 @@ export const removeFromCart = async (
     }
 
     cart.items = cart.items.filter(
-      (item) => !(item.productId === productId && item.color === color)
+      (item) => !(item.fabricId === productId && item.color === color)
     );
 
     // Recalculate totals
