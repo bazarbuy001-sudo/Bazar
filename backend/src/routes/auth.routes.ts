@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { register, login, logout, me, loginRateLimit } from '../api/auth.controller.js';
+import { register, login, logout, me } from '../api/auth.controller.js';
+import { rateLimits } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -10,6 +11,7 @@ const router = Router();
 /**
  * POST /api/v1/auth/register
  * Регистрация нового клиента
+ * Rate limiting: 3 попытки в минуту
  * 
  * Body:
  * {
@@ -21,21 +23,20 @@ const router = Router();
  *   "inn": "1234567890"
  * }
  */
-router.post('/register', register);
+router.post('/register', rateLimits.register, register);
 
 /**
  * POST /api/v1/auth/login
  * Аутентификация клиента
+ * Rate limiting: 5 попыток в минуту
  * 
  * Body:
  * {
  *   "email": "client@example.com",
  *   "password": "SecurePass123!"
  * }
- * 
- * Rate limiting: 5 попыток в минуту
  */
-router.post('/login', loginRateLimit, login);
+router.post('/login', rateLimits.login, login);
 
 /**
  * POST /api/v1/auth/logout

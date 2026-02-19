@@ -94,6 +94,15 @@ const CabinetUI = (function() {
                 container.innerHTML = renderContinueOrderScreen(state);
             } else {
                 container.innerHTML = renderAuthPage(state);
+                
+                // Рендерим AuthForms после обновления DOM
+                setTimeout(() => {
+                    const authContainer = document.getElementById('cabinet-auth-forms');
+                    if (authContainer && window.AuthForms) {
+                        // Показываем форму входа по умолчанию (можно переключаться на регистрацию)
+                        window.AuthForms.showLoginForm(authContainer);
+                    }
+                }, 0);
             }
             return;
         }
@@ -111,38 +120,12 @@ const CabinetUI = (function() {
     }
 
     function renderAuthPage(state) {
-        const { authMode, error } = state.system;
-        const isLogin = authMode === 'login';
-
+        // Простая обёртка для AuthForms компонента
         return `
-            <div class="cabinet-auth">
-                <div class="cabinet-auth__card">
-                    <h2 class="cabinet-auth__title">Личный кабинет</h2>
-                    ${error ? `<div class="cabinet-alert cabinet-alert--error">${escapeHtml(error)}</div>` : ''}
-                    <div class="cabinet-social">
-                        <button class="cabinet-social__btn cabinet-social__btn--google" data-action="social-login" data-provider="google">${ICONS.google}<span>Войти через Google</span></button>
-                        <button class="cabinet-social__btn cabinet-social__btn--vk" data-action="social-login" data-provider="vk">${ICONS.vk}<span>Войти через VK</span></button>
-                    </div>
-                    <div class="cabinet-social__divider"><span>или</span></div>
-                    <form class="cabinet-form" data-form="${isLogin ? 'login' : 'register'}">
-                        <div class="cabinet-form__group">
-                            <label class="cabinet-form__label">Email</label>
-                            <input type="email" name="email" class="cabinet-form__input" required placeholder="email@example.com">
-                        </div>
-                        <div class="cabinet-form__group">
-                            <label class="cabinet-form__label">Пароль</label>
-                            <input type="password" name="password" class="cabinet-form__input" required placeholder="••••••••" minlength="6">
-                        </div>
-                        ${!isLogin ? `<div class="cabinet-form__group"><label class="cabinet-form__label">Имя / Компания</label><input type="text" name="name" class="cabinet-form__input" placeholder="ООО «Компания»"></div>` : ''}
-                        <button type="submit" class="cabinet-btn cabinet-btn--primary cabinet-btn--full">${isLogin ? 'Войти' : 'Зарегистрироваться'}</button>
-                    </form>
-                    <div class="cabinet-auth__switch">
-                        ${isLogin 
-                            ? `<p>Нет аккаунта? <a href="#" data-action="switch-auth" data-mode="register">Зарегистрироваться</a></p>`
-                            : `<p>Уже есть аккаунт? <a href="#" data-action="switch-auth" data-mode="login">Войти</a></p>`}
-                    </div>
-                </div>
-            </div>`;
+            <div class="cabinet-auth-wrapper" id="cabinet-auth-forms">
+                <!-- AuthForms будут отрендерены здесь -->
+            </div>
+        `;
     }
 
     function renderContinueOrderScreen(state) {
@@ -588,6 +571,27 @@ const CabinetUI = (function() {
         container.addEventListener('click', handleClick);
         container.addEventListener('submit', handleSubmit);
         container.addEventListener('keydown', handleKeydown);
+        
+        // Слушаем события авторизации
+        window.addEventListener('auth:login', (e) => {
+            const user = e.detail.user;
+            console.log('[CabinetUI] Пользователь авторизован:', user);
+            
+            // Обновляем состояние кабинета
+            if (CabinetStore && CabinetStore.actions) {
+                CabinetStore.actions.setAuthenticatedUser(user);
+            }
+        });
+
+        window.addEventListener('auth:logout', () => {
+            console.log('[CabinetUI] Пользователь вышел');
+            
+            // Обновляем состояние кабинета
+            if (CabinetStore && CabinetStore.actions) {
+                CabinetStore.actions.logout();
+            }
+        });
+        
         CabinetStore.actions.init();
 
         console.log('[CabinetUI] Initialized successfully');

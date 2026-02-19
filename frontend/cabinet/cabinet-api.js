@@ -154,7 +154,7 @@ const CabinetAPI = (function() {
      * Получить токен авторизации
      */
     function getAuthToken() {
-        return localStorage.getItem('cabinet_token');
+        return localStorage.getItem('bazar_auth_token');
     }
 
     /**
@@ -162,9 +162,9 @@ const CabinetAPI = (function() {
      */
     function setAuthToken(token) {
         if (token) {
-            localStorage.setItem('cabinet_token', token);
+            localStorage.setItem('bazar_auth_token', token);
         } else {
-            localStorage.removeItem('cabinet_token');
+            localStorage.removeItem('bazar_auth_token');
         }
     }
 

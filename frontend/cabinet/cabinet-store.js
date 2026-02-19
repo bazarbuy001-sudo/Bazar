@@ -383,6 +383,15 @@ const CabinetStore = (function() {
         },
 
         /**
+         * Установить пользователя как авторизованного (внешняя авторизация)
+         * Используется когда пользователь авторизован через внешний Auth модуль
+         */
+        async setAuthenticatedUser(user) {
+            const mockResult = { user };
+            await this._handleAuthSuccess(mockResult, 'email');
+        },
+
+        /**
          * Выход из аккаунта
          */
         async logout() {
