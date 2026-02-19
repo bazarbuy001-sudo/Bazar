@@ -4,6 +4,7 @@ import cabinetRoutes from './cabinet.routes';
 import ordersRoutes from './orders.routes';
 import adminRoutes from './admin.routes';
 import authRoutes from './auth.routes';
+import autosaveRoutes from './autosave.routes';
 
 const router = Router();
 
@@ -11,6 +12,11 @@ const router = Router();
 // AUTH ROUTES (public)
 // ============================================
 router.use('/auth', authRoutes);
+
+// ============================================
+// AUTOSAVE ROUTES (public - работает со всеми пользователями)
+// ============================================
+router.use('/', autosaveRoutes);
 
 // ============================================
 // PRODUCTS ROUTES (public + admin)
