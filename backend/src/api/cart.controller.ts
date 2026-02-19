@@ -1,12 +1,180 @@
 import { Request, Response, NextFunction } from 'express';
-import { Cart, CartItem, Product, ApiResponse } from '../types.js';
+import { z } from 'zod';
+import prisma from '../lib/prisma.js';
+import { ApiResponse } from '../types.js';
 
-// Mock cart storage (in-memory for MVP, will be replaced with Redis/DB)
-const cartsStore = new Map<string, Cart>();
+// ============================================
+// ZOD VALIDATION SCHEMAS
+// ============================================
+
+const AddToCartSchema = z.object({
+  productId: z.string().uuid('Invalid product ID'),
+  quantity: z.number().int().positive('Quantity must be positive'),
+});
+
+const UpdateCartItemSchema = z.object({
+  quantity: z.number().int().positive('Quantity must be positive'),
+});
+
+const CartItemIdSchema = z.object({
+  id: z.string().uuid('Invalid cart item ID'),
+});
+
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
+
+/**
+ * Получить или создать корзину для клиента/гостя
+ */
+async function getOrCreateCart(clientId: string | null, sessionId?: string) {
+  if (clientId) {
+    // Авторизованный пользователь - ищем по clientId
+    let cart = await prisma.cart.findUnique({
+      where: { clientId },
+      include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                warehouseAvailability: true,
+                images: {
+                  where: { isMain: true },
+                  select: { imageUrl: true }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!cart) {
+      // Создаем новую корзину для пользователя
+      cart = await prisma.cart.create({
+        data: {
+          clientId,
+          sessionId: sessionId || `client-${clientId}`,
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 дней
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  warehouseAvailability: true,
+                  images: {
+                    where: { isMain: true },
+                    select: { imageUrl: true }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    return cart;
+  } else if (sessionId) {
+    // Гостевая корзина - ищем по sessionId
+    let cart = await prisma.cart.findFirst({
+      where: { 
+        sessionId,
+        clientId: null // Убеждаемся что это гостевая корзина
+      },
+      include: {
+        items: {
+          include: {
+            product: {
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                warehouseAvailability: true,
+                images: {
+                  where: { isMain: true },
+                  select: { imageUrl: true }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!cart) {
+      // Создаем новую гостевую корзину
+      cart = await prisma.cart.create({
+        data: {
+          sessionId,
+          expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 дней
+        },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  warehouseAvailability: true,
+                  images: {
+                    where: { isMain: true },
+                    select: { imageUrl: true }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    return cart;
+  } else {
+    throw new Error('Either clientId or sessionId must be provided');
+  }
+}
+
+/**
+ * Подсчет итогов корзины
+ */
+function calculateCartTotals(cartItems: Array<{ priceAtAdd: any; quantity: number }>) {
+  const subtotal = cartItems.reduce((sum, item) => {
+    return sum + (Number(item.priceAtAdd) * item.quantity);
+  }, 0);
+
+  return {
+    subtotal: Number(subtotal.toFixed(2)),
+    total: Number(subtotal.toFixed(2)),
+    itemCount: cartItems.reduce((sum, item) => sum + item.quantity, 0)
+  };
+}
+
+/**
+ * Извлечь clientId и sessionId из запроса
+ */
+function extractClientInfo(req: Request) {
+  const clientId = (req as any).user?.id || null;
+  const sessionId = req.headers['x-session-id'] as string;
+  
+  return { clientId, sessionId };
+}
+
+// ============================================
+// API CONTROLLERS
+// ============================================
 
 /**
  * GET /api/v1/cart
- * Получить содержимое корзины пользователя
+ * Получить содержимое корзины
  */
 export const getCart = async (
   req: Request,
@@ -14,24 +182,41 @@ export const getCart = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // In MVP: get from session/cookies, in production: from JWT token
-    const clientId = req.headers['x-client-id'] as string || 'anonymous';
+    const { clientId, sessionId } = extractClientInfo(req);
 
-    const cart = cartsStore.get(clientId) || {
-      id: `cart-${clientId}`,
-      sessionId: clientId,
-      items: [],
-      subtotal: 0,
-      total: 0,
-      totalAmount: 0,
-      itemCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    if (!clientId && !sessionId) {
+      res.status(400).json({
+        success: false,
+        error: 'Client authentication or session ID required'
+      });
+      return;
+    }
 
-    const response: ApiResponse<Cart> = {
+    const cart = await getOrCreateCart(clientId, sessionId);
+    const totals = calculateCartTotals(cart.items);
+
+    const response: ApiResponse<any> = {
       success: true,
-      data: cart,
+      data: {
+        id: cart.id,
+        items: cart.items.map(item => ({
+          id: item.id,
+          productId: item.productId,
+          product: {
+            name: item.product.name,
+            price: item.product.price,
+            imageUrl: item.product.images[0]?.imageUrl || null,
+            available: Number(item.product.warehouseAvailability) > 0
+          },
+          quantity: item.quantity,
+          priceAtAdd: item.priceAtAdd,
+          total: Number((Number(item.priceAtAdd) * item.quantity).toFixed(2)),
+          createdAt: item.createdAt
+        })),
+        ...totals,
+        createdAt: cart.createdAt,
+        updatedAt: cart.updatedAt
+      }
     };
 
     res.json(response);
@@ -41,8 +226,8 @@ export const getCart = async (
 };
 
 /**
- * POST /api/v1/cart
- * Добавить товар в корзину или обновить количество
+ * POST /api/v1/cart/items
+ * Добавить товар в корзину
  */
 export const addToCart = async (
   req: Request,
@@ -50,90 +235,147 @@ export const addToCart = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { productId, color, meters, pricePerMeter } = req.body as {
-      productId: string;
-      color: string;
-      meters: number;
-      pricePerMeter: number;
-    };
-
-    // Validation
-    if (!productId || !color || !meters || !pricePerMeter) {
+    // Валидация входных данных
+    const result = AddToCartSchema.safeParse(req.body);
+    if (!result.success) {
       res.status(400).json({
         success: false,
-        error: 'Missing required fields: productId, color, meters, pricePerMeter',
+        error: 'Validation error',
+        details: result.error.issues
       });
       return;
     }
 
-    if (meters <= 0) {
+    const { productId, quantity } = result.data;
+    const { clientId, sessionId } = extractClientInfo(req);
+
+    if (!clientId && !sessionId) {
       res.status(400).json({
         success: false,
-        error: 'Meters must be greater than 0',
+        error: 'Client authentication or session ID required'
       });
       return;
     }
 
-    const clientId = req.headers['x-client-id'] as string || 'anonymous';
+    // Проверяем существование и наличие товара
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        warehouseAvailability: true,
+        
+      }
+    });
 
-    const cart = cartsStore.get(clientId) || {
-      id: `cart-${clientId}`,
-      sessionId: clientId,
-      items: [],
-      subtotal: 0,
-      total: 0,
-      totalAmount: 0,
-      itemCount: 0,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
+    if (!product) {
+      res.status(404).json({
+        success: false,
+        error: 'Product not found'
+      });
+      return;
+    }
 
-    // Check if item already exists
-    const existingItem = cart.items.find(
-      (item) => item.fabricId === productId && item.color === color
-    );
+    if (Number(product.warehouseAvailability) < quantity) {
+      res.status(400).json({
+        success: false,
+        error: 'Insufficient stock',
+        available: Number(product.warehouseAvailability)
+      });
+      return;
+    }
+
+    // Получаем корзину
+    const cart = await getOrCreateCart(clientId, sessionId);
+
+    // Проверяем есть ли уже этот товар в корзине
+    const existingItem = await prisma.cartItem.findUnique({
+      where: {
+        cartId_productId: {
+          cartId: cart.id,
+          productId: productId
+        }
+      }
+    });
+
+    let cartItem;
 
     if (existingItem) {
-      // Update quantity
-      existingItem.meters += meters;
-      existingItem.totalPrice = existingItem.meters * pricePerMeter;
+      // Обновляем количество
+      const newQuantity = existingItem.quantity + quantity;
+      
+      if (Number(product.warehouseAvailability) < newQuantity) {
+        res.status(400).json({
+          success: false,
+          error: 'Insufficient stock for updated quantity',
+          available: Number(product.warehouseAvailability),
+          currentInCart: existingItem.quantity
+        });
+        return;
+      }
+
+      cartItem = await prisma.cartItem.update({
+        where: { id: existingItem.id },
+        data: { quantity: newQuantity },
+        include: {
+          product: {
+            select: {
+              name: true,
+              images: {
+                where: { isMain: true },
+                select: { imageUrl: true }
+              }
+            }
+          }
+        }
+      });
     } else {
-      // Add new item
-      const newItem: CartItem = {
-        id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        productId: productId,
-        fabricId: productId,
-        product: {} as Product, // Will be populated from DB in real implementation
-        color,
-        meters,
-        rolls: Math.ceil(meters / 100), // Assuming 100 meters per roll
-        pricePerMeter,
-        total: meters * pricePerMeter,
-        totalPrice: meters * pricePerMeter,
-      };
-      cart.items.push(newItem);
+      // Создаем новый элемент корзины
+      cartItem = await prisma.cartItem.create({
+        data: {
+          cartId: cart.id,
+          productId: productId,
+          quantity: quantity,
+          priceAtAdd: product.price // Фиксируем цену на момент добавления
+        },
+        include: {
+          product: {
+            select: {
+              name: true,
+              images: {
+                where: { isMain: true },
+                select: { imageUrl: true }
+              }
+            }
+          }
+        }
+      });
     }
 
-    // Recalculate totals
-    cart.totalAmount = cart.items.reduce((sum, item) => sum + (item.totalPrice || item.total), 0);
-    cart.itemCount = cart.items.length;
-
-    cartsStore.set(clientId, cart);
-
-    const response: ApiResponse<Cart> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: cart,
-      message: 'Item added to cart',
+      data: {
+        id: cartItem.id,
+        productId: cartItem.productId,
+        product: {
+          name: cartItem.product.name,
+          imageUrl: cartItem.product.images[0]?.imageUrl || null
+        },
+        quantity: cartItem.quantity,
+        priceAtAdd: cartItem.priceAtAdd,
+        total: Number((Number(cartItem.priceAtAdd) * cartItem.quantity).toFixed(2))
+      }
     };
 
-    res.json(response);
+    res.status(201).json(response);
   } catch (error) {
     next(error);
   }
 };
 
 /**
- * PUT /api/v1/cart/:itemId
+ * PUT /api/v1/cart/items/:id
  * Обновить количество товара в корзине
  */
 export const updateCartItem = async (
@@ -142,61 +384,110 @@ export const updateCartItem = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { meters } = req.body as { meters: number };
-    const { productId, color } = req.query;
-
-    if (!productId || !color) {
+    // Валидация ID
+    const idResult = CartItemIdSchema.safeParse({ id: req.params.id });
+    if (!idResult.success) {
       res.status(400).json({
         success: false,
-        error: 'Missing query params: productId, color',
+        error: 'Invalid cart item ID'
       });
       return;
     }
 
-    if (meters <= 0) {
+    // Валидация данных
+    const bodyResult = UpdateCartItemSchema.safeParse(req.body);
+    if (!bodyResult.success) {
       res.status(400).json({
         success: false,
-        error: 'Meters must be greater than 0',
+        error: 'Validation error',
+        details: bodyResult.error.issues
       });
       return;
     }
 
-    const clientId = req.headers['x-client-id'] as string || 'anonymous';
-    const cart = cartsStore.get(clientId);
+    const { id } = idResult.data;
+    const { quantity } = bodyResult.data;
+    const { clientId, sessionId } = extractClientInfo(req);
 
-    if (!cart) {
+    // Проверяем что элемент корзины принадлежит текущему пользователю/сессии
+    const cartItem = await prisma.cartItem.findUnique({
+      where: { id },
+      include: {
+        cart: true,
+        product: {
+          select: {
+            warehouseAvailability: true,
+            name: true,
+            images: {
+              where: { isMain: true },
+              select: { imageUrl: true }
+            }
+          }
+        }
+      }
+    });
+
+    if (!cartItem) {
       res.status(404).json({
         success: false,
-        error: 'Cart not found',
+        error: 'Cart item not found'
       });
       return;
     }
 
-    const item = cart.items.find(
-      (i) => i.fabricId === productId && i.color === color
-    );
+    // Проверяем права доступа
+    const hasAccess = clientId ? 
+      cartItem.cart.clientId === clientId :
+      cartItem.cart.sessionId === sessionId && !cartItem.cart.clientId;
 
-    if (!item) {
-      res.status(404).json({
+    if (!hasAccess) {
+      res.status(403).json({
         success: false,
-        error: 'Item not found in cart',
+        error: 'Access denied'
       });
       return;
     }
 
-    item.meters = meters;
-    item.totalPrice = meters * item.pricePerMeter;
-    item.total = item.totalPrice;  // Синхронизация с основным полем
+    // Проверяем наличие товара
+    if (Number(cartItem.product.warehouseAvailability) < quantity) {
+      res.status(400).json({
+        success: false,
+        error: 'Insufficient stock',
+        available: Number(cartItem.product.warehouseAvailability)
+      });
+      return;
+    }
 
-    // Recalculate totals
-    cart.totalAmount = cart.items.reduce((sum, i) => sum + (i.totalPrice || i.total), 0);
+    // Обновляем количество
+    const updatedItem = await prisma.cartItem.update({
+      where: { id },
+      data: { quantity },
+      include: {
+        product: {
+          select: {
+            name: true,
+            images: {
+              where: { isMain: true },
+              select: { imageUrl: true }
+            }
+          }
+        }
+      }
+    });
 
-    cartsStore.set(clientId, cart);
-
-    const response: ApiResponse<Cart> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: cart,
-      message: 'Cart item updated',
+      data: {
+        id: updatedItem.id,
+        productId: updatedItem.productId,
+        product: {
+          name: updatedItem.product.name,
+          imageUrl: updatedItem.product.images[0]?.imageUrl || null
+        },
+        quantity: updatedItem.quantity,
+        priceAtAdd: updatedItem.priceAtAdd,
+        total: Number((Number(updatedItem.priceAtAdd) * updatedItem.quantity).toFixed(2))
+      }
     };
 
     res.json(response);
@@ -206,7 +497,7 @@ export const updateCartItem = async (
 };
 
 /**
- * DELETE /api/v1/cart/:itemId
+ * DELETE /api/v1/cart/items/:id
  * Удалить товар из корзины
  */
 export const removeFromCart = async (
@@ -215,45 +506,57 @@ export const removeFromCart = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { productId, color } = req.query;
-
-    if (!productId || !color) {
+    // Валидация ID
+    const result = CartItemIdSchema.safeParse({ id: req.params.id });
+    if (!result.success) {
       res.status(400).json({
         success: false,
-        error: 'Missing query params: productId, color',
+        error: 'Invalid cart item ID'
       });
       return;
     }
 
-    const clientId = req.headers['x-client-id'] as string || 'anonymous';
-    const cart = cartsStore.get(clientId);
+    const { id } = result.data;
+    const { clientId, sessionId } = extractClientInfo(req);
 
-    if (!cart) {
+    // Проверяем что элемент корзины принадлежит текущему пользователю/сессии
+    const cartItem = await prisma.cartItem.findUnique({
+      where: { id },
+      include: { cart: true }
+    });
+
+    if (!cartItem) {
       res.status(404).json({
         success: false,
-        error: 'Cart not found',
+        error: 'Cart item not found'
       });
       return;
     }
 
-    cart.items = cart.items.filter(
-      (item) => !(item.fabricId === productId && item.color === color)
-    );
+    // Проверяем права доступа
+    const hasAccess = clientId ? 
+      cartItem.cart.clientId === clientId :
+      cartItem.cart.sessionId === sessionId && !cartItem.cart.clientId;
 
-    // Recalculate totals
-    cart.totalAmount = cart.items.reduce((sum, item) => sum + (item.totalPrice || item.total), 0);
-    cart.itemCount = cart.items.length;
-
-    if (cart.items.length === 0) {
-      cartsStore.delete(clientId);
-    } else {
-      cartsStore.set(clientId, cart);
+    if (!hasAccess) {
+      res.status(403).json({
+        success: false,
+        error: 'Access denied'
+      });
+      return;
     }
 
-    const response: ApiResponse<Cart> = {
+    // Удаляем элемент
+    await prisma.cartItem.delete({
+      where: { id }
+    });
+
+    const response: ApiResponse<any> = {
       success: true,
-      data: cart,
-      message: 'Item removed from cart',
+      data: {
+        message: 'Item removed from cart',
+        removedItemId: id
+      }
     };
 
     res.json(response);
@@ -272,12 +575,42 @@ export const clearCart = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const clientId = req.headers['x-client-id'] as string || 'anonymous';
-    cartsStore.delete(clientId);
+    const { clientId, sessionId } = extractClientInfo(req);
 
-    const response: ApiResponse<null> = {
+    if (!clientId && !sessionId) {
+      res.status(400).json({
+        success: false,
+        error: 'Client authentication or session ID required'
+      });
+      return;
+    }
+
+    // Находим корзину
+    const cart = await prisma.cart.findFirst({
+      where: clientId ? 
+        { clientId } : 
+        { sessionId, clientId: null }
+    });
+
+    if (!cart) {
+      res.status(404).json({
+        success: false,
+        error: 'Cart not found'
+      });
+      return;
+    }
+
+    // Удаляем все элементы корзины
+    await prisma.cartItem.deleteMany({
+      where: { cartId: cart.id }
+    });
+
+    const response: ApiResponse<any> = {
       success: true,
-      message: 'Cart cleared',
+      data: {
+        message: 'Cart cleared successfully',
+        cartId: cart.id
+      }
     };
 
     res.json(response);

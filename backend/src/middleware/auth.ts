@@ -167,3 +167,37 @@ export const authenticateClient = (req: Request, res: Response, next: NextFuncti
   req.user.clientId = decoded.id;
   next();
 };
+
+/**
+ * Middleware: Optional authentication
+ * Извлекает пользователя из JWT если токен присутствует, но не требует его обязательно
+ * Используется для API которые должны работать как для авторизованных, так и для гостей
+ */
+export const authenticateOptional = (req: Request, res: Response, next: NextFunction): void => {
+  const authHeader = req.headers.authorization;
+  
+  // Если токена нет - продолжаем без пользователя
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    next();
+    return;
+  }
+
+  const token = authHeader.substring(7);
+  const decoded = verifyJWT(token);
+
+  // Если токен невалидный - продолжаем без пользователя (не возвращаем ошибку)
+  if (!decoded) {
+    next();
+    return;
+  }
+
+  // Если токен валидный - добавляем пользователя в request
+  req.user = decoded;
+  
+  // Для клиентов добавляем clientId
+  if (decoded.role !== 'admin' && decoded.role !== 'superadmin' && decoded.role !== 'manager') {
+    req.user.clientId = decoded.id;
+  }
+
+  next();
+};

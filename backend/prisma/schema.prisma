@@ -75,6 +75,7 @@ model Product {
   colors                Json?               @default("[]")
   createdAt             DateTime            @default(now())
   updatedAt             DateTime            @updatedAt
+  cartItems             CartItem[]
   compositions          FabricComposition[]
   images                ProductImage[]
   category              Category            @relation(fields: [categoryId], references: [id])
@@ -131,6 +132,7 @@ model Client {
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   passwordHash       String?
+  carts              Cart[]
   chats              Chat[]
   idempotentRequests IdempotentRequest[]
   orders             Order[]
@@ -161,6 +163,41 @@ model AdminUser {
   @@index([email])
   @@index([role])
   @@map("admin_users")
+}
+
+/// Корзины покупателей
+model Cart {
+  id        String     @id @default(dbgenerated("gen_random_uuid()"))
+  clientId  String?                  // FK к Client, null для гостей
+  sessionId String                   // Session ID для гостевых корзин
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  expiresAt DateTime                 // Гостевые корзины живут 30 дней
+  items     CartItem[]
+  client    Client?    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId]) // Один клиент = одна корзина
+  @@index([sessionId]) // Поиск по sessionId для гостей
+  @@index([expiresAt]) // Для cleanup истекших корзин
+  @@map("carts")
+}
+
+/// Элементы корзины
+model CartItem {
+  id         String   @id @default(dbgenerated("gen_random_uuid()"))
+  cartId     String                  // FK к Cart
+  productId  String                  // FK к Product
+  quantity   Int                     // Количество единиц товара
+  priceAtAdd Decimal  @db.Decimal(10, 2) // Цена на момент добавления (фиксируется)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  cart       Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId]) // Один товар = один элемент в корзине
+  @@index([cartId])
+  @@index([productId])
+  @@map("cart_items")
 }
 
 model Order {
