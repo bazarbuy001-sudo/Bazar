@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="css/mobile-fixes.css">
     <link rel="stylesheet" href="css/mobile-fixes-phase6.css">
     <!-- Phase 6: Viewport height utility (load early) -->
-    <script src="js/utils/viewportHeight.js"></script>
+    <script type="module" src="js/utils/viewportHeight.js"></script>
     <style>
         @import url('https://fonts.cdnfonts.com/css/didot');
 
@@ -1961,62 +1961,62 @@
         })();
     </script>
     <!-- Phase 6: Scroll lock utility (before modules that use it) -->
-    <script src="js/utils/scrollLock.js"></script>
+    <script type="module" src="js/utils/scrollLock.js"></script>
     <!-- Mobile Header JS -->
-    <script src="js/mobile-header.js"></script>
-    <script src="js/catalog/eventBus.js"></script>
+    <script type="module" src="js/mobile-header.js"></script>
+    <script type="module" src="js/catalog/eventBus.js"></script>
     <!-- Источники данных -->
-    <script src="js/catalog/data-sources/localJSONSource.js"></script>
-    <script src="js/catalog/data-sources/wordpressRESTSource.js"></script>
+    <script type="module" src="js/catalog/data-sources/localJSONSource.js"></script>
+    <script type="module" src="js/catalog/data-sources/wordpressRESTSource.js"></script>
     <!-- Хранилище данных (использует источники) -->
-    <script src="js/catalog/dataStore.js"></script>
+    <script type="module" src="js/catalog/dataStore.js"></script>
     <!-- Phase 5A: Error handling extension (decorator) -->
-    <script src="js/catalog/dataStore-errorHandling.js"></script>
+    <script type="module" src="js/catalog/dataStore-errorHandling.js"></script>
     <!-- Phase 5B: Initialization helper (load early) -->
-    <script src="js/catalog/catalogReady.js"></script>
-    <script src="js/catalog/filters.js"></script>
+    <script type="module" src="js/catalog/catalogReady.js"></script>
+    <script type="module" src="js/catalog/filters.js"></script>
     <!-- Phase 5B: Guards (load AFTER modules) -->
-    <script src="js/catalog/filters-guards.js"></script>
-    <script src="js/catalog/sorting.js"></script>
-    <script src="js/catalog/pagination.js"></script>
+    <script type="module" src="js/catalog/filters-guards.js"></script>
+    <script type="module" src="js/catalog/sorting.js"></script>
+    <script type="module" src="js/catalog/pagination.js"></script>
     <!-- Phase 5B: Guards (load AFTER modules) -->
-    <script src="js/catalog/pagination-guards.js"></script>
-    <script src="js/catalog/productCard.js"></script>
-    <script src="js/catalog/catalog-core.js"></script>
+    <script type="module" src="js/catalog/pagination-guards.js"></script>
+    <script type="module" src="js/catalog/productCard.js"></script>
+    <script type="module" src="js/catalog/catalog-core.js"></script>
     <!-- Phase 5A: Fallback UI extension -->
-    <script src="js/catalog/catalogFallbackUI.js"></script>
-    <script src="js/catalog/integration.js"></script>
+    <script type="module" src="js/catalog/catalogFallbackUI.js"></script>
+    <script type="module" src="js/catalog/integration.js"></script>
     <!-- Существующие модули -->
-    <script src="js/catalog.js"></script>
-    <script src="js/product-popup.js"></script>
+    <script type="module" src="js/catalog.js"></script>
+    <script type="module" src="js/product-popup.js"></script>
     <!-- ============================================ -->
     <!-- НОВЫЕ МОДУЛИ КАТАЛОГА (добавлено ПОСЛЕ существующих) -->
     <!-- ============================================ -->
 
     <!-- 1. Расширение DataStore -->
-    <script src="js/catalog/dataStoreNavigation.js"></script>
+    <script type="module" src="js/catalog/dataStoreNavigation.js"></script>
 
     <!-- 2. Исправление пагинации -->
-    <script src="js/catalog/paginationFix.js"></script>
+    <script type="module" src="js/catalog/paginationFix.js"></script>
 
     <!-- 3. Меню -->
-    <script src="js/menu/megaMenu.js"></script>
+    <script type="module" src="js/menu/megaMenu.js"></script>
     <!-- Phase 5B: Guards (load AFTER modules) -->
     <!-- ВРЕМЕННО ОТКЛЮЧЕНО: Guard-файл вызывает проблемы с async/await -->
-    <!-- <script src="js/menu/megaMenu-guards.js"></script> -->
-    <script src="js/menu/catalogButton.js"></script>
+    <!-- <script type="module" src="js/menu/megaMenu-guards.js"></script> -->
+    <script type="module" src="js/menu/catalogButton.js"></script>
     <!-- Phase 5B: Guards (load AFTER modules) -->
-    <script src="js/menu/catalogButton-guards.js"></script>
+    <script type="module" src="js/menu/catalogButton-guards.js"></script>
 
     <!-- 4. Поиск -->
-    <script src="js/search/searchController.js"></script>
+    <script type="module" src="js/search/searchController.js"></script>
     <!-- Phase 5B: Guards (load AFTER modules) -->
-    <script src="js/search/searchController-guards.js"></script>
+    <script type="module" src="js/search/searchController-guards.js"></script>
 
     <!-- 5. SEO -->
-    <script src="js/seo/seoController.js"></script>
+    <script type="module" src="js/seo/seoController.js"></script>
 
-    <script src="js/cart-store.js"></script>
+    <script type="module" src="js/cart-store.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             await Catalog.load('data/products.json');
@@ -2070,9 +2070,9 @@
         });
     </script>
     <!-- Cabinet Scripts -->
-    <script src="cabinet/cabinet-api.js"></script>
-    <script src="cabinet/cabinet-store.js"></script>
-    <script src="cabinet/cabinet.js"></script>
+    <script type="module" src="cabinet/cabinet-api.js"></script>
+    <script type="module" src="cabinet/cabinet-store.js"></script>
+    <script type="module" src="cabinet/cabinet.js"></script>
 </body>
 
 </html>
