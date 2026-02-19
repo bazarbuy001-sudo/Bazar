@@ -1,9 +1,9 @@
 /**
- * Cabinet Routes v2
+ * Cabinet Routes - Simplified
  */
 
 import { Router } from 'express';
-import * as cabinetController from '../api/cabinet.v2.controller.js';
+import * as cabinetController from '../api/cabinet.controller.js';
 import { authenticateClient } from '../middleware/auth.js';
 
 const router = Router();
@@ -15,14 +15,12 @@ router.use(authenticateClient);
 router.get('/profile', cabinetController.getProfile);
 router.put('/profile', cabinetController.updateProfile);
 
-// Заказы
-router.get('/orders', cabinetController.getOrders);
-router.get('/orders/:orderId', cabinetController.getOrder);
-router.post('/orders/:orderId/cancel', cabinetController.cancelOrder);
+// Адреса (временно убрано — фокус на Products API)
+// router.get('/addresses', cabinetController.getAddresses);
+// router.post('/addresses', cabinetController.addAddress);
 
-// Чаты и сообщения
-router.get('/chats', cabinetController.getChats);
-router.get('/chats/:chatId/messages', cabinetController.getChatMessages);
-router.post('/chats/:chatId/messages', cabinetController.sendMessage);
+// Предпочтения (временно убрано)
+// router.get('/preferences', cabinetController.getPreferences);
+// router.put('/preferences', cabinetController.updatePreferences);
 
 export default router;

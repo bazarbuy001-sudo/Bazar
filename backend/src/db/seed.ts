@@ -43,9 +43,11 @@ async function main() {
   }).catch(() => null);
 
   if (!sampleClient) {
+    const clientPasswordHash = await bcrypt.hash('client123', 10);
     const client = await prisma.client.create({
       data: {
         email: 'info@example-company.ru',
+        passwordHash: clientPasswordHash,
         name: 'Example Company LLC',
         phone: '+7 (999) 123-45-67',
         inn: '7700000000',

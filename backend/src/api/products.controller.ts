@@ -1,105 +1,43 @@
-import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../server.js';
-import { ApiResponse, PaginatedResponse, Product, FilterOptions } from '../types.js';
-import { safeError } from '../lib/error-handler.js';
+/**
+ * Products API Controller v1 (Rewritten for new schema)
+ */
 
-// Mock products data for Phase 2 MVP
-const mockProducts: Product[] = [
-  {
-    id: 'fabric-001',
-    name: 'Хлопковая ткань белая',
-    sku: 'HLB-001',
-    categoryId: 'cat-fabrics',
-    category: 'Ткани',
-    supplier: 'Производитель №1',
-    price: 150,
-    currency: 'RUB',
-    stock: 100,
-    images: ['/images/fabric-1.jpg'],
-    colors: [{name: 'белый', hex: '#FFFFFF'}],
-    rollLength: 25,
-    status: 'active' as const,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'fabric-002',
-    name: 'Льняная ткань синяя',
-    sku: 'LYN-001',
-    categoryId: 'cat-fabrics',
-    category: 'Ткани',
-    supplier: 'Производитель №2',
-    price: 200,
-    currency: 'RUB',
-    stock: 50,
-    images: ['/images/fabric-2.jpg'],
-    colors: [{name: 'синий', hex: '#0066CC'}],
-    rollLength: 20,
-    status: 'active' as const,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'fabric-003',
-    name: 'Шелковая ткань красная',
-    sku: 'SHL-001',
-    categoryId: 'cat-fabrics',
-    category: 'Ткани',
-    supplier: 'Производитель №3',
-    price: 350,
-    currency: 'RUB',
-    stock: 30,
-    images: ['/images/fabric-3.jpg'],
-    colors: [{name: 'красный', hex: '#CC0000'}],
-    rollLength: 15,
-    status: 'active' as const,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'fabric-004',
-    name: 'Полиэстер черный',
-    sku: 'PLY-001',
-    categoryId: 'cat-fabrics',
-    category: 'Ткани',
-    supplier: 'Производитель №1',
-    price: 120,
-    currency: 'RUB',
-    stock: 200,
-    images: ['/images/fabric-4.jpg'],
-    colors: [{name: 'черный', hex: '#000000'}],
-    rollLength: 30,
-    status: 'active' as const,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'furni-001',
-    name: 'Пуговицы деревянные',
-    sku: 'BTN-001',
-    categoryId: 'cat-furni',
-    category: 'Фурнитура',
-    supplier: 'Производитель №4',
-    price: 25,
-    currency: 'RUB',
-    stock: 1000,
-    images: ['/images/button.jpg'],
-    colors: [{name: 'коричневый', hex: '#8B4513'}, {name: 'черный', hex: '#000000'}],
-    status: 'active' as const,
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+import { Request, Response, NextFunction } from 'express';
+import { z } from 'zod';
+import prisma from '../lib/prisma.js';
+import { Product, ProductVariant, Category } from '@prisma/client';
+
+// ============================================
+// ZOD VALIDATION SCHEMAS
+// ============================================
+
+// Query параметры для списка товаров
+const ProductsQuerySchema = z.object({
+  page: z.string().optional().transform(v => v ? Math.max(1, parseInt(v) || 1) : 1),
+  limit: z.string().optional().transform(v => v ? Math.min(100, Math.max(1, parseInt(v) || 20)) : 20),
+  category: z.string().optional(),
+  productType: z.enum(['fabric', 'accessory']).optional(),
+  isNew: z.enum(['true', 'false']).optional().transform(v => v === 'true' ? true : v === 'false' ? false : undefined),
+  isOnSale: z.enum(['true', 'false']).optional().transform(v => v === 'true' ? true : v === 'false' ? false : undefined),
+  hasStock: z.enum(['true', 'false']).optional().transform(v => v === 'true' ? true : v === 'false' ? false : undefined),
+  minPrice: z.string().optional().transform(v => v ? parseFloat(v) || 0 : undefined),
+  maxPrice: z.string().optional().transform(v => v ? parseFloat(v) || 0 : undefined),
+  sortBy: z.enum(['price_asc', 'price_desc', 'newest', 'name_asc', 'name_desc']).optional().default('newest'),
+  search: z.string().optional(),
+});
+
+// Параметры для получения товара по ID
+const ProductIdSchema = z.object({
+  id: z.string().transform(v => parseInt(v) || 0),
+});
+
+// ============================================
+// API HANDLERS
+// ============================================
 
 /**
  * GET /api/v1/products
- * Получить список товаров с фильтрацией
- * Фильтры: category, minPrice, maxPrice, colors, search, sortBy, page, pageSize
+ * Получить список товаров с фильтрами и пагинацией
  */
 export const getProducts = async (
   req: Request,
@@ -107,127 +45,305 @@ export const getProducts = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const filters: FilterOptions = {
-      category: req.query.category as string,
-      minPrice: req.query.minPrice ? parseFloat(req.query.minPrice as string) : undefined,
-      maxPrice: req.query.maxPrice ? parseFloat(req.query.maxPrice as string) : undefined,
-      colors: req.query.colors ? (Array.isArray(req.query.colors) ? req.query.colors as string[] : [req.query.colors as string]) : undefined,
-      search: req.query.search as string,
-      sortBy: (req.query.sortBy as any) || 'popularity',
-      sortOrder: (req.query.sortOrder as any) || 'asc',
-      page: parseInt(req.query.page as string) || 1,
-      pageSize: parseInt(req.query.pageSize as string) || 12,
-    };
+    // Валидация query параметров
+    const query = ProductsQuerySchema.parse(req.query);
 
-    // Apply filters
-    let filtered = [...mockProducts];
+    // Построение WHERE условий
+    const where: any = {};
 
-    // Search filter
-    if (filters.search) {
-      filtered = filtered.filter((p) =>
-        p.name.toLowerCase().includes(filters.search!.toLowerCase()) ||
-        p.description?.toLowerCase().includes(filters.search!.toLowerCase())
-      );
+    // Фильтр по категории (по slug или id)
+    if (query.category) {
+      const categoryId = parseInt(query.category);
+      if (!isNaN(categoryId)) {
+        // По ID категории
+        where.categories = {
+          some: {
+            categoryId: categoryId,
+          },
+        };
+      } else {
+        // По slug категории
+        where.categories = {
+          some: {
+            category: {
+              slug: query.category,
+            },
+          },
+        };
+      }
     }
 
-    // Category filter
-    if (filters.category) {
-      filtered = filtered.filter((p) => p.category.toLowerCase() === filters.category?.toLowerCase());
+    // Фильтр по типу товара
+    if (query.productType) {
+      where.productType = query.productType;
     }
 
-    // Price range filter
-    if (filters.minPrice !== undefined) {
-      filtered = filtered.filter((p) => p.price >= filters.minPrice!);
-    }
-    if (filters.maxPrice !== undefined) {
-      filtered = filtered.filter((p) => p.price <= filters.maxPrice!);
+    // Фильтр по новинкам
+    if (query.isNew !== undefined) {
+      where.isNew = query.isNew;
     }
 
-    // Color filter
-    if (filters.colors && filters.colors.length > 0) {
-      filtered = filtered.filter((p) =>
-        p.colors.some((c) =>
-          filters.colors!.some((fc) => c.name.toLowerCase() === fc.toLowerCase())
-        )
-      );
+    // Фильтр по скидкам
+    if (query.isOnSale !== undefined) {
+      where.isOnSale = query.isOnSale;
     }
 
-    // Sorting
-    if (filters.sortBy === 'price') {
-      filtered.sort((a, b) => (filters.sortOrder === 'asc' ? a.price - b.price : b.price - a.price));
-    } else if (filters.sortBy === 'name') {
-      filtered.sort((a, b) =>
-        filters.sortOrder === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-      );
-    } else if (filters.sortBy === 'newest') {
-      filtered.sort((a, b) =>
-        filters.sortOrder === 'asc'
-          ? new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-      );
+    // Фильтр по наличию
+    if (query.hasStock !== undefined) {
+      if (query.hasStock) {
+        where.stockQuantity = { gt: 0 };
+      } else {
+        where.stockQuantity = { lte: 0 };
+      }
     }
 
-    // Pagination
-    const total = filtered.length;
-    const pageSize = filters.pageSize!;
-    const page = filters.page!;
-    const totalPages = Math.ceil(total / pageSize);
-    const start = (page - 1) * pageSize;
-    const items = filtered.slice(start, start + pageSize);
+    // Фильтр по цене
+    if (query.minPrice !== undefined || query.maxPrice !== undefined) {
+      where.price = {};
+      if (query.minPrice !== undefined) {
+        where.price.gte = query.minPrice;
+      }
+      if (query.maxPrice !== undefined) {
+        where.price.lte = query.maxPrice;
+      }
+    }
 
-    const response: PaginatedResponse<Product> = {
-      success: true,
-      data: items,
-      pagination: {
-        page,
-        limit: pageSize,
-        total,
-        totalPages,
+    // Поиск по названию
+    if (query.search) {
+      where.name = {
+        contains: query.search,
+        mode: 'insensitive',
+      };
+    }
+
+    // Только активные товары (поле hasStock используется для проверки активности)
+    // where.isActive = true; // Поле не существует в схеме
+
+    // Сортировка
+    let orderBy: any = {};
+    switch (query.sortBy) {
+      case 'price_asc':
+        orderBy.price = 'asc';
+        break;
+      case 'price_desc':
+        orderBy.price = 'desc';
+        break;
+      case 'newest':
+        orderBy.createdAt = 'desc';
+        break;
+      case 'name_asc':
+        orderBy.name = 'asc';
+        break;
+      case 'name_desc':
+        orderBy.name = 'desc';
+        break;
+      default:
+        orderBy.createdAt = 'desc';
+    }
+
+    // Пагинация
+    const skip = (query.page - 1) * query.limit;
+
+    // Запрос к базе
+    const [products, totalCount] = await Promise.all([
+      prisma.product.findMany({
+        where,
+        orderBy,
+        skip,
+        take: query.limit,
+        include: {
+          variants: {
+            where: { isActive: true },
+          },
+          categories: {
+            include: {
+              category: {
+                select: { id: true, name: true, slug: true },
+              },
+            },
+          },
+        },
+      }),
+      prisma.product.count({ where }),
+    ]);
+
+    // Форматирование результата
+    const formattedProducts = products.map((product: any) => ({
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: Number(product.price),
+      isNew: product.isNew,
+      isOnSale: product.isOnSale,
+      isRestRoll: product.isRestRoll,
+      productType: product.productType,
+      unit: product.unit,
+      rollLength: product.rollLength ? Number(product.rollLength) : null,
+      minOrderQty: Number(product.minOrderQty),
+      stockQuantity: product.stockQuantity ? Number(product.stockQuantity) : null,
+      hasStock: product.hasStock,
+      description: product.description,
+      mainImage: product.mainImage,
+      images: product.images ? (Array.isArray(product.images) ? product.images : [product.images]) : [],
+      variants: product.variants.map((variant: any) => ({
+        id: variant.id,
+        colorName: variant.colorName,
+        colorHex: variant.colorHex,
+        sku: variant.sku,
+        inStock: variant.inStock,
+        images: variant.images ? (Array.isArray(variant.images) ? variant.images : [variant.images]) : [],
+      })),
+      categories: product.categories.map((cp: any) => cp.category),
+      createdAt: product.createdAt.toISOString(),
+    }));
+
+    // Мета-информация для пагинации
+    const totalPages = Math.ceil(totalCount / query.limit);
+
+    const response = {
+      status: 'success',
+      data: {
+        products: formattedProducts,
+        pagination: {
+          currentPage: query.page,
+          totalPages,
+          totalCount,
+          limit: query.limit,
+          hasNextPage: query.page < totalPages,
+          hasPrevPage: query.page > 1,
+        },
+        filters: {
+          category: query.category,
+          productType: query.productType,
+          isNew: query.isNew,
+          isOnSale: query.isOnSale,
+          hasStock: query.hasStock,
+          priceRange: query.minPrice || query.maxPrice ? {
+            min: query.minPrice,
+            max: query.maxPrice,
+          } : null,
+          search: query.search,
+          sortBy: query.sortBy,
+        },
       },
     };
 
     res.json(response);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({
+        status: 'error',
+        message: 'Invalid query parameters',
+        errors: error.issues,
+      });
+      return;
+    }
     next(error);
   }
 };
 
 /**
  * GET /api/v1/products/:id
- * Получить товар по ID
+ * Получить карточку товара с вариантами
  */
-export const getProductById = async (
+export const getProduct = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    // Валидация ID
+    const { id } = ProductIdSchema.parse(req.params);
 
-    const product = mockProducts.find((p) => p.id === id);
-
-    if (!product) {
-      res.status(404).json({
-        success: false,
-        error: 'Товар не найден',
+    if (id === 0) {
+      res.status(400).json({
+        status: 'error',
+        message: 'Invalid product ID',
       });
       return;
     }
 
-    const response: ApiResponse<Product> = {
-      success: true,
-      data: product,
+    // Запрос товара
+    const product = await prisma.product.findFirst({
+      where: {
+        id: id,
+      },
+      include: {
+        variants: {
+          where: { isActive: true },
+        },
+        categories: {
+          include: {
+            category: {
+              select: { id: true, name: true, slug: true, parentId: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      res.status(404).json({
+        status: 'error',
+        message: 'Product not found',
+      });
+      return;
+    }
+
+    // Форматирование результата
+    const formattedProduct = {
+      id: product.id,
+      name: product.name,
+      slug: product.slug,
+      price: Number(product.price),
+      isNew: product.isNew,
+      isOnSale: product.isOnSale,
+      isRestRoll: product.isRestRoll,
+      productType: product.productType,
+      unit: product.unit,
+      rollLength: product.rollLength ? Number(product.rollLength) : null,
+      minOrderQty: Number(product.minOrderQty),
+      stepQty: Number(product.stepQty),
+      stockQuantity: product.stockQuantity ? Number(product.stockQuantity) : null,
+      hasStock: product.hasStock,
+      description: product.description,
+      mainImage: product.mainImage,
+      images: product.images ? (Array.isArray(product.images) ? product.images : [product.images]) : [],
+      variants: product.variants.map((variant: any) => ({
+        id: variant.id,
+        colorName: variant.colorName,
+        colorHex: variant.colorHex,
+        sku: variant.sku,
+        inStock: variant.inStock,
+        images: variant.images ? (Array.isArray(variant.images) ? variant.images : [variant.images]) : [],
+      })),
+      categories: product.categories.map((cp: any) => cp.category),
+      createdAt: product.createdAt.toISOString(),
+      updatedAt: product.updatedAt.toISOString(),
+    };
+
+    const response = {
+      status: 'success',
+      data: formattedProduct,
     };
 
     res.json(response);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({
+        status: 'error',
+        message: 'Invalid product ID',
+        errors: error.issues,
+      });
+      return;
+    }
     next(error);
   }
 };
 
 /**
- * GET /api/v1/products/categories
- * Получить список категорий товаров
+ * GET /api/v1/categories
+ * Получить дерево категорий
  */
 export const getCategories = async (
   req: Request,
@@ -235,67 +351,43 @@ export const getCategories = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const categories = Array.from(new Set(mockProducts.map((p) => p.category)));
+    // Получаем все категории
+    const categories = await prisma.category.findMany({
+      where: { isActive: true },
+      orderBy: [{ level: 'asc' }, { position: 'asc' }],
+      include: {
+        _count: {
+          select: {
+            products: true,
+          },
+        },
+      },
+    });
 
-    const response: ApiResponse<string[]> = {
-      success: true,
-      data: categories,
+    // Строим дерево категорий
+    const buildTree = (parentId: number | null = null): any[] => {
+      return categories
+        .filter((cat: any) => cat.parentId === parentId)
+        .map((cat: any) => ({
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug,
+          level: cat.level,
+          position: cat.position,
+          icon: cat.icon,
+          productCount: cat._count.products,
+          children: buildTree(cat.id),
+        }));
     };
 
-    res.json(response);
-  } catch (error) {
-    next(error);
-  }
-};
+    const tree = buildTree();
 
-/**
- * GET /api/v1/products/colors/:category
- * Получить список доступных цветов для категории
- */
-export const getColorsByCategory = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { category } = req.params;
-
-    const products = mockProducts.filter(
-      (p) => p.category.toLowerCase() === category.toLowerCase()
-    );
-
-    const colors = Array.from(
-      new Set(products.flatMap((p) => p.colors.map(c => c.name)))
-    );
-
-    const response: ApiResponse<string[]> = {
-      success: true,
-      data: colors,
-    };
-
-    res.json(response);
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * GET /api/v1/products/price-range
- * Получить диапазон цен для товаров
- */
-export const getPriceRange = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const prices = mockProducts.map((p) => p.price);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-
-    const response: ApiResponse<{ minPrice: number; maxPrice: number }> = {
-      success: true,
-      data: { minPrice, maxPrice },
+    const response = {
+      status: 'success',
+      data: {
+        categories: tree,
+        totalCount: categories.length,
+      },
     };
 
     res.json(response);
