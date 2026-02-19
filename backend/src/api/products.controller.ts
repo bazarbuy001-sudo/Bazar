@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../server';
-import { ApiResponse, PaginatedResponse, Product, FilterOptions } from '../types';
+import { prisma } from '../server.js';
+import { ApiResponse, PaginatedResponse, Product, FilterOptions } from '../types.js';
+import { safeError } from '../lib/error-handler.js';
 
 // Mock products data for Phase 2 MVP
 const mockProducts: Product[] = [
@@ -15,8 +16,9 @@ const mockProducts: Product[] = [
     currency: 'RUB',
     stock: 100,
     images: ['/images/fabric-1.jpg'],
-    colors: ['белый'],
+    colors: [{name: 'белый', hex: '#FFFFFF'}],
     rollLength: 25,
+    status: 'active' as const,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -32,8 +34,9 @@ const mockProducts: Product[] = [
     currency: 'RUB',
     stock: 50,
     images: ['/images/fabric-2.jpg'],
-    colors: ['синий'],
+    colors: [{name: 'синий', hex: '#0066CC'}],
     rollLength: 20,
+    status: 'active' as const,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -49,8 +52,9 @@ const mockProducts: Product[] = [
     currency: 'RUB',
     stock: 30,
     images: ['/images/fabric-3.jpg'],
-    colors: ['красный'],
+    colors: [{name: 'красный', hex: '#CC0000'}],
     rollLength: 15,
+    status: 'active' as const,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -66,8 +70,9 @@ const mockProducts: Product[] = [
     currency: 'RUB',
     stock: 200,
     images: ['/images/fabric-4.jpg'],
-    colors: ['черный'],
+    colors: [{name: 'черный', hex: '#000000'}],
     rollLength: 30,
+    status: 'active' as const,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -83,7 +88,8 @@ const mockProducts: Product[] = [
     currency: 'RUB',
     stock: 1000,
     images: ['/images/button.jpg'],
-    colors: ['коричневый', 'черный'],
+    colors: [{name: 'коричневый', hex: '#8B4513'}, {name: 'черный', hex: '#000000'}],
+    status: 'active' as const,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -141,7 +147,7 @@ export const getProducts = async (
     if (filters.colors && filters.colors.length > 0) {
       filtered = filtered.filter((p) =>
         p.colors.some((c) =>
-          filters.colors!.some((fc) => c.toLowerCase() === fc.toLowerCase())
+          filters.colors!.some((fc) => c.name.toLowerCase() === fc.toLowerCase())
         )
       );
     }
@@ -169,13 +175,13 @@ export const getProducts = async (
     const start = (page - 1) * pageSize;
     const items = filtered.slice(start, start + pageSize);
 
-    const response: ApiResponse<PaginatedResponse<Product>> = {
+    const response: PaginatedResponse<Product> = {
       success: true,
-      data: {
-        items,
-        total,
+      data: items,
+      pagination: {
         page,
-        pageSize,
+        limit: pageSize,
+        total,
         totalPages,
       },
     };
@@ -259,7 +265,7 @@ export const getColorsByCategory = async (
     );
 
     const colors = Array.from(
-      new Set(products.flatMap((p) => p.colors))
+      new Set(products.flatMap((p) => p.colors.map(c => c.name)))
     );
 
     const response: ApiResponse<string[]> = {

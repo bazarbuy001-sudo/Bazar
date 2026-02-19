@@ -21,7 +21,7 @@ const CabinetAPI = (function() {
     // ═══════════════════════════════════════════════════════════════════════════
 
     const CONFIG = {
-        baseURL: '/api/v1',              // Backend API базовый путь
+        baseURL: 'http://localhost:3000/api/v1',  // Backend API базовый путь
         useMock: false,                   // false для использования реального backend
         mockDelay: 300,                   // Задержка mock ответов (мс)
         timeout: 15000,                   // Таймаут запросов (мс)

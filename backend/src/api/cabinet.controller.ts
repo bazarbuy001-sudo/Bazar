@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../server';
-import { ApiResponse } from '../types';
+import { prisma } from '../server.js';
+import { ApiResponse } from '../types.js';
 
 /**
  * GET /api/v1/cabinet/profile

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
-import { generateJWT, verifyJWT } from '../middleware/auth';
+import { generateJWT, verifyJWT } from '../middleware/auth.js';
 import rateLimit from 'express-rate-limit';
 
 const prisma = new PrismaClient();

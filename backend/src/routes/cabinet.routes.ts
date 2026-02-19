@@ -3,8 +3,8 @@
  */
 
 import { Router } from 'express';
-import * as cabinetController from '../api/cabinet.v2.controller';
-import { authenticateClient } from '../middleware/auth';
+import * as cabinetController from '../api/cabinet.v2.controller.js';
+import { authenticateClient } from '../middleware/auth.js';
 
 const router = Router();
 

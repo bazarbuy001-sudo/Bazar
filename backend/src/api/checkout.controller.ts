@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../server';
-import { ApiResponse, OrderCreateRequest } from '../types';
+import { prisma } from '../server.js';
+import { ApiResponse, OrderCreateRequest } from '../types.js';
 import { v4 as uuidv4 } from 'uuid';
 
 interface CheckoutSession {

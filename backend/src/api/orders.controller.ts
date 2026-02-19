@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../server';
-import { ApiResponse, PaginatedResponse } from '../types';
+import { prisma } from '../server.js';
+import { ApiResponse, PaginatedResponse } from '../types.js';
 
 /**
  * GET /api/v1/orders
@@ -54,22 +54,22 @@ export const getOrders = async (
 
     const totalPages = Math.ceil(total / pageSize);
 
-    const response: ApiResponse<PaginatedResponse<any>> = {
+    const response: PaginatedResponse<any> = {
       success: true,
-      data: {
-        items: orders.map((order) => ({
-          id: order.id,
-          publicId: order.publicId,
-          status: order.status,
-          totalAmount: order.totalAmount,
-          currency: order.currency,
-          itemCount: order.items?.length || 0,
-          createdAt: order.createdAt.toISOString(),
-          updatedAt: order.updatedAt.toISOString(),
-        })),
-        total,
+      data: orders.map((order) => ({
+        id: order.id,
+        publicId: order.publicId,
+        status: order.status,
+        totalAmount: order.totalAmount,
+        currency: order.currency,
+        itemCount: order.items?.length || 0,
+        createdAt: order.createdAt.toISOString(),
+        updatedAt: order.updatedAt.toISOString(),
+      })),
+      pagination: {
         page,
-        pageSize,
+        limit: pageSize,
+        total,
         totalPages,
       },
     };

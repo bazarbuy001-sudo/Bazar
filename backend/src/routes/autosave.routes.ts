@@ -8,7 +8,7 @@ import {
   restoreUserState, 
   clearUserState,
   cleanupExpiredSessions 
-} from '../controllers/autosave.controller';
+} from '../controllers/autosave.controller.js';
 
 const router = Router();
 

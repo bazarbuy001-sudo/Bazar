@@ -3,8 +3,8 @@
  */
 
 import { Router } from 'express';
-import * as ordersController from '../api/orders.v2.controller';
-import { authenticateClient, authenticateAdmin } from '../middleware/auth';
+import * as ordersController from '../api/orders.v2.controller.js';
+import { authenticateClient, authenticateAdmin } from '../middleware/auth.js';
 
 const router = Router();
 

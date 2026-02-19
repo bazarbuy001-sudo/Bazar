@@ -5,8 +5,8 @@ import dotenv from 'dotenv';
 import { PrismaClient } from '@prisma/client';
 import http from 'http';
 import WebSocket, { WebSocketServer } from 'ws';
-import logger from './middleware/logger';
-import apiRoutes from './routes';
+import logger from './middleware/logger.js';
+import apiRoutes from './routes/index.js';
 
 // Optional: Import multer (will be added when installed)
 let multer: any;

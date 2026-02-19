@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { Cart, CartItem, ApiResponse } from '../types';
+import { Cart, CartItem, Product, ApiResponse } from '../types.js';
 
 // Mock cart storage (in-memory for MVP, will be replaced with Redis/DB)
 const cartsStore = new Map<string, Cart>();
@@ -18,9 +18,15 @@ export const getCart = async (
     const clientId = req.headers['x-client-id'] as string || 'anonymous';
 
     const cart = cartsStore.get(clientId) || {
+      id: `cart-${clientId}`,
+      sessionId: clientId,
       items: [],
+      subtotal: 0,
+      total: 0,
       totalAmount: 0,
       itemCount: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     const response: ApiResponse<Cart> = {
@@ -44,7 +50,12 @@ export const addToCart = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { productId, color, meters, pricePerMeter } = req.body;
+    const { productId, color, meters, pricePerMeter } = req.body as {
+      productId: string;
+      color: string;
+      meters: number;
+      pricePerMeter: number;
+    };
 
     // Validation
     if (!productId || !color || !meters || !pricePerMeter) {
@@ -66,9 +77,15 @@ export const addToCart = async (
     const clientId = req.headers['x-client-id'] as string || 'anonymous';
 
     const cart = cartsStore.get(clientId) || {
+      id: `cart-${clientId}`,
+      sessionId: clientId,
       items: [],
+      subtotal: 0,
+      total: 0,
       totalAmount: 0,
       itemCount: 0,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     // Check if item already exists
@@ -82,17 +99,23 @@ export const addToCart = async (
       existingItem.totalPrice = existingItem.meters * pricePerMeter;
     } else {
       // Add new item
-      cart.items.push({
+      const newItem: CartItem = {
+        id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        productId: productId,
         fabricId: productId,
+        product: {} as Product, // Will be populated from DB in real implementation
         color,
         meters,
+        rolls: Math.ceil(meters / 100), // Assuming 100 meters per roll
         pricePerMeter,
+        total: meters * pricePerMeter,
         totalPrice: meters * pricePerMeter,
-      });
+      };
+      cart.items.push(newItem);
     }
 
     // Recalculate totals
-    cart.totalAmount = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+    cart.totalAmount = cart.items.reduce((sum, item) => sum + (item.totalPrice || item.total), 0);
     cart.itemCount = cart.items.length;
 
     cartsStore.set(clientId, cart);
@@ -119,7 +142,7 @@ export const updateCartItem = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { meters } = req.body;
+    const { meters } = req.body as { meters: number };
     const { productId, color } = req.query;
 
     if (!productId || !color) {
@@ -163,9 +186,10 @@ export const updateCartItem = async (
 
     item.meters = meters;
     item.totalPrice = meters * item.pricePerMeter;
+    item.total = item.totalPrice;  // Синхронизация с основным полем
 
     // Recalculate totals
-    cart.totalAmount = cart.items.reduce((sum, i) => sum + i.totalPrice, 0);
+    cart.totalAmount = cart.items.reduce((sum, i) => sum + (i.totalPrice || i.total), 0);
 
     cartsStore.set(clientId, cart);
 
@@ -217,7 +241,7 @@ export const removeFromCart = async (
     );
 
     // Recalculate totals
-    cart.totalAmount = cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+    cart.totalAmount = cart.items.reduce((sum, item) => sum + (item.totalPrice || item.total), 0);
     cart.itemCount = cart.items.length;
 
     if (cart.items.length === 0) {

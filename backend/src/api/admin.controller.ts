@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { generateJWT } from '../middleware/auth';
+import { generateJWT } from '../middleware/auth.js';
 
 /**
  * Mock Admin Users

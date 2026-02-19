@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import productsRoutes from './products.routes';
-import cabinetRoutes from './cabinet.routes';
-import ordersRoutes from './orders.routes';
-import adminRoutes from './admin.routes';
-import authRoutes from './auth.routes';
-import autosaveRoutes from './autosave.routes';
+import productsRoutes from './products.routes.js';
+import cabinetRoutes from './cabinet.routes.js';
+import ordersRoutes from './orders.routes.js';
+import adminRoutes from './admin.routes.js';
+import authRoutes from './auth.routes.js';
+import autosaveRoutes from './autosave.routes.js';
 
 const router = Router();
 
